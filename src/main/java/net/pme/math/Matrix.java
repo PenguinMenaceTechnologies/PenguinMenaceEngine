@@ -73,7 +73,7 @@ public class Matrix {
 	 * 
 	 * @return A DoubleBuffer containing the matrix.
 	 */
-	public DoubleBuffer getValues() {
+	public DoubleBuffer getValues(DoubleBuffer db) {
 		double[] m = new double[4 * 4];
 		m[0] = m11;
 		m[1] = m12;
@@ -91,7 +91,11 @@ public class Matrix {
 		m[13] = m42;
 		m[14] = m43;
 		m[15] = m44;
-		DoubleBuffer db = BufferUtils.createDoubleBuffer(16);
+		if (db == null) {
+			db = BufferUtils.createDoubleBuffer(16);
+		} else {
+			db.clear();
+		}
 		db.put(m);
 		return db;
 	}

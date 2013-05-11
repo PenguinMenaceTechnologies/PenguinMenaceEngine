@@ -16,6 +16,10 @@ import net.pme.math.Vector3D;
  */
 public abstract class Player extends RenderableObject implements Networkable {
 	/**
+	 * The matrix buffer to avoid recalculations.
+	 */
+	private DoubleBuffer matrixBuffer;
+	/**
 	 * Create a new player.
 	 * 
 	 * @param position
@@ -37,12 +41,14 @@ public abstract class Player extends RenderableObject implements Networkable {
 	 */
 	public final void applyCamera() {
 
-		Matrix m = Matrix.camera(position, Vector3D.crossProduct(front, up),
+		if (needsUpdate) {
+			Matrix m = Matrix.camera(position, Vector3D.crossProduct(front, up),
 				up, front);
 
-		DoubleBuffer db = m.getValues();
-		db.position(0);
-		GL11.glMultMatrix(db);
+			matrixBuffer = m.getValues(matrixBuffer);
+		}
+		matrixBuffer.position(0);
+		GL11.glMultMatrix(matrixBuffer);
 	}
 
 	/**

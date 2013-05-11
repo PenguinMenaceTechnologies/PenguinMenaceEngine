@@ -24,6 +24,14 @@ public class RenderableObject extends MovableObject {
 	 * The direction where the top of the object is.
 	 */
 	protected Vector3D up;
+	/**
+	 * Determines if the matrix needs to be updated.
+	 */
+	protected boolean needsUpdate;
+	/**
+	 * The matrix buffer to avoid recalculations.
+	 */
+	private DoubleBuffer matrixBuffer;
 
 	/**
 	 * Create a new RenderableObject.
@@ -45,6 +53,8 @@ public class RenderableObject extends MovableObject {
 		this.front = Vector3D.normalize(front);
 		this.up = Vector3D.normalize(up);
 		this.graphics = graphics;
+		this.needsUpdate = true;
+		this.matrixBuffer = null;
 	}
 
 	/**
@@ -57,6 +67,8 @@ public class RenderableObject extends MovableObject {
 		double angle = MathUtils.DEG2RAD * degree;
 		up = Vector3D.transformCoords(up, Matrix.rotationAxis(front, angle));
 		up = Vector3D.normalize(up);
+		needsUpdate = true;
+
 	}
 
 	/**
@@ -69,6 +81,7 @@ public class RenderableObject extends MovableObject {
 		double angle = MathUtils.DEG2RAD * degree;
 		front = Vector3D.transformCoords(front, Matrix.rotationAxis(up, angle));
 		front = Vector3D.normalize(front);
+		needsUpdate = true;
 	}
 
 	/**
@@ -87,6 +100,7 @@ public class RenderableObject extends MovableObject {
 		front = Vector3D.transformCoords(front,
 				Matrix.rotationAxis(pitch, angle));
 		front = Vector3D.normalize(front);
+		needsUpdate = true;
 	}
 
 	/**
@@ -103,6 +117,7 @@ public class RenderableObject extends MovableObject {
 		Vector3D absolute = Vector3D.transformCoords(relative, m);
 
 		position = Vector3D.add(position, absolute);
+		needsUpdate = true;
 	}
 
 	/**
@@ -115,11 +130,14 @@ public class RenderableObject extends MovableObject {
 
 		GL11.glTranslated(position.x, position.y, position.z);
 
-		Matrix m = Matrix.axes(up, Vector3D.crossProduct(front, up), front);
+		if (needsUpdate) {
+			Matrix m = Matrix.axes(up, Vector3D.crossProduct(front, up), front);
 
-		DoubleBuffer db = m.getValues();
-		db.position(0);
-		GL11.glMultMatrix(db);
+			matrixBuffer = m.getValues(matrixBuffer);
+			needsUpdate = false;
+		}
+		matrixBuffer.position(0);
+		GL11.glMultMatrix(matrixBuffer);
 
 		if (graphics > 0) {
 			GL11.glCallList(graphics);

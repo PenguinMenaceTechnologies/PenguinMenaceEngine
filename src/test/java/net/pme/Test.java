@@ -61,9 +61,20 @@ public class Test {
 		game.addRenderable(new TestCube3(4, new Vector3D(-2, 0, -10), front3,
 				up3));
 		game.addRenderable(new RenderableObject(5, new Vector3D(-4, 2.5, -10),
-				frontA, upA, ModelManager.getSpecialCoords(Test.class.getResource("/assets/ships/Anachron.obj").getFile())));
+				frontA, upA, ModelManager.getSpecialCoords(Test.class
+						.getResource("/assets/ships/Anachron.obj").getFile())));
 		game.addRenderable(new RenderableObject(6, new Vector3D(4, 2.5, -10),
-				frontB, upB, ModelManager.getSpecialCoords(Test.class.getResource("/assets/ships/Anachron.obj").getFile())));
+				frontB, upB, ModelManager.getSpecialCoords(Test.class
+						.getResource("/assets/ships/Anachron.obj").getFile())));
+		for (int j = 0; j < 100; j++) {
+			for (int i = 1; i < 100; i++) {
+				game.addRenderable(new RenderableObject(6, new Vector3D(
+						4 + 2 * i, 2.5 + 2 * j, -10), frontB, upB, ModelManager
+						.getSpecialCoords(Test.class.getResource(
+								"/assets/ships/Anachron.obj").getFile())));
+
+			}
+		}
 
 		Mouse.setGrabbed(true);
 
