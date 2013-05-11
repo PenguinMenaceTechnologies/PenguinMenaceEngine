@@ -30,7 +30,7 @@ public class TestCube1 extends RenderableObject {
 
 	@Override
 	public void move(double elapsedTime) {
-		rotateAroundFrontAxis(elapsedTime);
+		rotateAroundFrontAxis(elapsedTime*10);
 	}
 
 	@Override

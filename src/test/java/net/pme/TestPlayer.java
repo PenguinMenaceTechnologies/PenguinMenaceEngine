@@ -1,6 +1,7 @@
 package net.pme;
 
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.opengl.Display;
 
 import net.pme.math.Vector3D;
 import net.pme.objects.Packet;
@@ -34,9 +35,10 @@ public class TestPlayer extends Player {
 
 	@Override
 	public void move(double elapsedTime) {
-		move(new Vector3D(xAxis * elapsedTime * 0.3, yAxis * elapsedTime * 0.3,
-				zAxis * elapsedTime * 0.6));
-		rotateAroundFrontAxis(elapsedTime * rotate * 5);
+		move(new Vector3D(xAxis * elapsedTime * 3, yAxis * elapsedTime * 3,
+				zAxis * elapsedTime * 6));
+		rotateAroundFrontAxis(elapsedTime * rotate * 50);
+		Display.setTitle(String.format("PenguinMenaceEngine Test [%.0f]",1/elapsedTime));
 	}
 
 	/*

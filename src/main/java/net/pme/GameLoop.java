@@ -112,7 +112,7 @@ final class GameLoop {
 			GameDisplay.getDisplay().update();
 
 			timer = System.nanoTime() - timer;
-			elapsedTime = timer * 1.0 * 10E-9;
+			elapsedTime = timer * 1E-9;
 		}
 	}
 

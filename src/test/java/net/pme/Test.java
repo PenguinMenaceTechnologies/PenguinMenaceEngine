@@ -37,6 +37,7 @@ public class Test {
 		game.loadGame();
 
 		GameDisplay.create("PenguinMenaceEngine Test", 800, 600, false);
+		GameDisplay.getDisplay().setFPS(1000000);
 
 		Vector3D frontA = new Vector3D(0, 0, -1);
 		Vector3D upA = new Vector3D(0, 1, 0);
