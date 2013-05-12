@@ -1,5 +1,11 @@
 package net.pme;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
 import org.lwjgl.input.Mouse;
 
 import net.pme.Game;
@@ -66,15 +72,23 @@ public class Test {
 		game.addRenderable(new RenderableObject(6, new Vector3D(4, 2.5, -10),
 				frontB, upB, ModelManager.getSpecialCoords(Test.class
 						.getResource("/assets/ships/Anachron.obj").getFile())));
-		/*for (int j = 0; j < 100; j++) {
-			for (int i = 1; i < 100; i++) {
-				game.addRenderable(new RenderableObject(6, new Vector3D(
-						4 + 2 * i, 2.5 + 2 * j, -10), frontB, upB, ModelManager
-						.getSpecialCoords(Test.class.getResource(
-								"/assets/ships/Anachron.obj").getFile())));
+		/*
+		 * for (int j = 0; j < 100; j++) { for (int i = 1; i < 100; i++) {
+		 * game.addRenderable(new RenderableObject(6, new Vector3D( 4 + 2 * i,
+		 * 2.5 + 2 * j, -10), frontB, upB, ModelManager
+		 * .getSpecialCoords(Test.class.getResource(
+		 * "/assets/ships/Anachron.obj").getFile())));
+		 * 
+		 * } }
+		 */
 
-			}
-		}*/
+		try {
+			BufferedImage bi = ImageIO.read(new File(Test.class.getResource(
+					"/assets/ships/Anachron.jpg").getFile()));
+			game.addHud(new TestHudObject(7, 250, 250, bi));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 		Mouse.setGrabbed(true);
 

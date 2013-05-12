@@ -154,7 +154,7 @@ public class GameDisplay {
 		glMatrixMode(GL_PROJECTION);
 		glPushMatrix();
 		glLoadIdentity();
-		glOrtho(0, displayWidth, displayHeight, 0, 1, -1);
+		glOrtho(0, displayWidth, displayHeight, 0, 0.01, -1);
 		glMatrixMode(GL_MODELVIEW);
 	}
 

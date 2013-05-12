@@ -103,6 +103,7 @@ final class GameLoop {
 			}
 
 			// Render Hud ontop of all
+			glLoadIdentity();
 			display.enterOrtho();
 			for (HudObject o : hudObjects) {
 				o.render();
