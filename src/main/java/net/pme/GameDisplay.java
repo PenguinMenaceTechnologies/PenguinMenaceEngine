@@ -124,7 +124,7 @@ public class GameDisplay {
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 		gluPerspective(45.0f, ((float) displayWidth) / ((float) displayHeight),
-				1f, 2000.0f);
+				0.1f, 2000.0f);
 		glMatrixMode(GL_MODELVIEW);
 		glShadeModel(GL_SMOOTH);
 		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
@@ -138,7 +138,7 @@ public class GameDisplay {
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 		gluPerspective(45.0f, ((float) displayWidth) / ((float) displayHeight),
-				1f, 2000.0f);
+				0.1f, 2000.0f);
 		glMatrixMode(GL_MODELVIEW);
 	}
 
