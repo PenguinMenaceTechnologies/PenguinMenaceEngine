@@ -66,7 +66,7 @@ public class Test {
 		game.addRenderable(new RenderableObject(6, new Vector3D(4, 2.5, -10),
 				frontB, upB, ModelManager.getSpecialCoords(Test.class
 						.getResource("/assets/ships/Anachron.obj").getFile())));
-		for (int j = 0; j < 100; j++) {
+		/*for (int j = 0; j < 100; j++) {
 			for (int i = 1; i < 100; i++) {
 				game.addRenderable(new RenderableObject(6, new Vector3D(
 						4 + 2 * i, 2.5 + 2 * j, -10), frontB, upB, ModelManager
@@ -74,7 +74,7 @@ public class Test {
 								"/assets/ships/Anachron.obj").getFile())));
 
 			}
-		}
+		}*/
 
 		Mouse.setGrabbed(true);
 
