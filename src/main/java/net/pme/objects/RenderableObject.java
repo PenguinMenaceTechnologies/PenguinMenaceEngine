@@ -32,6 +32,10 @@ public class RenderableObject extends MovableObject {
 	 * The matrix buffer to avoid recalculations.
 	 */
 	private DoubleBuffer matrixBuffer;
+	/**
+	 * A shader for the renderable object;
+	 */
+	private Shader shader;
 
 	/**
 	 * Create a new RenderableObject.
@@ -55,6 +59,21 @@ public class RenderableObject extends MovableObject {
 		this.graphics = graphics;
 		this.needsUpdate = true;
 		this.matrixBuffer = null;
+	}
+	
+	/**
+	 * Attach a shader to this object.
+	 * @param shader The shader to attach to this object.
+	 */
+	public void attachShader(Shader shader) {
+		this.shader = shader;
+	}
+	
+	/**
+	 * Detach the currently attached shader from this object.
+	 */
+	public void detachShader() {
+		shader = null;
 	}
 
 	/**
@@ -139,11 +158,18 @@ public class RenderableObject extends MovableObject {
 		matrixBuffer.position(0);
 		GL11.glMultMatrix(matrixBuffer);
 
+		if (shader != null) {
+			shader.bind();
+		}
 		if (graphics > 0) {
 			GL11.glCallList(graphics);
 		}
 
 		specialFX();
+
+		if (shader != null) {
+			shader.unbind();
+		}
 
 		GL11.glPopMatrix();
 	}
