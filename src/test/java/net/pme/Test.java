@@ -15,6 +15,7 @@ import net.pme.ModelManager;
 import net.pme.math.Vector3D;
 import net.pme.objects.Player;
 import net.pme.objects.RenderableObject;
+import net.pme.utils.JarLoader;
 
 /**
  * A simple test of the game engine.
@@ -66,13 +67,13 @@ public class Test {
 				up2));
 		game.addRenderable(new TestCube3(4, new Vector3D(-2, 0, -10), front3,
 				up3));
-		
+
 		game.addRenderable(new RenderableObject(5, new Vector3D(-4, 2.5, -10),
-				frontA, upA, ModelManager.getSpecialCoords(Test.class
-						.getResource("/assets/ships/Anachron.obj").getFile())));
+				frontA, upA, ModelManager.getSpecialCoords(JarLoader
+						.translateString("/assets/ships/Anachron.obj"))));
 		game.addRenderable(new RenderableObject(6, new Vector3D(4, 2.5, -10),
-				frontB, upB, ModelManager.getSpecialCoords(Test.class
-						.getResource("/assets/ships/Anachron.obj").getFile())));
+				frontB, upB, ModelManager.getSpecialCoords(JarLoader
+						.translateString("/assets/ships/Anachron.obj"))));
 		/*
 		 * for (int j = 0; j < 100; j++) { for (int i = 1; i < 100; i++) {
 		 * game.addRenderable(new RenderableObject(6, new Vector3D( 4 + 2 * i,

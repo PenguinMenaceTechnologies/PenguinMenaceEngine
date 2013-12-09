@@ -24,6 +24,9 @@ final class LibraryLoader {
 		if (path == null || path.equals("")) {
 			throw new IllegalArgumentException("Invalid argument!");
 		}
+		if (path.contains(".jar") || path.contains(".zip")) {
+			throw new IllegalArgumentException("You may not use archives for libraries");
+		}
 		if (System.getProperty("os.name").equals("Mac OS X")) {
 			addLibraryPath(path + "/macosx");
 		} else if (System.getProperty("os.name").equals("Linux")) {
@@ -40,7 +43,7 @@ final class LibraryLoader {
 		}
 	}
 
-	private static void addLibraryPath(String s) throws Exception {
+	public static void addLibraryPath(String s) throws Exception {
 		final Field usr_paths_field = ClassLoader.class
 				.getDeclaredField("usr_paths");
 		usr_paths_field.setAccessible(true);
