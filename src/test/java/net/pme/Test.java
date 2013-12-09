@@ -40,6 +40,8 @@ public class Test {
 
 		// Set the game settings first
 		GameSettings.set(new TestSettings());
+		GameSettings.get().getKeyMapping();
+		GameSettings.get().getSettings();
 
 		game.loadGame();
 

@@ -1,8 +1,7 @@
 package net.pme;
 
-import java.util.HashMap;
-
 import net.pme.GameSettings;
+import net.pme.config.MemoryConfiguration;
 
 /**
  * The settings for the test.
@@ -12,24 +11,17 @@ import net.pme.GameSettings;
  */
 public class TestSettings extends GameSettings {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.pme.GameSettings#setDefaultKeyMapping()
-	 */
 	@Override
-	protected HashMap<String, Integer> setDefaultKeyMapping() {
-		return new HashMap<String, Integer>();
+	protected MemoryConfiguration setDefaultKeyMapping() {
+		return new MemoryConfiguration();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.pme.GameSettings#setDefaultLibraryPath()
-	 */
 	@Override
-	protected String setDefaultLibraryPath() {
-		return null;
+	protected MemoryConfiguration setDefaultSettings() {
+		MemoryConfiguration res = new MemoryConfiguration();
+		res.set("test", "a test config");
+		res.set("test2", "foobar");
+		return res;
 	}
 
 }

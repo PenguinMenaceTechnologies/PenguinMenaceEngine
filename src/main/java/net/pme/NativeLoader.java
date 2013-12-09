@@ -5,6 +5,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.logging.Logger;
 
 public class NativeLoader {
@@ -17,6 +19,24 @@ public class NativeLoader {
 	private static final String[] MAC = {"liblwjgl.jnilib", "openal.dylib", "libjinput-osx.jnilib"};
 
 	private NativeLoader() {
+	}
+	
+	private static void addLibraryPath(String s) throws Exception {
+		final Field usr_paths_field = ClassLoader.class
+				.getDeclaredField("usr_paths");
+		usr_paths_field.setAccessible(true);
+
+		final String[] paths = (String[]) usr_paths_field.get(null);
+
+		for (String path : paths) {
+			if (path.equals(s)) {
+				return;
+			}
+		}
+
+		final String[] new_paths = Arrays.copyOf(paths, paths.length + 1);
+		new_paths[new_paths.length - 1] = s;
+		usr_paths_field.set(null, new_paths);
 	}
 	
 	static void unloadLibraries() {
@@ -68,7 +88,7 @@ public class NativeLoader {
 			tmpDir.mkdir();
 		}
 		try {
-			LibraryLoader.addLibraryPath(tmpDir+"/pme-libs");
+			addLibraryPath(tmpDir+"/pme-libs");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

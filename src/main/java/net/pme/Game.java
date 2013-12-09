@@ -1,6 +1,5 @@
 package net.pme;
 
-import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -12,7 +11,6 @@ import net.pme.objects.MovableObject;
 import net.pme.objects.Particle;
 import net.pme.objects.Player;
 import net.pme.objects.RenderableObject;
-import net.pme.utils.JarLoader;
 
 /**
  * Creates the LWJGL object and invokes a game loop thread as well as a network
@@ -170,10 +168,6 @@ public final class Game {
 
 		try {
 			NativeLoader.loadLibraries();
-			String extraGameLibs = GameSettings.get().getLibraryPath();
-			if (extraGameLibs != null && !extraGameLibs.equals("")) {
-				LibraryLoader.loadLibraries(extraGameLibs);
-			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			JOptionPane.showConfirmDialog(null,
@@ -194,5 +188,9 @@ public final class Game {
 	 */
 	public void unload() {
 		NativeLoader.unloadLibraries();
+		GameSettings s = GameSettings.get();
+		if (s != null) {
+			s.saveAll();
+		}
 	}
 }

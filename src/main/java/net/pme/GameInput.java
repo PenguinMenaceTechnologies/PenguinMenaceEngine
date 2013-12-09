@@ -1,6 +1,6 @@
 package net.pme;
 
-import java.util.HashMap;
+import net.pme.config.MemoryConfiguration;
 
 /**
  * This class maps inputs (integers) to strings.
@@ -9,7 +9,7 @@ import java.util.HashMap;
  * @version 1.0
  */
 public final class GameInput {
-	private static HashMap<String, Integer> map = null;
+	private static MemoryConfiguration map = null;
 
 	/**
 	 * Get a key integer for a string input.
@@ -24,11 +24,11 @@ public final class GameInput {
 			throw new IllegalAccessException(
 					"The keymap has to be loaded first.");
 		}
-		if (map.get(key) == null) {
+		if (map.getInteger(key, -1) == -1) {
 			throw new IllegalArgumentException(
 					"The given key was not specified.");
 		}
-		return map.get(key);
+		return map.getInteger(key);
 	}
 
 	/**
