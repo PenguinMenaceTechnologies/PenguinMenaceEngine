@@ -19,7 +19,17 @@ public class NativeLoader {
 	private NativeLoader() {
 	}
 	
-	public static void loadLibraries() {
+	static void unloadLibraries() {
+		String tmpDirName = System.getProperty("java.io.tmpdir");
+		File tmpDir = new File(tmpDirName);
+		if (!tmpDir.exists()) {
+			tmpDir.mkdir();
+		}
+		File file = new File(tmpDir+"/pme-libs");
+		file.delete();
+	}
+	
+	static void loadLibraries() {
 		String os = System.getProperty("os.arch");
 		String arch = System.getProperty("os.arch");
 		if (os.equalsIgnoreCase("mac os x")) {

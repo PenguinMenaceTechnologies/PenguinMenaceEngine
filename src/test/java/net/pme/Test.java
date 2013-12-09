@@ -102,5 +102,7 @@ public class Test {
 		game.runGame(player);
 
 		GameDisplay.getDisplay().deinit();
+		
+		game.unload();
 	}
 }

@@ -188,4 +188,11 @@ public final class Game {
 
 		isLoaded = true;
 	}
+	
+	/**
+	 * Unload the game.
+	 */
+	public void unload() {
+		NativeLoader.unloadLibraries();
+	}
 }
