@@ -15,7 +15,6 @@ import net.pme.ModelManager;
 import net.pme.math.Vector3D;
 import net.pme.objects.Player;
 import net.pme.objects.RenderableObject;
-import net.pme.objects.Shader;
 
 /**
  * A simple test of the game engine.
