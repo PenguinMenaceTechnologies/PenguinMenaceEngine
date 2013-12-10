@@ -149,7 +149,7 @@ public class RenderableObject extends MovableObject {
 	public final void render() {
 		GL11.glPushMatrix();
 
-		GL11.glTranslated(position.x, position.y, position.z);
+		GL11.glTranslated(position.getX(), position.getY(), position.getZ());
 
 		if (needsUpdate) {
 			Matrix m = Matrix.axes(up, Vector3D.crossProduct(front, up), front);
