@@ -19,6 +19,7 @@ import org.lwjgl.opengl.GL20;
  * @version 1.0
  */
 public class Shader extends GameObject {
+	private static final int UNIFORM4F_LENGTH = 4;
 	private int vsId = 0;
 	private int fsId = 0;
 	private int program = 0;
@@ -34,7 +35,7 @@ public class Shader extends GameObject {
 	 * @param fsh
 	 *            The fragment shader. (as a string)
 	 */
-	public Shader(long id, String vsh, String fsh) {
+	public Shader(final long id, final String vsh, final String fsh) {
 		super(id);
 		try {
 			if (vsh != null) {
@@ -79,7 +80,7 @@ public class Shader extends GameObject {
 	 * careful when calling this. Objects of the Engine automatically call this
 	 * if they have a shader attached.)
 	 */
-	public void bind() {
+	public final void bind() {
 		if (program != 0) {
 			ARBShaderObjects.glUseProgramObjectARB(program);
 			updateUniforms();
@@ -93,7 +94,7 @@ public class Shader extends GameObject {
 	 * careful when calling this. Objects of the Engine automatically call this
 	 * if they have a shader attached.)
 	 */
-	public void unbind() {
+	public final void unbind() {
 		ARBShaderObjects.glUseProgramObjectARB(0);
 	}
 
@@ -107,11 +108,11 @@ public class Shader extends GameObject {
 	 *            The array of size 4 which to bind to that uniform.
 	 * @return Weather binding was successful or not.
 	 */
-	public boolean setUniform4f(String uniform, float[] value) {
+	public final boolean setUniform4f(final String uniform, final float[] value) {
 		boolean result = false;
 
 		if (uniform != null && GL20.glGetUniformLocation(program, uniform) != 0
-				&& value != null && value.length == 4) {
+				&& value != null && value.length == UNIFORM4F_LENGTH) {
 			uniforms.put(uniform, value);
 			result = true;
 		}
@@ -127,7 +128,7 @@ public class Shader extends GameObject {
 	 * @return Weather the removal was successful or not. (It is successful as
 	 *         long as the uniform was registered before)
 	 */
-	public boolean removeUniform4f(String uniform) {
+	public final boolean removeUniform4f(final String uniform) {
 		return uniforms.remove(uniform) != null;
 	}
 
@@ -139,7 +140,7 @@ public class Shader extends GameObject {
 	 * This automatically removes all uniform bindings, whereas they are no
 	 * longer usefull.
 	 */
-	public void delete() {
+	public final void delete() {
 		Set<String> keys = uniforms.keySet();
 		for (String k : keys) {
 			removeUniform4f(k);
@@ -158,6 +159,9 @@ public class Shader extends GameObject {
 		}
 	}
 
+	/**
+	 * Update uniforms.
+	 */
 	private void updateUniforms() {
 		Set<String> keys = uniforms.keySet();
 		for (String k : keys) {
@@ -167,8 +171,13 @@ public class Shader extends GameObject {
 		}
 	}
 
-	private int createShader(String shaderString, int shaderType)
-			throws RuntimeException {
+	/**
+	 * Create a shader.
+	 * @param shaderString The string describing the shader.
+	 * @param shaderType The type of the shader.
+	 * @return The int to the shader in gl.
+	 */
+	private int createShader(final String shaderString, final int shaderType) {
 		int shader = 0;
 		shader = ARBShaderObjects.glCreateShaderObjectARB(shaderType);
 		if (shader == 0) {
@@ -186,7 +195,12 @@ public class Shader extends GameObject {
 		return shader;
 	}
 
-	private String getLogInfo(int obj) {
+	/**
+	 * Get the log info for a shader object.
+	 * @param obj The shader for which to get the log.
+	 * @return The log info.
+	 */
+	private String getLogInfo(final int obj) {
 		return ARBShaderObjects.glGetInfoLogARB(obj, ARBShaderObjects
 				.glGetObjectParameteriARB(obj,
 						ARBShaderObjects.GL_OBJECT_INFO_LOG_LENGTH_ARB));

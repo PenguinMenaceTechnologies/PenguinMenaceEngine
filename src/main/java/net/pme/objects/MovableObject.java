@@ -12,7 +12,7 @@ public abstract class MovableObject extends GameObject {
 	/**
 	 * The position of the object.
 	 */
-	protected Vector3D position;
+	private Vector3D position;
 
 	/**
 	 * Create a new movable object.
@@ -22,9 +22,9 @@ public abstract class MovableObject extends GameObject {
 	 * @param position
 	 *            The position.
 	 */
-	public MovableObject(long id, Vector3D position) {
+	public MovableObject(final long id, final Vector3D position) {
 		super(id);
-		this.position = position;
+		this.setPosition(position);
 	}
 
 	/**
@@ -34,4 +34,18 @@ public abstract class MovableObject extends GameObject {
 	 *            The time that the last frame took to calculate. (in seconds)
 	 */
 	public abstract void move(double elapsedTime);
+
+	/**
+	 * @return the position
+	 */
+	public final Vector3D getPosition() {
+		return position;
+	}
+
+	/**
+	 * @param position the position to set
+	 */
+	public final void setPosition(final Vector3D position) {
+		this.position = position;
+	}
 }

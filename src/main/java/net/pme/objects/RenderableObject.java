@@ -19,21 +19,21 @@ public class RenderableObject extends MovableObject {
 	/**
 	 * The direction the object is facing at.
 	 */
-	protected Vector3D front;
+	private Vector3D front;
 	/**
 	 * The direction where the top of the object is.
 	 */
-	protected Vector3D up;
+	private Vector3D up;
 	/**
 	 * Determines if the matrix needs to be updated.
 	 */
-	protected boolean needsUpdate;
+	private boolean needsUpdate;
 	/**
 	 * The matrix buffer to avoid recalculations.
 	 */
 	private DoubleBuffer matrixBuffer;
 	/**
-	 * A shader for the renderable object;
+	 * A shader for the renderable object.
 	 */
 	private Shader shader;
 
@@ -51,8 +51,8 @@ public class RenderableObject extends MovableObject {
 	 * @param graphics
 	 *            The graphics identifier.
 	 */
-	public RenderableObject(long id, Vector3D position, Vector3D front,
-			Vector3D up, int graphics) {
+	public RenderableObject(final long id, final Vector3D position, final Vector3D front,
+			final Vector3D up, final int graphics) {
 		super(id, position);
 		this.front = Vector3D.normalize(front);
 		this.up = Vector3D.normalize(up);
@@ -64,17 +64,101 @@ public class RenderableObject extends MovableObject {
 	/**
 	 * Attach a shader to this object.
 	 * 
-	 * @param shader
+	 * @param newShader
 	 *            The shader to attach to this object.
 	 */
-	public void attachShader(Shader shader) {
+	public final void attachShader(final Shader newShader) {
+		this.shader = newShader;
+	}
+
+	/**
+	 * @return the graphics
+	 */
+	protected final int getGraphics() {
+		return graphics;
+	}
+
+	/**
+	 * @param graphics the graphics to set
+	 */
+	protected final void setGraphics(final int graphics) {
+		this.graphics = graphics;
+	}
+
+	/**
+	 * @return the front
+	 */
+	protected final Vector3D getFront() {
+		return front;
+	}
+
+	/**
+	 * @param front the front to set
+	 */
+	protected final void setFront(final Vector3D front) {
+		this.front = front;
+	}
+
+	/**
+	 * @return the up
+	 */
+	protected final Vector3D getUp() {
+		return up;
+	}
+
+	/**
+	 * @param up the up to set
+	 */
+	protected final void setUp(final Vector3D up) {
+		this.up = up;
+	}
+
+	/**
+	 * @return the needsUpdate
+	 */
+	protected final boolean isNeedsUpdate() {
+		return needsUpdate;
+	}
+
+	/**
+	 * @param needsUpdate the needsUpdate to set
+	 */
+	protected final void setNeedsUpdate(final boolean needsUpdate) {
+		this.needsUpdate = needsUpdate;
+	}
+
+	/**
+	 * @return the matrixBuffer
+	 */
+	protected final DoubleBuffer getMatrixBuffer() {
+		return matrixBuffer;
+	}
+
+	/**
+	 * @param matrixBuffer the matrixBuffer to set
+	 */
+	protected final void setMatrixBuffer(final DoubleBuffer matrixBuffer) {
+		this.matrixBuffer = matrixBuffer;
+	}
+
+	/**
+	 * @return the shader
+	 */
+	protected final Shader getShader() {
+		return shader;
+	}
+
+	/**
+	 * @param shader the shader to set
+	 */
+	protected final void setShader(final Shader shader) {
 		this.shader = shader;
 	}
 
 	/**
 	 * Detach the currently attached shader from this object.
 	 */
-	public void detachShader() {
+	public final void detachShader() {
 		shader = null;
 	}
 
@@ -84,7 +168,7 @@ public class RenderableObject extends MovableObject {
 	 * @param degree
 	 *            The amount it should be rotated in degree.
 	 */
-	protected final void rotateAroundFrontAxis(double degree) {
+	protected final void rotateAroundFrontAxis(final double degree) {
 		double angle = MathUtils.DEG2RAD * degree;
 		up = Vector3D.transformCoords(up, Matrix.rotationAxis(front, angle));
 		up = Vector3D.normalize(up);
@@ -98,7 +182,7 @@ public class RenderableObject extends MovableObject {
 	 * @param degree
 	 *            The amount it should be rotated in degree.
 	 */
-	protected final void rotateAroundUpAxis(double degree) {
+	protected final void rotateAroundUpAxis(final double degree) {
 		double angle = MathUtils.DEG2RAD * degree;
 		front = Vector3D.transformCoords(front, Matrix.rotationAxis(up, angle));
 		front = Vector3D.normalize(front);
@@ -113,7 +197,7 @@ public class RenderableObject extends MovableObject {
 	 * @param degree
 	 *            The amount it should be rotated in degree.
 	 */
-	protected final void rotateAroundPitchAxis(double degree) {
+	protected final void rotateAroundPitchAxis(final double degree) {
 		Vector3D pitch = Vector3D.crossProduct(front, up);
 		double angle = MathUtils.DEG2RAD * degree;
 		up = Vector3D.transformCoords(up, Matrix.rotationAxis(pitch, angle));
@@ -130,14 +214,14 @@ public class RenderableObject extends MovableObject {
 	 * @param relative
 	 *            The vector defining the motion.
 	 */
-	protected final void move(Vector3D relative) {
+	protected final void move(final Vector3D relative) {
 		Vector3D pitch = Vector3D.crossProduct(front, up);
 
 		Matrix m = Matrix.axes(pitch, up, front);
 
 		Vector3D absolute = Vector3D.transformCoords(relative, m);
 
-		position = Vector3D.add(position, absolute);
+		setPosition(Vector3D.add(getPosition(), absolute));
 		needsUpdate = true;
 	}
 
@@ -149,7 +233,7 @@ public class RenderableObject extends MovableObject {
 	public final void render() {
 		GL11.glPushMatrix();
 
-		GL11.glTranslated(position.getX(), position.getY(), position.getZ());
+		GL11.glTranslated(getPosition().getX(), getPosition().getY(), getPosition().getZ());
 
 		if (needsUpdate) {
 			Matrix m = Matrix.axes(up, Vector3D.crossProduct(front, up), front);
@@ -186,6 +270,6 @@ public class RenderableObject extends MovableObject {
 	}
 
 	@Override
-	public void move(double elapsedTime) {
+	public void move(final double elapsedTime) {
 	}
 }

@@ -10,6 +10,7 @@ import net.pme.math.Vector3D;
  * @version 1.0
  */
 public abstract class Particle extends RenderableObject {
+	private static final double PERCENT = 100.0;
 	private final double initialDecay;
 	private double decay;
 	private Game game;
@@ -32,8 +33,8 @@ public abstract class Particle extends RenderableObject {
 	 * @param game
 	 *            The game instance in which the particle should live.
 	 */
-	public Particle(long id, Vector3D position, Vector3D front, Vector3D up,
-			double decay, int graphics, Game game) {
+	public Particle(final long id, final Vector3D position, final Vector3D front, final Vector3D up,
+			final double decay, final int graphics, final Game game) {
 		super(id, position, front, up, graphics);
 		this.initialDecay = decay;
 		this.decay = decay;
@@ -44,14 +45,14 @@ public abstract class Particle extends RenderableObject {
 	}
 
 	@Override
-	public final void move(double elapsedTime) {
+	public final void move(final double elapsedTime) {
 		decay -= elapsedTime;
 
 		if (decay < 0) {
 			game.removeRenderable(this);
 		}
 
-		lifeTimeBasedMove(elapsedTime, (decay / initialDecay) * 100);
+		lifeTimeBasedMove(elapsedTime, (decay / initialDecay) * PERCENT);
 	}
 
 	/**
