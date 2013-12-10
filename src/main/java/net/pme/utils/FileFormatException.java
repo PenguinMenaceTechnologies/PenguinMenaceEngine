@@ -22,7 +22,7 @@ public class FileFormatException extends RuntimeException {
 	 * @param line
 	 *            The line where the error was.
 	 */
-	public FileFormatException(String text, String file, int line) {
+	public FileFormatException(final String text, final String file, final int line) {
 		super(text + "(" + file + " l." + line + ")");
 	}
 }
