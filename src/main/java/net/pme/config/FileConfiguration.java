@@ -8,17 +8,35 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Set;
 
+/**
+ * Load a MemoryConfiguration from a file using a FileConfiguration.
+ * 
+ * @author Michael Fürst, Daniel Wieland
+ * @version 1.0
+ */
 public final class FileConfiguration extends MemoryConfiguration {
 	private File file;
 	
+	/**
+	 * Create a file configuration without a file given.
+	 */
 	public FileConfiguration() {
 		this(null);
 	}
 	
+	/**
+	 * Create a file configuration telling in what file to safe changes.
+	 * @param file The file in which to save the configuration when calling save().
+	 */
 	public FileConfiguration(File file) {
 		this.file = file;
 	}
 	
+	/**
+	 * Create a file configuration from a given file.
+	 * @param file The file to parse into a file configuration.
+	 * @return The file configuration.
+	 */
 	public static FileConfiguration parseFromFile(File file) {
 		FileConfiguration configuration = new FileConfiguration(file);
 		
@@ -51,10 +69,19 @@ public final class FileConfiguration extends MemoryConfiguration {
 		return configuration;
 	}
 	
+	/**
+	 * Save the file configuration to a file.
+	 * @return True, if saving was successful.
+	 */
 	public boolean save() {
 		return save(file);
 	}
 	
+	/**
+	 * Save the file configuration to a file.
+	 * @param file The file in which to save the configuration.
+	 * @return True, if saving was successful.
+	 */
 	public boolean save(File file) {
 		if (file == null)
 			return false;

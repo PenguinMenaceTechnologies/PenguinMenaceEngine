@@ -24,7 +24,7 @@ public final class GameInput {
 			throw new IllegalAccessException(
 					"The keymap has to be loaded first.");
 		}
-		if (map.getInteger(key, -1) == -1) {
+		if (!map.isSet(key)) {
 			throw new IllegalArgumentException(
 					"The given key was not specified.");
 		}

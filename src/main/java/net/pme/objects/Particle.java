@@ -1,5 +1,6 @@
 package net.pme.objects;
 
+import net.pme.Game;
 import net.pme.math.Vector3D;
 
 /**
@@ -11,6 +12,7 @@ import net.pme.math.Vector3D;
 public abstract class Particle extends RenderableObject {
 	private final double initialDecay;
 	private double decay;
+	private Game game;
 
 	/**
 	 * Create a new particle.
@@ -27,12 +29,17 @@ public abstract class Particle extends RenderableObject {
 	 *            The decay of the particle in seconds.
 	 * @param graphics
 	 *            The graphics identifier.
+	 * @param game
+	 *            The game instance in which the particle should live.
 	 */
 	public Particle(long id, Vector3D position, Vector3D front, Vector3D up,
-			double decay, int graphics) {
+			double decay, int graphics, Game game) {
 		super(id, position, front, up, graphics);
 		this.initialDecay = decay;
 		this.decay = decay;
+		this.game = game;
+		// This is safe since addRenderable only adds the particle if it has not been added before.
+		game.addRenderable(this);
 	}
 
 	@Override
@@ -40,7 +47,7 @@ public abstract class Particle extends RenderableObject {
 		decay -= elapsedTime;
 
 		if (decay < 0) {
-			// TODO kill this particle
+			game.removeRenderable(this);
 		}
 
 		lifeTimeBasedMove(elapsedTime, (decay / initialDecay) * 100);

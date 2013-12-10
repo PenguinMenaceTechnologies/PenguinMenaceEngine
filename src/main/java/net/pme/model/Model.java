@@ -191,6 +191,6 @@ public class Model {
 	 *            The ID of the model that should be removed.
 	 */
 	public static void unloadModel(int model) {
-		// TODO remove the model.
+		glDeleteLists(model, 1);
 	}
 }

@@ -8,10 +8,14 @@ import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.logging.Logger;
-
+/**
+ * A native library loader.
+ * 
+ * @author Michael Fürst
+ * @version 1.0
+ */
 public class NativeLoader {
-
-	public static final Logger LOG = Logger.getLogger("NativeLoader");
+	private static final Logger LOG = Logger.getLogger("NativeLoader");
 	private static final String[] WINDOWS_32 = {"jinput-dx8.dll", "jinput-raw.dll", "lwjgl.dll", "OpenAL32.dll"};
 	private static final String[] WINDOWS_64 = {"jinput-dx8_64.dll", "jinput-raw_64.dll", "lwjgl64.dll", "OpenAL64.dll"};
 	private static final String[] LINUX32 = {"libwjgl.so", "libopenal.so", "libjinput-linux.so"};
@@ -39,6 +43,10 @@ public class NativeLoader {
 		usr_paths_field.set(null, new_paths);
 	}
 	
+	/**
+	 * Unload the libraries.
+	 * Removes the temporary files.
+	 */
 	static void unloadLibraries() {
 		String tmpDirName = System.getProperty("java.io.tmpdir");
 		File tmpDir = new File(tmpDirName);
@@ -49,6 +57,10 @@ public class NativeLoader {
 		file.delete();
 	}
 	
+	/**
+	 * Load the native libraries.
+	 * This creates temporary objects.
+	 */
 	static void loadLibraries() {
 		String os = System.getProperty("os.arch");
 		String arch = System.getProperty("os.arch");

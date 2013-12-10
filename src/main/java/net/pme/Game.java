@@ -53,7 +53,9 @@ public final class Game {
 		if (movableObjects.contains(renderableObject)) {
 			removeMovable(renderableObject);
 		}
-		renderableObjects.add(renderableObject);
+		if (!renderableObjects.contains(renderableObject)) {
+			renderableObjects.add(renderableObject);
+		}
 	}
 
 	/**
@@ -164,8 +166,6 @@ public final class Game {
 	 * Loads the game.
 	 */
 	public final void loadGame() {
-		// TODO load settings.
-
 		try {
 			NativeLoader.loadLibraries();
 		} catch (Exception e) {
