@@ -10,7 +10,10 @@ import java.util.HashMap;
  * @version 1.0
  */
 public class MemoryConfiguration {
-	protected HashMap<String, String> values;
+	/**
+	 * Modeling the values of the configuration.
+	 */
+	private HashMap<String, String> values;
 
 	/**
 	 * Create a new memory configuration.
@@ -19,6 +22,15 @@ public class MemoryConfiguration {
 		this.values = new HashMap<String, String>();
 	}
 
+
+	/**
+	 * Get the values of this object.
+	 * @return The values.
+	 */
+	protected final HashMap<String, String> getValues() {
+		return values;
+	}
+	
 	/**
 	 * Get a string to the given key.
 	 * 
@@ -26,7 +38,7 @@ public class MemoryConfiguration {
 	 *            The key.
 	 * @return The string for the key.
 	 */
-	public String getString(String key) {
+	public final String getString(final String key) {
 		return getString(key, null);
 	}
 
@@ -39,11 +51,12 @@ public class MemoryConfiguration {
 	 *            The default value.
 	 * @return The string for the key.
 	 */
-	public String getString(String key, String def) {
+	public final String getString(final String key, final String def) {
 		String res = values.get(key);
 
-		if (res == null)
+		if (res == null) {
 			res = def;
+		}
 
 		return res;
 	}
@@ -55,7 +68,7 @@ public class MemoryConfiguration {
 	 *            The key.
 	 * @return The integer for the key.
 	 */
-	public int getInteger(String key) {
+	public final int getInteger(final String key) {
 		return getInteger(key, 0);
 	}
 
@@ -68,10 +81,11 @@ public class MemoryConfiguration {
 	 *            The default value.
 	 * @return The integer for the key.
 	 */
-	public int getInteger(String key, int def) {
+	public final int getInteger(final String key, final int def) {
 		String res = values.get(key);
-		if (res == null)
+		if (res == null) {
 			return def;
+		}
 
 		try {
 			return Integer.parseInt(res);
@@ -89,9 +103,10 @@ public class MemoryConfiguration {
 	 *            The default value.
 	 * @return The boolean for the key.
 	 */
-	public boolean getBoolean(String key, boolean def) {
-		if (!isSet(key))
+	public final boolean getBoolean(final String key, final boolean def) {
+		if (!isSet(key)) {
 			return def;
+		}
 
 		return getBoolean(key);
 	}
@@ -103,7 +118,7 @@ public class MemoryConfiguration {
 	 *            The key.
 	 * @return The boolean for the key.
 	 */
-	public boolean getBoolean(String key) {
+	public final boolean getBoolean(final String key) {
 		String res = values.get(key);
 
 		return Boolean.parseBoolean(res);
@@ -116,7 +131,7 @@ public class MemoryConfiguration {
 	 *            The key to check.
 	 * @return True, if the key is defined.
 	 */
-	public boolean isSet(String key) {
+	public final boolean isSet(final String key) {
 		return values.containsKey(key);
 	}
 
@@ -128,9 +143,10 @@ public class MemoryConfiguration {
 	 * @param value
 	 *            The value. This Object must implement toString method.
 	 */
-	public void set(String key, Object value) {
-		if (value == null)
+	public final void set(final String key, final Object value) {
+		if (value == null) {
 			return;
+		}
 
 		values.put(key, value.toString());
 	}
@@ -141,7 +157,7 @@ public class MemoryConfiguration {
 	 * @param key
 	 *            The key to remove.
 	 */
-	public void remove(String key) {
+	public final void remove(final String key) {
 		values.remove(key);
 	}
 
@@ -151,7 +167,7 @@ public class MemoryConfiguration {
 	 * @param m
 	 *            The other memory configuration.
 	 */
-	public void setMap(MemoryConfiguration m) {
+	public final void setMap(final MemoryConfiguration m) {
 		values = m.values;
 	}
 }

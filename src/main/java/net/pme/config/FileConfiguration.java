@@ -27,12 +27,12 @@ public final class FileConfiguration extends MemoryConfiguration {
 	/**
 	 * Create a file configuration telling in what file to safe changes.
 	 * 
-	 * @param file
+	 * @param initialFile
 	 *            The file in which to save the configuration when calling
 	 *            save().
 	 */
-	public FileConfiguration(File file) {
-		this.file = file;
+	public FileConfiguration(final File initialFile) {
+		this.file = initialFile;
 	}
 
 	/**
@@ -42,11 +42,12 @@ public final class FileConfiguration extends MemoryConfiguration {
 	 *            The file to parse into a file configuration.
 	 * @return The file configuration.
 	 */
-	public static FileConfiguration parseFromFile(File file) {
+	public static FileConfiguration parseFromFile(final File file) {
 		FileConfiguration configuration = new FileConfiguration(file);
 
-		if (file == null || !file.exists())
+		if (file == null || !file.exists()) {
 			return configuration;
+		}
 
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(file));
@@ -68,7 +69,7 @@ public final class FileConfiguration extends MemoryConfiguration {
 
 			reader.close();
 		} catch (IOException e) {
-			// Well Crap!
+			e.printStackTrace();
 		}
 
 		return configuration;
@@ -86,21 +87,22 @@ public final class FileConfiguration extends MemoryConfiguration {
 	/**
 	 * Save the file configuration to a file.
 	 * 
-	 * @param file
+	 * @param overrideFile
 	 *            The file in which to save the configuration.
 	 * @return True, if saving was successful.
 	 */
-	public boolean save(File file) {
-		if (file == null)
+	public boolean save(final File overrideFile) {
+		if (overrideFile == null) {
 			return false;
+		}
 
 		try {
-			BufferedWriter writer = new BufferedWriter(new FileWriter(file,
+			BufferedWriter writer = new BufferedWriter(new FileWriter(overrideFile,
 					false));
 
-			Set<String> keySet = values.keySet();
+			Set<String> keySet = getValues().keySet();
 			for (String key : keySet) {
-				String value = values.get(key);
+				String value = getValues().get(key);
 
 				writer.write(key);
 				writer.write('=');
