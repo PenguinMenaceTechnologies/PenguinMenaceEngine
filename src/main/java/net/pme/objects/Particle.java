@@ -38,7 +38,8 @@ public abstract class Particle extends RenderableObject {
 		this.initialDecay = decay;
 		this.decay = decay;
 		this.game = game;
-		// This is safe since addRenderable only adds the particle if it has not been added before.
+		// This is safe since addRenderable only adds the particle if it has not
+		// been added before.
 		game.addRenderable(this);
 	}
 

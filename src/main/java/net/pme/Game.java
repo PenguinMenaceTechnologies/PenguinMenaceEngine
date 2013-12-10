@@ -35,7 +35,7 @@ public final class Game {
 	 * @param movableObject
 	 *            The object that should be added.
 	 */
-	public final void addMovable(MovableObject movableObject) {
+	public void addMovable(final MovableObject movableObject) {
 		if (!renderableObjects.contains(movableObject)) {
 			movableObjects.add(movableObject);
 		}
@@ -49,7 +49,7 @@ public final class Game {
 	 * @param renderableObject
 	 *            The object that should be added.
 	 */
-	public final void addRenderable(RenderableObject renderableObject) {
+	public void addRenderable(final RenderableObject renderableObject) {
 		if (movableObjects.contains(renderableObject)) {
 			removeMovable(renderableObject);
 		}
@@ -64,7 +64,7 @@ public final class Game {
 	 * @param hudObject
 	 *            The specified hud object.
 	 */
-	public final void addHud(HudObject hudObject) {
+	public void addHud(final HudObject hudObject) {
 		hudObjects.add(hudObject);
 	}
 
@@ -74,7 +74,7 @@ public final class Game {
 	 * @param movableObject
 	 *            The object that should be removed.
 	 */
-	public final void removeMovable(MovableObject movableObject) {
+	public void removeMovable(final MovableObject movableObject) {
 		movableObjects.remove(movableObject);
 	}
 
@@ -84,7 +84,7 @@ public final class Game {
 	 * @param renderableObject
 	 *            The object that should be removed.
 	 */
-	public final void removeRenderable(RenderableObject renderableObject) {
+	public void removeRenderable(final RenderableObject renderableObject) {
 		renderableObjects.remove(renderableObject);
 	}
 
@@ -94,35 +94,35 @@ public final class Game {
 	 * @param hudObject
 	 *            The object that should be removed.
 	 */
-	public final void removeHud(HudObject hudObject) {
+	public void removeHud(final HudObject hudObject) {
 		hudObjects.remove(hudObject);
 	}
 
 	/**
 	 * Clear the movable object list.
 	 */
-	public final void clearMovable() {
+	public void clearMovable() {
 		movableObjects.clear();
 	}
 
 	/**
 	 * Clear the renderable object list.
 	 */
-	public final void clearRenderable() {
+	public void clearRenderable() {
 		renderableObjects.clear();
 	}
 
 	/**
 	 * Clear the hud object list.
 	 */
-	public final void clearHud() {
+	public void clearHud() {
 		hudObjects.clear();
 	}
 
 	/**
 	 * Clear the renderable, movable and hud object list.
 	 */
-	public final void clearAll() {
+	public void clearAll() {
 		clearMovable();
 		clearRenderable();
 		clearHud();
@@ -134,7 +134,7 @@ public final class Game {
 	 * @param player
 	 *            The player instance. (Null creates a dummy-player placed at 0)
 	 */
-	public final void runGame(Player player) {
+	public void runGame(final Player player) {
 		if (!isLoaded) {
 			loadGame();
 		}
@@ -155,7 +155,7 @@ public final class Game {
 	/**
 	 * Stop the currently running gameloop.
 	 */
-	public final void stopGame() {
+	public void stopGame() {
 		if (gameLoop == null) {
 			throw new IllegalStateException("You must call runGame first.");
 		}
@@ -165,7 +165,7 @@ public final class Game {
 	/**
 	 * Loads the game.
 	 */
-	public final void loadGame() {
+	public void loadGame() {
 		try {
 			NativeLoader.loadLibraries();
 		} catch (Exception e) {
@@ -182,7 +182,7 @@ public final class Game {
 
 		isLoaded = true;
 	}
-	
+
 	/**
 	 * Unload the game.
 	 */

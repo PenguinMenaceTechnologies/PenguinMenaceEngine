@@ -39,24 +39,28 @@ public class Texture {
 	public Texture(String filename) throws IOException {
 		textureId = TextureLoader.loadFromFile(filename);
 	}
-	
+
 	/**
 	 * Bind a texture to a given target.
-	 * @param target The target to bind to. (Usually GL_TEXTURE_2D):
+	 * 
+	 * @param target
+	 *            The target to bind to. (Usually GL_TEXTURE_2D):
 	 */
 	public void bind(int target) {
 		GL11.glEnable(target);
 		GL11.glBindTexture(target, textureId);
 	}
-	
+
 	/**
 	 * Unbind a texture from a given target.
-	 * @param target The target to unbind from. (Usually GL_TEXTURE_2D):
+	 * 
+	 * @param target
+	 *            The target to unbind from. (Usually GL_TEXTURE_2D):
 	 */
 	public static void unbind(int target) {
 		GL11.glDisable(target);
 	}
-	
+
 	/**
 	 * Free the memory this texture is using.
 	 */

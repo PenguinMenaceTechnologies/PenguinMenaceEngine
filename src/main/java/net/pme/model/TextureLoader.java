@@ -35,12 +35,14 @@ public class TextureLoader {
 	 * @return The texture identifier.
 	 */
 	public static int loadFromFile(String pathname) throws IOException {
-		if (!textures.containsKey(pathname) || openedTimes.get(textures.get(pathname)) == 0) {
+		if (!textures.containsKey(pathname)
+				|| openedTimes.get(textures.get(pathname)) == 0) {
 			textures.put(pathname,
 					loadTextureForceReload(ImageIO.read(new File(pathname))));
 			openedTimes.put(textures.get(pathname), 0);
 		}
-		openedTimes.put(textures.get(pathname), openedTimes.get(textures.get(pathname)) + 1);
+		openedTimes.put(textures.get(pathname),
+				openedTimes.get(textures.get(pathname)) + 1);
 		return textures.get(pathname);
 	}
 
@@ -93,7 +95,8 @@ public class TextureLoader {
 	 * Frees the memory textures take. For each loadTexture texture there must
 	 * be one free call of free before the memory is actually released.
 	 * 
-	 * @param textureId The texture id of the texture to delete.
+	 * @param textureId
+	 *            The texture id of the texture to delete.
 	 */
 	public static void free(int textureId) {
 		if (openedTimes.get(textureId) - 1 < 0) {
@@ -104,13 +107,14 @@ public class TextureLoader {
 			GL11.glDeleteTextures(textureId);
 		}
 	}
-	
+
 	/**
-	 * Forces a texture to be removed from memory.
-	 * Should be used for textures loaded withloadTextureForceReload.
-	 * Should <b>not</b> be used for textures loaded with loadFromFile.
+	 * Forces a texture to be removed from memory. Should be used for textures
+	 * loaded withloadTextureForceReload. Should <b>not</b> be used for textures
+	 * loaded with loadFromFile.
 	 * 
-	 * @param textureId The texture id of the texture to delete.
+	 * @param textureId
+	 *            The texture id of the texture to delete.
 	 */
 	public static void forceFree(int textureId) {
 		GL11.glDeleteTextures(textureId);

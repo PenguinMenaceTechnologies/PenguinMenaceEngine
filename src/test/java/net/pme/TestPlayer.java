@@ -38,7 +38,8 @@ public class TestPlayer extends Player {
 		move(new Vector3D(xAxis * elapsedTime * 3, yAxis * elapsedTime * 3,
 				zAxis * elapsedTime * 6));
 		rotateAroundFrontAxis(elapsedTime * rotate * 50);
-		Display.setTitle(String.format("PenguinMenaceEngine Test [%.0f]",1/elapsedTime));
+		Display.setTitle(String.format("PenguinMenaceEngine Test [%.0f]",
+				1 / elapsedTime));
 	}
 
 	/*

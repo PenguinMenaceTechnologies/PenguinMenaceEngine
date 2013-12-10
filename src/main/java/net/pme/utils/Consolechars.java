@@ -40,22 +40,22 @@ public class Consolechars {
 			return true;
 		case ('+'):
 			return true;
-//		case ('ß'):
-//			return true;
+			// case ('ß'):
+			// return true;
 		case ('`'):
 			return true;
-//		case ('´'):
-//			return true;
+			// case ('´'):
+			// return true;
 		case ('^'):
 			return true;
-//		case ('°'):
-//			return true;
+			// case ('°'):
+			// return true;
 		case ('!'):
 			return true;
 		case ('"'):
 			return true;
-//		case ('§'):
-//			return true;
+			// case ('§'):
+			// return true;
 		case ('$'):
 			return true;
 		case ('%'):
@@ -160,12 +160,12 @@ public class Consolechars {
 			return true;
 		case ('z'):
 			return true;
-//		case ('ä'):
-//			return true;
-//		case ('ö'):
-//			return true;
-//		case ('ü'):
-//			return true;
+			// case ('ä'):
+			// return true;
+			// case ('ö'):
+			// return true;
+			// case ('ü'):
+			// return true;
 
 		case ('A'):
 			return true;
@@ -219,12 +219,12 @@ public class Consolechars {
 			return true;
 		case ('Z'):
 			return true;
-//		case ('Ä'):
-//			return true;
-//		case ('Ö'):
-//			return true;
-//		case ('Ü'):
-//			return true;
+			// case ('Ä'):
+			// return true;
+			// case ('Ö'):
+			// return true;
+			// case ('Ü'):
+			// return true;
 		}
 		return false;
 	}

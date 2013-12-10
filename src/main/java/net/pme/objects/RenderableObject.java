@@ -60,15 +60,17 @@ public class RenderableObject extends MovableObject {
 		this.needsUpdate = true;
 		this.matrixBuffer = null;
 	}
-	
+
 	/**
 	 * Attach a shader to this object.
-	 * @param shader The shader to attach to this object.
+	 * 
+	 * @param shader
+	 *            The shader to attach to this object.
 	 */
 	public void attachShader(Shader shader) {
 		this.shader = shader;
 	}
-	
+
 	/**
 	 * Detach the currently attached shader from this object.
 	 */

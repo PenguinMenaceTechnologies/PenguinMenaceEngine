@@ -28,14 +28,13 @@ class Material {
 	Texture bumpMap = null;
 	Texture displacementMap = null;
 	Texture decalMap = null;
-	
+
 	Material(String name) {
 		this.name = name;
 	}
 
 	/**
-	 * Use this material.
-	 * Set LWJGL up for the material.
+	 * Use this material. Set LWJGL up for the material.
 	 */
 	void use() {
 		Material.resetMaterial();
@@ -44,7 +43,7 @@ class Material {
 		}
 		// TODO use a material
 	}
-	
+
 	/**
 	 * Reset all settings a material can do to default values.
 	 */

@@ -29,7 +29,7 @@ class Face {
 	 *            The indexes.
 	 * @param normal
 	 *            The normal vectors.
-	 * @param normal 
+	 * @param normal
 	 */
 	Face(Vector3f vertex, Vector3f texture, Vector3f normal) {
 		this.vertex = vertex;

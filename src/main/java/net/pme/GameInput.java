@@ -10,6 +10,13 @@ import net.pme.config.MemoryConfiguration;
  */
 public final class GameInput {
 	private static MemoryConfiguration map = null;
+	
+	/**
+	 * Utility classes should not have public constructor.
+	 */
+	private GameInput() {
+		
+	}
 
 	/**
 	 * Get a key integer for a string input.
@@ -17,9 +24,9 @@ public final class GameInput {
 	 * @param key
 	 *            The input type to get the code for.
 	 * @return The integer representing the key.
-	 * @throws IllegalAccessException
+	 * @throws IllegalAccessException When the requested code was wrong.
 	 */
-	public static int getCode(String key) throws IllegalAccessException {
+	public static int getCode(final String key) throws IllegalAccessException {
 		if (map == null) {
 			throw new IllegalAccessException(
 					"The keymap has to be loaded first.");

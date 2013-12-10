@@ -16,6 +16,7 @@ public class TestCube3 extends RenderableObject {
 	private float[] uniform = null;
 	private Shader sh = null;
 	private double t;
+
 	/**
 	 * A Test cube.
 	 * 
@@ -35,12 +36,12 @@ public class TestCube3 extends RenderableObject {
 		uniform = new float[4];
 		sh.setUniform4f("color", uniform);
 	}
-	
+
 	@Override
 	public void move(double elapsedTime) {
-		rotateAroundPitchAxis(elapsedTime*10.0);
-		uniform[0] = (float)Math.abs(Math.sin(t));
-		uniform[1] = (float)Math.abs(Math.cos(t));
+		rotateAroundPitchAxis(elapsedTime * 10.0);
+		uniform[0] = (float) Math.abs(Math.sin(t));
+		uniform[1] = (float) Math.abs(Math.cos(t));
 		uniform[2] = 0.0f;
 		uniform[3] = 1.0f;
 		t += elapsedTime;
