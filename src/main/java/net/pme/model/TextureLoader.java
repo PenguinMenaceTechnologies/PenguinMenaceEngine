@@ -22,19 +22,27 @@ import org.lwjgl.opengl.GL11;
  * @author Michael Fürst
  * @version 1.0
  */
-public class TextureLoader {
+public final class TextureLoader {
 	private static HashMap<String, Integer> textures = new HashMap<String, Integer>();
 	private static HashMap<Integer, Integer> openedTimes = new HashMap<Integer, Integer>();
+	
+	/**
+	 * Private Constructor for a utility class.
+	 */
+	private TextureLoader() {
+		
+	}
 
 	/**
 	 * Load a texture from a file. When already loaded before it will only
 	 * return a pointer to the texture.
 	 * 
-	 * @param img
+	 * @param pathname
 	 *            The image you want as a texture.
+	 *            @throws IOException When there is an error opening the file.
 	 * @return The texture identifier.
 	 */
-	public static int loadFromFile(String pathname) throws IOException {
+	public static int loadFromFile(final String pathname) throws IOException {
 		if (!textures.containsKey(pathname)
 				|| openedTimes.get(textures.get(pathname)) == 0) {
 			textures.put(pathname,
@@ -54,7 +62,7 @@ public class TextureLoader {
 	 *            The image you want as a texture.
 	 * @return The texture identifier.
 	 */
-	public static int loadTextureForceReload(BufferedImage img) {
+	public static int loadTextureForceReload(final BufferedImage img) {
 		byte[] src = ((DataBufferByte) img.getData().getDataBuffer()).getData();
 
 		bgr2rgb(src);
@@ -63,11 +71,11 @@ public class TextureLoader {
 				.createByteBuffer(src.length).put(src, 0x00000000, src.length)
 				.flip();
 
-		IntBuffer textures = BufferUtils.createIntBuffer(0x00000001);
+		IntBuffer tex = BufferUtils.createIntBuffer(0x00000001);
 
-		GL11.glGenTextures(textures);
+		GL11.glGenTextures(tex);
 
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, textures.get(0x00000000));
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, tex.get(0x00000000));
 
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER,
 				GL11.GL_LINEAR);
@@ -79,10 +87,14 @@ public class TextureLoader {
 				img.getWidth(), img.getHeight(), 0x00000000, GL11.GL_RGB,
 				GL11.GL_UNSIGNED_BYTE, pixels);
 
-		return textures.get(0x00000000);
+		return tex.get(0x00000000);
 	}
 
-	private static void bgr2rgb(byte[] target) {
+	/**
+	 * Transform bgr to rgb.
+	 * @param target Where to do the transformation.
+	 */
+	private static void bgr2rgb(final byte[] target) {
 		byte tmp;
 		for (int i = 0x00000000; i < target.length; i += 0x00000003) {
 			tmp = target[i];
@@ -98,7 +110,7 @@ public class TextureLoader {
 	 * @param textureId
 	 *            The texture id of the texture to delete.
 	 */
-	public static void free(int textureId) {
+	public static void free(final int textureId) {
 		if (openedTimes.get(textureId) - 1 < 0) {
 			throw new RuntimeException("More textures removed than loaded");
 		}
@@ -116,7 +128,7 @@ public class TextureLoader {
 	 * @param textureId
 	 *            The texture id of the texture to delete.
 	 */
-	public static void forceFree(int textureId) {
+	public static void forceFree(final int textureId) {
 		GL11.glDeleteTextures(textureId);
 	}
 }
