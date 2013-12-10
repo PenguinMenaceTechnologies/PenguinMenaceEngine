@@ -188,4 +188,12 @@ public class Vector3D {
 	public String toString() {
 		return "(" + x + "," + y + "," + z + ")";
 	}
+
+	public double[] toArray() {
+		double[] res = new double[3];
+		res[0] = x;
+		res[1] = y;
+		res[2] = z;
+		return res;
+	}
 }
