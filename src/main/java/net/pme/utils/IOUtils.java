@@ -17,21 +17,22 @@ public final class IOUtils {
 	 * The UTF-8 character set.
 	 */
 	private static final Charset CHARSET_UTF8 = Charset.forName("UTF-8");
+	private static final int MAXLEN = 65535;
 
 	/**
 	 * Writes a string to the buffer.
 	 * 
-	 * @param buf
+	 * @param out
 	 *            The buffer.
 	 * @param str
 	 *            The string.
-	 * @throws IllegalArgumentException
-	 *             if the string is too long <em>after</em> it is encoded.
+	 * @throws IOException
+	 *             Loading the file failed.
 	 */
-	public static void writeString(DataOutputStream out, String str)
+	public static void writeString(final DataOutputStream out, final String str)
 			throws IOException {
 		int len = str.length();
-		if (len >= 65536) {
+		if (len > MAXLEN) {
 			throw new IllegalArgumentException("String too long.");
 		}
 
@@ -44,17 +45,16 @@ public final class IOUtils {
 	/**
 	 * Writes a UTF-8 string to the buffer.
 	 * 
-	 * @param buf
+	 * @param out
 	 *            The buffer.
 	 * @param str
 	 *            The string.
-	 * @throws IllegalArgumentException
-	 *             if the string is too long <em>after</em> it is encoded.
+	 * @throws IOException When opening the file failed.
 	 */
-	public static void writeUtf8String(DataOutputStream out, String str)
+	public static void writeUtf8String(final DataOutputStream out, final String str)
 			throws IOException {
 		byte[] bytes = str.getBytes(CHARSET_UTF8);
-		if (bytes.length >= 65536) {
+		if (bytes.length > MAXLEN) {
 			throw new IllegalArgumentException("Encoded UTF-8 string too long.");
 		}
 
@@ -65,11 +65,12 @@ public final class IOUtils {
 	/**
 	 * Reads a string from the buffer.
 	 * 
-	 * @param buf
+	 * @param in
 	 *            The buffer.
 	 * @return The string.
+	 * @throws IOException When opening the file failed.
 	 */
-	public static String readString(DataInputStream in) throws IOException {
+	public static String readString(final DataInputStream in) throws IOException {
 		int len = in.readUnsignedShort();
 
 		char[] characters = new char[len];
@@ -83,11 +84,12 @@ public final class IOUtils {
 	/**
 	 * Reads a UTF-8 encoded string from the buffer.
 	 * 
-	 * @param buf
+	 * @param in
 	 *            The buffer.
 	 * @return The string.
+	 * @throws IOException When loading the file failed.
 	 */
-	public static String readUtf8String(DataInputStream in) throws IOException {
+	public static String readUtf8String(final DataInputStream in) throws IOException {
 		int len = in.readUnsignedShort();
 
 		byte[] bytes = new byte[len];

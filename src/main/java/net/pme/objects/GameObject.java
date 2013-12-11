@@ -10,7 +10,14 @@ public abstract class GameObject {
 	/**
 	 * The id of an object.
 	 */
-	public final long id;
+	private final long id;
+
+	/**
+	 * @return the id
+	 */
+	public final long getId() {
+		return id;
+	}
 
 	/**
 	 * Create a new gameobject.
@@ -18,7 +25,7 @@ public abstract class GameObject {
 	 * @param id
 	 *            The id of the object.
 	 */
-	public GameObject(long id) {
+	public GameObject(final long id) {
 		this.id = id;
 	}
 }

@@ -6,7 +6,21 @@ package net.pme.math;
  * @author Michael Fürst
  * @version 1.0
  */
-public class MathUtils {
-	public static final double DEG2RAD = Math.PI / 180.0;
-	public static final double RAD2DEG = 180.0 / Math.PI;
+public final class MathUtils {
+	private static final double HALF_CIRCLE = 180;
+	/**
+	 * Transform degree to radial by multiplying with this.
+	 */
+	public static final double DEG2RAD = Math.PI / HALF_CIRCLE;
+	/**
+	 * Transform radial to degree by multiplying with this.
+	 */
+	public static final double RAD2DEG = HALF_CIRCLE / Math.PI;
+	
+	/**
+	 * Private constructor for util classes.
+	 */
+	private MathUtils() {
+		
+	}
 }

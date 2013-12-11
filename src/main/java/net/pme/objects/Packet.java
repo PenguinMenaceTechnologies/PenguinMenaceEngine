@@ -13,7 +13,7 @@ public class Packet extends GameObject {
 	 * @param id
 	 *            The id.
 	 */
-	public Packet(long id) {
+	public Packet(final long id) {
 		super(id);
 	}
 

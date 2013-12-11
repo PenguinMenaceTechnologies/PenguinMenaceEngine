@@ -11,8 +11,15 @@ import net.pme.model.Model;
  * @version 1.0
  */
 public final class ModelManager {
-	private static final HashMap<String, Integer> map = new HashMap<String, Integer>();
+	private static final HashMap<String, Integer> MAP = new HashMap<String, Integer>();
 
+	/**
+	 * Utility classes should have no public constructor.
+	 */
+	private ModelManager() {
+		
+	}
+	
 	/**
 	 * Load a model or just get the link if already loaded.
 	 * 
@@ -22,12 +29,12 @@ public final class ModelManager {
 	 *            The model name.
 	 * @return The id to the model. (-1 if the required model cannot be found)
 	 */
-	public static final int get(String key) {
-		if (!map.containsKey(key)) {
-			map.put(key, Model.loadModel(key));
+	public static int get(final String key) {
+		if (!MAP.containsKey(key)) {
+			MAP.put(key, Model.loadModel(key));
 		}
 
-		return map.get(key);
+		return MAP.get(key);
 	}
 
 	/**
@@ -39,12 +46,12 @@ public final class ModelManager {
 	 *            The model name.
 	 * @return The id to the model. (-1 if the required model cannot be found)
 	 */
-	public static int getSpecialCoords(String key) {
-		if (!map.containsKey(key)) {
-			map.put(key, Model.loadModelSpecialCoords(key));
+	public static int getSpecialCoords(final String key) {
+		if (!MAP.containsKey(key)) {
+			MAP.put(key, Model.loadModelSpecialCoords(key));
 		}
 
-		return map.get(key);
+		return MAP.get(key);
 	}
 
 	/**
@@ -52,16 +59,20 @@ public final class ModelManager {
 	 * 
 	 * (Free Memory)
 	 */
-	public static final void clear() {
-		for (String s : map.keySet()) {
+	public static void clear() {
+		for (String s : MAP.keySet()) {
 			unload(s);
 		}
 	}
 
-	private static final void unload(String key) {
-		if (map.containsKey(key)) {
-			Model.unloadModel(map.get(key));
-			map.remove(key);
+	/**
+	 * Unload a given model.
+	 * @param key The key for the model to unload.
+	 */
+	private static void unload(final String key) {
+		if (MAP.containsKey(key)) {
+			Model.unloadModel(MAP.get(key));
+			MAP.remove(key);
 		}
 	}
 }

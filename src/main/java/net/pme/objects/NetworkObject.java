@@ -13,7 +13,7 @@ public abstract class NetworkObject extends RenderableObject implements
 	/**
 	 * Create a new NetworkObject.
 	 * 
-	 * @param ID
+	 * @param id
 	 *            The id.
 	 * @param position
 	 *            The position.
@@ -24,8 +24,8 @@ public abstract class NetworkObject extends RenderableObject implements
 	 * @param graphics
 	 *            The model identifier.
 	 */
-	public NetworkObject(long ID, Vector3D position, Vector3D front,
-			Vector3D up, int graphics) {
-		super(ID, position, front, up, graphics);
+	public NetworkObject(final long id, final Vector3D position, final Vector3D front,
+			final Vector3D up, final int graphics) {
+		super(id, position, front, up, graphics);
 	}
 }

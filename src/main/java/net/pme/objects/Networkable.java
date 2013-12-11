@@ -15,5 +15,5 @@ public interface Networkable {
 	 * @param p
 	 *            The packet to retrieve.
 	 */
-	public void retrievePacket(Packet p);
+	void retrievePacket(Packet p);
 }

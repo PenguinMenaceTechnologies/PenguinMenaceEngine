@@ -2,24 +2,29 @@ package net.pme;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.lwjgl.*;
+
+import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
-
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.util.glu.GLU.*;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.glu.GLU;
 
 /**
  * The Display.
  * 
  * @author Michael Fürst
+ * @version 1.0
  */
-public class GameDisplay {
+public final class GameDisplay {
+	private static final float FOVY = 45.0f;
+	private static final float Z_NEAR = 0.001f;
+	private static final float Z_FAR = 2000.0f;
+	private static final int INITIAL_FPS_LIMIT = 120;
 	private int displayWidth;
 	private int displayHeight;
-	private int fpsLimit = 120;
+	private int fpsLimit = INITIAL_FPS_LIMIT;
 	private static GameDisplay instance = null;
 
 	/**
@@ -34,11 +39,13 @@ public class GameDisplay {
 	 * @param fullscreen
 	 *            Request fullscreen.
 	 */
-	private void init(String title, int width, int height, boolean fullscreen) {
+	private void init(final String title, final int width, final int height,
+			final boolean fullscreen) {
 		if (fullscreen) {
 			try {
 				Display.setFullscreen(fullscreen);
 			} catch (LWJGLException ex) {
+				ex.printStackTrace();
 			}
 			displayWidth = Display.getDesktopDisplayMode().getWidth();
 			displayHeight = Display.getDesktopDisplayMode().getHeight();
@@ -49,6 +56,7 @@ public class GameDisplay {
 				Display.setDisplayMode(new DisplayMode(displayWidth,
 						displayHeight));
 			} catch (LWJGLException ex) {
+				ex.printStackTrace();
 			}
 		}
 		Display.setTitle(title);
@@ -56,6 +64,7 @@ public class GameDisplay {
 		try {
 			Display.create();
 		} catch (LWJGLException ex) {
+			ex.printStackTrace();
 		}
 		try {
 			Keyboard.create();
@@ -80,8 +89,9 @@ public class GameDisplay {
 	 * Limit the fps. (Only works when vsync disabled.)
 	 * 
 	 * @param fps
+	 *            The framerate to set.
 	 */
-	public void setFPS(int fps) {
+	public void setFPS(final int fps) {
 		fpsLimit = fps;
 	}
 
@@ -117,29 +127,29 @@ public class GameDisplay {
 	private void initGL() {
 		// run through some based OpenGL capability settings. Textures
 		// enabled, back face culling enabled, depth texting is on,
-		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_TEXTURE_2D);
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
 
 		// define the properties for the perspective of the scene
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		gluPerspective(45.0f, ((float) displayWidth) / ((float) displayHeight),
-				0.1f, 2000.0f);
-		glMatrixMode(GL_MODELVIEW);
-		glShadeModel(GL_SMOOTH);
-		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		GL11.glMatrixMode(GL11.GL_PROJECTION);
+		GL11.glLoadIdentity();
+		GLU.gluPerspective(FOVY, ((float) displayWidth)
+				/ ((float) displayHeight), Z_NEAR, Z_FAR);
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+		GL11.glShadeModel(GL11.GL_SMOOTH);
+		GL11.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_NICEST);
+		GL11.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	}
 
 	/**
 	 * Resize event of GL.
 	 */
 	private void resizeGL() {
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		gluPerspective(45.0f, ((float) displayWidth) / ((float) displayHeight),
-				0.1f, 2000.0f);
-		glMatrixMode(GL_MODELVIEW);
+		GL11.glMatrixMode(GL11.GL_PROJECTION);
+		GL11.glLoadIdentity();
+		GLU.gluPerspective(FOVY, ((float) displayWidth)
+				/ ((float) displayHeight), Z_NEAR, Z_FAR);
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 	}
 
 	/**
@@ -147,15 +157,15 @@ public class GameDisplay {
 	 * from org.netdawn.asteroids
 	 */
 	void enterOrtho() {
-		glDisable(GL_DEPTH_TEST);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glMatrixMode(GL_MODELVIEW);
-		glMatrixMode(GL_PROJECTION);
-		glPushMatrix();
-		glLoadIdentity();
-		glOrtho(0, displayWidth, displayHeight, 0, 0.01, -1);
-		glMatrixMode(GL_MODELVIEW);
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+		GL11.glMatrixMode(GL11.GL_PROJECTION);
+		GL11.glPushMatrix();
+		GL11.glLoadIdentity();
+		GL11.glOrtho(0, displayWidth, displayHeight, 0, Z_NEAR, Z_FAR);
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 	}
 
 	/**
@@ -163,11 +173,11 @@ public class GameDisplay {
 	 * from org.netdawn.asteroids
 	 */
 	void leaveOrtho() {
-		glMatrixMode(GL_PROJECTION);
-		glPopMatrix();
-		glMatrixMode(GL_MODELVIEW);
-		glEnable(GL_DEPTH_TEST);
-		glDisable(GL_BLEND);
+		GL11.glMatrixMode(GL11.GL_PROJECTION);
+		GL11.glPopMatrix();
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
+		GL11.glDisable(GL11.GL_BLEND);
 	}
 
 	/**
@@ -183,8 +193,8 @@ public class GameDisplay {
 	 *            Request fullscreen.
 	 * @return An instance of the display.
 	 */
-	public static GameDisplay create(String title, int width, int height,
-			boolean fullscreen) {
+	public static GameDisplay create(final String title, final int width, final int height,
+			final boolean fullscreen) {
 		instance = new GameDisplay();
 		instance.init(title, width, height, fullscreen);
 		return instance;
