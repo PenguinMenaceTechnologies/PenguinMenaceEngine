@@ -19,7 +19,7 @@ import net.pme.objects.RenderableObject;
 /**
  * A simple test of the game engine.
  * 
- * @author Michael Fürst
+ * @author Michael FÃ¼rst
  * @version 1.0
  */
 public class Test {
@@ -47,6 +47,14 @@ public class Test {
 		GameDisplay.create("PenguinMenaceEngine Test", 800, 600, false);
 		GameDisplay.getDisplay().setFPS(1000000);
 
+		int model = ModelManager.getSpecialCoords(Test.class.getResource(
+				"/assets/ships/Anachron.obj").getPath());
+		int model2 = ModelManager.getSpecialCoords(Test.class.getResource(
+				"/assets/ships/Anachron.obj").getPath());
+		if (model == model2) {
+			System.out.println("Model loading is efficient!");
+		}
+
 		Vector3D frontA = new Vector3D(0, 0, -1);
 		Vector3D upA = new Vector3D(0, 1, 0);
 
@@ -70,18 +78,17 @@ public class Test {
 				up3));
 
 		game.addRenderable(new RenderableObject(5, new Vector3D(-4, 2.5, -10),
-				frontA, upA, ModelManager.getSpecialCoords(Test.class.getResource("/assets/ships/Anachron.obj").getPath())));
+				frontA, upA, model));
 		game.addRenderable(new RenderableObject(6, new Vector3D(4, 2.5, -10),
-				frontB, upB, ModelManager.getSpecialCoords(Test.class.getResource("/assets/ships/Anachron.obj").getPath())));
-		/*
-		 * for (int j = 0; j < 100; j++) { for (int i = 1; i < 100; i++) {
-		 * game.addRenderable(new RenderableObject(6, new Vector3D( 4 + 2 * i,
-		 * 2.5 + 2 * j, -10), frontB, upB, ModelManager
-		 * .getSpecialCoords(Test.class.getResource(
-		 * "/assets/ships/Anachron.obj").getFile())));
-		 * 
-		 * } }
-		 */
+				frontB, upB, model2));
+
+		for (int j = 0; j < 10; j++) {
+			for (int i = 1; i < 10; i++) {
+				game.addRenderable(new RenderableObject(6, new Vector3D(
+						4 + 2 * i, 2.5 + 2 * j, -10), frontB, upB, model));
+
+			}
+		}
 
 		try {
 			BufferedImage bi = ImageIO.read(new File(Test.class.getResource(
@@ -100,8 +107,8 @@ public class Test {
 
 		game.runGame(player);
 
-		GameDisplay.getDisplay().deinit();
-
 		game.unload();
+
+		GameDisplay.getDisplay().deinit();
 	}
 }
