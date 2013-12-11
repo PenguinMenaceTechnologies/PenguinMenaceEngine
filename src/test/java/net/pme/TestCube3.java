@@ -31,7 +31,7 @@ public class TestCube3 extends RenderableObject {
 	 **/
 	public TestCube3(long ID, Vector3D position, Vector3D front, Vector3D up) {
 		super(ID, position, front, up, -1);
-		sh = new Shader(7, null, Shaders.fsh);
+		sh = new Shader(8, null, Shaders.fsh);
 		attachShader(sh);
 		uniform = new float[4];
 		sh.setUniform4f("color", uniform);
