@@ -23,7 +23,7 @@ public class Texture {
 	 * @param image
 	 *            The buffered image.
 	 */
-	public Texture(BufferedImage image) {
+	public Texture(final BufferedImage image) {
 		textureId = TextureLoader.loadTextureForceReload(image);
 	}
 
@@ -36,31 +36,35 @@ public class Texture {
 	 *             When the searched file does not exist or not contain an
 	 *             image.
 	 */
-	public Texture(String filename) throws IOException {
+	public Texture(final String filename) throws IOException {
 		textureId = TextureLoader.loadFromFile(filename);
 	}
-	
+
 	/**
 	 * Bind a texture to a given target.
-	 * @param target The target to bind to. (Usually GL_TEXTURE_2D):
+	 * 
+	 * @param target
+	 *            The target to bind to. (Usually GL_TEXTURE_2D):
 	 */
-	public void bind(int target) {
+	public final void bind(final int target) {
 		GL11.glEnable(target);
 		GL11.glBindTexture(target, textureId);
 	}
-	
+
 	/**
 	 * Unbind a texture from a given target.
-	 * @param target The target to unbind from. (Usually GL_TEXTURE_2D):
+	 * 
+	 * @param target
+	 *            The target to unbind from. (Usually GL_TEXTURE_2D):
 	 */
-	public static void unbind(int target) {
+	public static void unbind(final int target) {
 		GL11.glDisable(target);
 	}
-	
+
 	/**
 	 * Free the memory this texture is using.
 	 */
-	public void free() {
+	public final void free() {
 		TextureLoader.free(textureId);
 	}
 }

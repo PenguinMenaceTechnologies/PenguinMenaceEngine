@@ -12,10 +12,10 @@ public interface Focusable {
 	/**
 	 * Defines what happens if the object gets focused.
 	 */
-	public void onFocus();
+	void onFocus();
 
 	/**
 	 * Defines what happens when the focus is lost.
 	 */
-	public void onFocusLost();
+	void onFocusLost();
 }

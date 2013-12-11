@@ -19,11 +19,11 @@ public abstract class GameSettings {
 	private FileConfiguration keyMapping = null;
 	private FileConfiguration settings = null;
 
-	static	{
+	static {
 		File f = new File("config");
 		f.mkdirs();
 	}
-	
+
 	/**
 	 * Get the game settings.
 	 * 
@@ -34,15 +34,15 @@ public abstract class GameSettings {
 	}
 
 	/**
-	 * Set the game Settings
+	 * Set the game Settings.
 	 * 
 	 * @param settings
 	 *            The new game settings.
 	 */
-	public static final void set(GameSettings settings) {
+	public static final void set(final GameSettings settings) {
 		instance = settings;
 	}
-	
+
 	/**
 	 * Save all settings to files.
 	 */
@@ -80,7 +80,7 @@ public abstract class GameSettings {
 		}
 		return keyMapping;
 	}
-	
+
 	/**
 	 * Give back the setting string.
 	 * 
@@ -110,12 +110,14 @@ public abstract class GameSettings {
 	/**
 	 * When there cannot be loaded a key mapping, this defines the default
 	 * mapping.
+	 * @return A default key mapping.
 	 */
 	protected abstract MemoryConfiguration setDefaultKeyMapping();
-	
+
 	/**
 	 * When there cannot be loaded a settings map, this defines the default
 	 * mapping.
+	 * @return a default settings mapping.
 	 */
 	protected abstract MemoryConfiguration setDefaultSettings();
 }

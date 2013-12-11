@@ -19,6 +19,7 @@ public abstract class Player extends RenderableObject implements Networkable {
 	 * The matrix buffer to avoid recalculations.
 	 */
 	private DoubleBuffer matrixBuffer;
+
 	/**
 	 * Create a new player.
 	 * 
@@ -31,7 +32,7 @@ public abstract class Player extends RenderableObject implements Networkable {
 	 * @param graphics
 	 *            The graphics identifier.
 	 */
-	public Player(Vector3D position, Vector3D front, Vector3D up, int graphics) {
+	public Player(final Vector3D position, final Vector3D front, final Vector3D up, final int graphics) {
 		super(1, position, front, up, graphics);
 	}
 
@@ -41,9 +42,9 @@ public abstract class Player extends RenderableObject implements Networkable {
 	 */
 	public final void applyCamera() {
 
-		if (needsUpdate) {
-			Matrix m = Matrix.camera(position, Vector3D.crossProduct(front, up),
-				up, front);
+		if (isNeedsUpdate()) {
+			Matrix m = Matrix.camera(getPosition(),
+					Vector3D.crossProduct(getFront(), getUp()), getUp(), getFront());
 
 			matrixBuffer = m.getValues(matrixBuffer);
 		}

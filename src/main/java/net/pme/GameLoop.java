@@ -6,14 +6,13 @@ import java.util.List;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
 
 import net.pme.objects.HudObject;
 import net.pme.objects.MovableObject;
 import net.pme.objects.Particle;
 import net.pme.objects.Player;
 import net.pme.objects.RenderableObject;
-
-import static org.lwjgl.opengl.GL11.*;
 
 /**
  * This makes the gameengine pump.
@@ -22,6 +21,7 @@ import static org.lwjgl.opengl.GL11.*;
  * @version 1.0
  */
 final class GameLoop {
+	private static final double NANO_TO_SEC = 1E-9;
 	private boolean running = true;
 
 	/**
@@ -44,11 +44,13 @@ final class GameLoop {
 	 * @param particleObjects
 	 *            All particles. (Note that the particle list is internally not
 	 *            thread-safe.)
+	 * @param hudObjects
+	 * 			  All hud objects.
 	 */
-	void run(List<MovableObject> movableObjects,
-			List<RenderableObject> renderableObjects,
-			LinkedList<Particle> particleObjects, List<HudObject> hudObjects,
-			Player player) {
+	void run(final List<MovableObject> movableObjects,
+			final List<RenderableObject> renderableObjects,
+			final LinkedList<Particle> particleObjects, final List<HudObject> hudObjects,
+			final Player player) {
 		List<Particle> localParticleObjects = new ArrayList<Particle>();
 
 		double elapsedTime = 0;
@@ -56,8 +58,8 @@ final class GameLoop {
 		while (running && !display.isCloseRequested()) {
 			long timer = System.nanoTime();
 
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			glLoadIdentity();
+			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+			GL11.glLoadIdentity();
 
 			// Flush particle buffer to local buffer.
 			addAll(localParticleObjects, particleObjects);
@@ -103,7 +105,7 @@ final class GameLoop {
 			}
 
 			// Render Hud ontop of all
-			glLoadIdentity();
+			GL11.glLoadIdentity();
 			display.enterOrtho();
 			for (HudObject o : hudObjects) {
 				o.render();
@@ -113,7 +115,7 @@ final class GameLoop {
 			GameDisplay.getDisplay().update();
 
 			timer = System.nanoTime() - timer;
-			elapsedTime = timer * 1E-9;
+			elapsedTime = timer * NANO_TO_SEC;
 		}
 	}
 
@@ -125,8 +127,8 @@ final class GameLoop {
 	 * @param particleObjects
 	 *            Buffer to copy into local list.
 	 */
-	private void addAll(List<Particle> localParticleObjects,
-			LinkedList<Particle> particleObjects) {
+	private void addAll(final List<Particle> localParticleObjects,
+			final LinkedList<Particle> particleObjects) {
 		while (!particleObjects.isEmpty()) {
 			localParticleObjects.add(particleObjects.removeFirst());
 		}

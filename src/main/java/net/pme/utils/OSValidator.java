@@ -6,7 +6,14 @@ package net.pme.utils;
  * @author Michael Fürst
  * @version 1.0
  */
-public class OSValidator {
+public final class OSValidator {
+	/**
+	 * Utility class.
+	 */
+	private OSValidator() {
+		
+	}
+	
 	/**
 	 * Detect a windows.
 	 * 

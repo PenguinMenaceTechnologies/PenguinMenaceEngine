@@ -14,10 +14,12 @@ import org.lwjgl.opengl.GL20;
 
 /**
  * Shader binding to manage them.
+ * 
  * @author Michael Fürst
  * @version 1.0
  */
 public class Shader extends GameObject {
+	private static final int UNIFORM4F_LENGTH = 4;
 	private int vsId = 0;
 	private int fsId = 0;
 	private int program = 0;
@@ -25,18 +27,23 @@ public class Shader extends GameObject {
 
 	/**
 	 * Create a shader with the given id and shader strings.
-	 * @param id The id for the shader.
-	 * @param vsh The vertex shader. (as a string)
-	 * @param fsh The fragment shader. (as a string)
+	 * 
+	 * @param id
+	 *            The id for the shader.
+	 * @param vsh
+	 *            The vertex shader. (as a string)
+	 * @param fsh
+	 *            The fragment shader. (as a string)
 	 */
-	public Shader(long id, String vsh, String fsh) {
+	public Shader(final long id, final String vsh, final String fsh) {
 		super(id);
 		try {
 			if (vsh != null) {
 				vsId = createShader(vsh, ARBVertexShader.GL_VERTEX_SHADER_ARB);
 			}
 			if (fsh != null) {
-				fsId = createShader(fsh, ARBFragmentShader.GL_FRAGMENT_SHADER_ARB);
+				fsId = createShader(fsh,
+						ARBFragmentShader.GL_FRAGMENT_SHADER_ARB);
 			}
 			program = ARBShaderObjects.glCreateProgramObjectARB();
 
@@ -69,10 +76,11 @@ public class Shader extends GameObject {
 	}
 
 	/**
-	 * Make the shader active for all triangles drawn after this call.
-	 * (Be careful when calling this. Objects of the Engine automatically call this if they have a shader attached.)
+	 * Make the shader active for all triangles drawn after this call. (Be
+	 * careful when calling this. Objects of the Engine automatically call this
+	 * if they have a shader attached.)
 	 */
-	public void bind() {
+	public final void bind() {
 		if (program != 0) {
 			ARBShaderObjects.glUseProgramObjectARB(program);
 			updateUniforms();
@@ -82,26 +90,29 @@ public class Shader extends GameObject {
 	}
 
 	/**
-	 * Make the shader inactive.
-	 * Technically activating a default shader.
-	 * (Be careful when calling this. Objects of the Engine automatically call this if they have a shader attached.)
+	 * Make the shader inactive. Technically activating a default shader. (Be
+	 * careful when calling this. Objects of the Engine automatically call this
+	 * if they have a shader attached.)
 	 */
-	public void unbind() {
+	public final void unbind() {
 		ARBShaderObjects.glUseProgramObjectARB(0);
 	}
 
 	/**
-	 * Bind a java array to be a uniform4f in your shader code.
-	 * In the shader it is used by "uniform vec4 uniform_name;"
-	 * @param uniform The name of the uniform.
-	 * @param value The array of size 4 which to bind to that uniform.
+	 * Bind a java array to be a uniform4f in your shader code. In the shader it
+	 * is used by "uniform vec4 uniform_name;"
+	 * 
+	 * @param uniform
+	 *            The name of the uniform.
+	 * @param value
+	 *            The array of size 4 which to bind to that uniform.
 	 * @return Weather binding was successful or not.
 	 */
-	public boolean setUniform4f(String uniform, float[] value) {
+	public final boolean setUniform4f(final String uniform, final float[] value) {
 		boolean result = false;
 
 		if (uniform != null && GL20.glGetUniformLocation(program, uniform) != 0
-				&& value != null && value.length == 4) {
+				&& value != null && value.length == UNIFORM4F_LENGTH) {
 			uniforms.put(uniform, value);
 			result = true;
 		}
@@ -111,10 +122,13 @@ public class Shader extends GameObject {
 
 	/**
 	 * Remove a uniform binding.
-	 * @param uniform The uniform to remove.
-	 * @return Weather the removal was successful or not. (It is successful as long as the uniform was registered before)
+	 * 
+	 * @param uniform
+	 *            The uniform to remove.
+	 * @return Weather the removal was successful or not. (It is successful as
+	 *         long as the uniform was registered before)
 	 */
-	public boolean removeUniform4f(String uniform) {
+	public final boolean removeUniform4f(final String uniform) {
 		return uniforms.remove(uniform) != null;
 	}
 
@@ -123,9 +137,10 @@ public class Shader extends GameObject {
 	 * 
 	 * Should be called every time before you null an object.
 	 * 
-	 * This automatically removes all uniform bindings, whereas they are no longer usefull.
+	 * This automatically removes all uniform bindings, whereas they are no
+	 * longer usefull.
 	 */
-	public void delete() {
+	public final void delete() {
 		Set<String> keys = uniforms.keySet();
 		for (String k : keys) {
 			removeUniform4f(k);
@@ -144,6 +159,9 @@ public class Shader extends GameObject {
 		}
 	}
 
+	/**
+	 * Update uniforms.
+	 */
 	private void updateUniforms() {
 		Set<String> keys = uniforms.keySet();
 		for (String k : keys) {
@@ -152,9 +170,14 @@ public class Shader extends GameObject {
 					value[1], value[2], value[3]);
 		}
 	}
-	
-	private int createShader(String shaderString, int shaderType)
-			throws RuntimeException {
+
+	/**
+	 * Create a shader.
+	 * @param shaderString The string describing the shader.
+	 * @param shaderType The type of the shader.
+	 * @return The int to the shader in gl.
+	 */
+	private int createShader(final String shaderString, final int shaderType) {
 		int shader = 0;
 		shader = ARBShaderObjects.glCreateShaderObjectARB(shaderType);
 		if (shader == 0) {
@@ -172,7 +195,12 @@ public class Shader extends GameObject {
 		return shader;
 	}
 
-	private String getLogInfo(int obj) {
+	/**
+	 * Get the log info for a shader object.
+	 * @param obj The shader for which to get the log.
+	 * @return The log info.
+	 */
+	private String getLogInfo(final int obj) {
 		return ARBShaderObjects.glGetInfoLogARB(obj, ARBShaderObjects
 				.glGetObjectParameteriARB(obj,
 						ARBShaderObjects.GL_OBJECT_INFO_LOG_LENGTH_ARB));

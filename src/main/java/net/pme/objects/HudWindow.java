@@ -17,7 +17,7 @@ public abstract class HudWindow extends HudObject implements Focusable {
 	 * @param y
 	 *            The y position.
 	 */
-	public HudWindow(long id, int x, int y) {
+	public HudWindow(final long id, final int x, final int y) {
 		super(id, x, y);
 	}
 

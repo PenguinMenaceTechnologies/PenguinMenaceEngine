@@ -10,7 +10,9 @@ import java.security.NoSuchAlgorithmException;
  * @author Michael Fürst
  * @version 1.0
  */
-public class MD5Generator {
+public final class MD5Generator {
+	private static final byte MASK = (byte) 0xFF;
+
 	/**
 	 * Generate a md5 string of a given string.
 	 * 
@@ -18,7 +20,7 @@ public class MD5Generator {
 	 *            Given string.
 	 * @return md5 string.
 	 */
-	public static String generate(String string) {
+	public static String generate(final String string) {
 		byte[] bytesOfMessage;
 		try {
 			bytesOfMessage = string.getBytes("UTF-8");
@@ -36,12 +38,15 @@ public class MD5Generator {
 
 		StringBuffer toReturn = new StringBuffer(digest.length);
 		for (byte tiledigest : digest) {
-			toReturn.append(Integer.toHexString(0xFF & tiledigest));
+			toReturn.append(Integer.toHexString(MASK & tiledigest));
 		}
 
 		return toReturn.toString();
 	}
 
+	/**
+	 * Utility class.
+	 */
 	private MD5Generator() {
 	}
 }
