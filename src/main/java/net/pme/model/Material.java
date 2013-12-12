@@ -188,10 +188,10 @@ class Material {
 		int lineNumber = 0;
 		while ((line = reader.readLine()) != null) {
 			try {
-				// parse the mtl file
-				//if (line.startsWith("#")) {
-					// Ignore comments
-				//} else 
+				while (line.startsWith(" ") || line.startsWith("\t")) {
+					line = line.substring(1);
+				}
+				line = line.replaceAll("  ", " ");
 				if (line.startsWith("newmtl ")) {
 					String[] splitline = line.split(" ");
 					if (mtl != null) {
@@ -227,32 +227,60 @@ class Material {
 					mtl.illuminationModel = Integer.parseInt(splitline[1]);
 				} else if (line.startsWith("map_Ka ")) {
 					String[] splitline = line.split(" ");
-					mtl.ambientMap = new Texture(f.getParent() + "/"
+					String s = "";
+					if (!splitline[1].startsWith("/")) {
+						s = "/";
+					}
+					mtl.ambientMap = new Texture(f.getParent() + s
 							+ splitline[1]);
 				} else if (line.startsWith("map_Kd ")) {
 					String[] splitline = line.split(" ");
-					mtl.diffuseMap = new Texture(f.getParent() + "/"
+					String s = "";
+					if (!splitline[1].startsWith("/")) {
+						s = "/";
+					}
+					mtl.diffuseMap = new Texture(f.getParent() + s
 							+ splitline[1]);
 				} else if (line.startsWith("map_Ks ")) {
 					String[] splitline = line.split(" ");
-					mtl.specularMap = new Texture(f.getParent() + "/"
+					String s = "";
+					if (!splitline[1].startsWith("/")) {
+						s = "/";
+					}
+					mtl.specularMap = new Texture(f.getParent() + s
 							+ splitline[1]);
 				} else if (line.startsWith("map_Ns ")) {
 					String[] splitline = line.split(" ");
-					mtl.specularHighlightMap = new Texture(f.getParent() + "/"
+					String s = "";
+					if (!splitline[1].startsWith("/")) {
+						s = "/";
+					}
+					mtl.specularHighlightMap = new Texture(f.getParent() + s
 							+ splitline[1]);
 				} else if (line.startsWith("map_bump ")
 						|| line.startsWith("bump ")) {
 					String[] splitline = line.split(" ");
-					mtl.bumpMap = new Texture(f.getParent() + "/"
+					String s = "";
+					if (!splitline[1].startsWith("/")) {
+						s = "/";
+					}
+					mtl.bumpMap = new Texture(f.getParent() + s
 							+ splitline[1]);
 				} else if (line.startsWith("disp ")) {
 					String[] splitline = line.split(" ");
-					mtl.displacementMap = new Texture(f.getParent() + "/"
+					String s = "";
+					if (!splitline[1].startsWith("/")) {
+						s = "/";
+					}
+					mtl.displacementMap = new Texture(f.getParent() + s
 							+ splitline[1]);
 				} else if (line.startsWith("decal ")) {
 					String[] splitline = line.split(" ");
-					mtl.decalMap = new Texture(f.getParent() + "/"
+					String s = "";
+					if (!splitline[1].startsWith("/")) {
+						s = "/";
+					}
+					mtl.decalMap = new Texture(f.getParent() + s
 							+ splitline[1]);
 				}
 			} catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {

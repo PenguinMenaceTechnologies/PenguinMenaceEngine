@@ -164,7 +164,7 @@ public final class GameDisplay {
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glPushMatrix();
 		GL11.glLoadIdentity();
-		GL11.glOrtho(0, displayWidth, displayHeight, 0, Z_NEAR, Z_FAR);
+		GL11.glOrtho(0, displayWidth, displayHeight, 0, 0, 1);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 	}
 

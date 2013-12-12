@@ -25,57 +25,12 @@ public class TestCube1 extends RenderableObject {
 	 *            The up axis.
 	 */
 	public TestCube1(long id, Vector3D position, Vector3D front, Vector3D up) {
-		super(id, position, front, up, -1);
+		super(id, position, front, up, ModelManager.getSpecialCoords(Test.class.getResource(
+				"/assets/cube_small.obj").getPath()));
 	}
 
 	@Override
 	public void move(double elapsedTime) {
 		rotateAroundFrontAxis(elapsedTime * 10);
 	}
-
-	@Override
-	protected void specialFX() {
-		GL11.glBegin(GL11.GL_QUADS);
-		{
-			// Quader
-			GL11.glColor3f(0.5f, 0.5f, 0.0f);
-			GL11.glVertex3f(-1.0f, -1.0f, -1.0f);
-			GL11.glVertex3f(-1.0f, 1.0f, -1.0f);
-			GL11.glVertex3f(1.0f, 1.0f, -1.0f);
-			GL11.glVertex3f(1.0f, -1.0f, -1.0f);
-
-			GL11.glColor3f(0.5f, 0.8f, 0.0f);
-			GL11.glVertex3f(-1.0f, 1.0f, -1.0f);
-			GL11.glVertex3f(-1.0f, 1.0f, 1.0f);
-			GL11.glVertex3f(1.0f, 1.0f, 1.0f);
-			GL11.glVertex3f(1.0f, 1.0f, -1.0f);
-
-			GL11.glColor3f(0.8f, 0.5f, 0.0f);
-			GL11.glVertex3f(-1.0f, -1.0f, -1.0f);
-			GL11.glVertex3f(-1.0f, -1.0f, 1.0f);
-			GL11.glVertex3f(1.0f, -1.0f, 1.0f);
-			GL11.glVertex3f(1.0f, -1.0f, -1.0f);
-
-			GL11.glColor3f(0.5f, 0.0f, 0.5f);
-			GL11.glVertex3f(-1.0f, -1.0f, -1.0f);
-			GL11.glVertex3f(-1.0f, -1.0f, 1.0f);
-			GL11.glVertex3f(-1.0f, 1.0f, 1.0f);
-			GL11.glVertex3f(-1.0f, 1.0f, -1.0f);
-
-			GL11.glColor3f(0.5f, 0.5f, 0.5f);
-			GL11.glVertex3f(-1.0f, -1.0f, 1.0f);
-			GL11.glVertex3f(-1.0f, 1.0f, 1.0f);
-			GL11.glVertex3f(1.0f, 1.0f, 1.0f);
-			GL11.glVertex3f(1.0f, -1.0f, 1.0f);
-
-			GL11.glColor3f(0.0f, 0.0f, 0.5f);
-			GL11.glVertex3f(1.0f, -1.0f, -1.0f);
-			GL11.glVertex3f(1.0f, -1.0f, 1.0f);
-			GL11.glVertex3f(1.0f, 1.0f, 1.0f);
-			GL11.glVertex3f(1.0f, 1.0f, -1.0f);
-		}
-		GL11.glEnd();
-
-	}
-
 }

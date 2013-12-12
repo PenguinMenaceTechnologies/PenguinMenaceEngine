@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.util.Arrays;
-import java.util.logging.Logger;
 
 /**
  * A native library loader.
@@ -16,7 +15,6 @@ import java.util.logging.Logger;
  * @version 1.0
  */
 public final class NativeLoader {
-	private static final Logger LOG = Logger.getLogger("NativeLoader");
 	private static final int BUFFER_SIZE = 16 * 1024;
 	private static final String[] WINDOWS_32 = { "jinput-dx8.dll",
 			"jinput-raw.dll", "lwjgl.dll", "OpenAL32.dll" };
@@ -160,7 +158,6 @@ public final class NativeLoader {
 			while ((cnt = in.read(buf)) >= 1) {
 				out.write(buf, 0, cnt);
 			}
-			LOG.info("Saved libfile: " + file.getAbsoluteFile());
 			return file.getAbsolutePath();
 		} finally {
 			if (in != null) {

@@ -9,7 +9,7 @@ import net.pme.objects.Shader;
 /**
  * A simple cube.
  * 
- * @author Michael Fürst
+ * @author Michael FÃ¼rst
  * @version 1.0
  */
 public class TestCube3 extends RenderableObject {

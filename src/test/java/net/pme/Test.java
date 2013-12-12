@@ -47,10 +47,10 @@ public class Test {
 		GameDisplay.create("PenguinMenaceEngine Test", 800, 600, false);
 		GameDisplay.getDisplay().setFPS(1000000);
 
-		int model = ModelManager.getSpecialCoords(Test.class.getResource(
-				"/assets/ships/Anachron.obj").getPath());
-		int model2 = ModelManager.getSpecialCoords(Test.class.getResource(
-				"/assets/ships/Anachron.obj").getPath());
+		int model = ModelManager.get(Test.class.getResource(
+				"/assets/cube_small.obj").getPath());
+		int model2 = ModelManager.get(Test.class.getResource(
+				"/assets/cube_small.obj").getPath());
 		if (model == model2) {
 			System.out.println("Model loading is efficient!");
 		}
@@ -72,7 +72,7 @@ public class Test {
 
 		game.addRenderable(new TestCube1(2, new Vector3D(1, 2, -10), front1,
 				up1));
-		game.addRenderable(new TestCube2(3, new Vector3D(1, -2, -10), front2,
+		game.addRenderable(new Ship(3, new Vector3D(1, -2, -10), front2,
 				up2));
 		game.addRenderable(new TestCube3(4, new Vector3D(-2, 0, -10), front3,
 				up3));
@@ -80,20 +80,21 @@ public class Test {
 		game.addRenderable(new RenderableObject(5, new Vector3D(-4, 2.5, -10),
 				frontA, upA, model));
 		game.addRenderable(new RenderableObject(6, new Vector3D(4, 2.5, -10),
-				frontB, upB, model2));
+				frontB, upB, ModelManager.get(Test.class.getResource(
+						"/assets/cube_small.obj").getPath())));
 
 		for (int j = 0; j < 10; j++) {
 			for (int i = 1; i < 10; i++) {
 				game.addRenderable(new RenderableObject(6, new Vector3D(
-						4 + 2 * i, 2.5 + 2 * j, -10), frontB, upB, model));
+						4 + 4 * i, 2.5 + 4 * j, -10), frontB, upB, model));
 
 			}
 		}
 
 		try {
 			BufferedImage bi = ImageIO.read(new File(Test.class.getResource(
-					"/assets/ships/Anachron.jpg").getFile()));
-			game.addHud(new TestHudObject(7, 250, 250, bi));
+					"/assets/overlay.jpg").getFile()));
+			game.addHud(new TestHudObject(7, 64, 64, bi));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
