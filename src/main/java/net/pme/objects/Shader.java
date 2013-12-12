@@ -47,7 +47,7 @@ public class Shader extends GameObject {
 			}
 			program = ARBShaderObjects.glCreateProgramObjectARB();
 
-			if (program == 0) {
+			if (program <= 0) {
 				throw new RuntimeException("Cannot create shader");
 			}
 
@@ -81,7 +81,7 @@ public class Shader extends GameObject {
 	 * if they have a shader attached.)
 	 */
 	public final void bind() {
-		if (program != 0) {
+		if (program > 0) {
 			ARBShaderObjects.glUseProgramObjectARB(program);
 			updateUniforms();
 		} else {
@@ -111,7 +111,7 @@ public class Shader extends GameObject {
 	public final boolean setUniform4f(final String uniform, final float[] value) {
 		boolean result = false;
 
-		if (uniform != null && GL20.glGetUniformLocation(program, uniform) != 0
+		if (uniform != null && program > 0 && GL20.glGetUniformLocation(program, uniform) >= 0
 				&& value != null && value.length == UNIFORM4F_LENGTH) {
 			uniforms.put(uniform, value);
 			result = true;

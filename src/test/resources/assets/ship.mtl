@@ -1,0 +1,86 @@
+newmtl default
+d 0.7
+Ns 1
+Ni 0
+Ka 0 0 0
+Kd 0 0 0
+Ks 1 1 1
+Km 0
+
+newmtl default_display
+d 1
+Ns 1
+Ni 0
+Ka 1 1 1
+Kd 1 1 1
+Ks 1 1 1
+Km 0
+map_Kd /Maps/gm1.jpg
+
+newmtl default_seat_cushions
+d 1
+Ns 1
+Ni 0
+Ka 0 0 0
+Kd 1 1 1
+Ks 1 1 1
+Km 0
+map_Kd /Maps/yx1_02_01_01.jpg
+
+newmtl default_entry
+d 1
+Ns 1
+Ni 0
+Ka 0 0 0
+Kd 1 1 1
+Ks 1 1 1
+Km 0
+map_Kd /Maps/elem4b.jpg
+
+newmtl default_body2b
+d 1
+Ns 1
+Ni 0
+Ka 0 0 0
+Kd 1 1 1
+Ks 1 1 1
+Km 0
+map_Kd /Maps/fmx1.jpg
+
+newmtl default_ship_grid_syst.2
+d 1
+Ns 1
+Ni 0
+Ka 0 0 0
+Kd 1 1 1
+Ks 1 1 1
+Km 0
+
+newmtl default_propulsion
+d 1
+Ns 1
+Ni 0
+Ka 0.501961 1 1
+Kd 0 1 1
+Ks 1 1 1
+Km 0
+
+newmtl default_gate2
+d 1
+Ns 1
+Ni 0
+Ka 0 0 0
+Kd 1 1 1
+Ks 1 1 1
+Km 0
+map_Kd /Maps/elem4b.jpg
+
+newmtl default_name
+d 1
+Ns 1
+Ni 0
+Ka 0 0 0
+Kd 0.27451 0.27451 0.27451
+Ks 1 1 1
+Km 0
+
