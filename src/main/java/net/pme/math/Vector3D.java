@@ -197,7 +197,7 @@ public class Vector3D {
 	 *            The second vector.
 	 * @return The result.
 	 */
-	public static boolean equal(final Vector3D a, final Vector3D b, final double precision) {
+	public static boolean equals(final Vector3D a, final Vector3D b, final double precision) {
 		return Math.abs(a.getX() - b.getX()) < precision
 				&& Math.abs(a.getY() - b.getY()) < precision
 				&& Math.abs(a.getZ() - b.getZ()) < precision;
@@ -304,8 +304,8 @@ public class Vector3D {
 	 *            The second vector.
 	 * @return The result.
 	 */
-	public boolean equal(final Vector3D other, final double precision) {
-		return equal(this, other, precision);
+	public boolean equals(final Vector3D other, final double precision) {
+		return equals(this, other, precision);
 	}
 	
 	/**
