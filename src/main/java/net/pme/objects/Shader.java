@@ -3,7 +3,10 @@
  */
 package net.pme.objects;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.HashMap;
+import java.util.Scanner;
 import java.util.Set;
 
 import org.lwjgl.opengl.ARBFragmentShader;
@@ -25,6 +28,44 @@ public class Shader extends GameObject {
 	private int program = 0;
 	private HashMap<Integer, float[]> uniforms = new HashMap<Integer, float[]>();
 
+	/**
+	 * Create a new shader from files in the given path.
+	 * 
+	 * There will be automatically laoded path.fsh and path.vsh.
+	 * 
+	 * @param id The id for the gameengine.
+	 * @param path The path to the files, without the file ending. There must be a path.vsh and a path.fsh.
+	 */
+	public Shader(long id, String path) {
+		this(id, readFromFile(path+".vsh"), readFromFile(path+".fsh"));
+	}
+	
+	/**
+	 * Load a shader from a file into a string.
+	 * @param pathname The file to open.
+	 * @return The string read from the file or null if not found.
+	 */
+	static private String readFromFile(String pathname) {
+		File file = new File(pathname);
+	    StringBuilder fileContents = new StringBuilder((int)file.length());
+		try {
+			Scanner scanner = new Scanner(file);
+			String lineSeparator = System.getProperty("line.separator");
+
+		    try {
+		        while(scanner.hasNextLine()) {        
+		            fileContents.append(scanner.nextLine() + lineSeparator);
+		        }
+		        return fileContents.toString();
+		    } finally {
+		        scanner.close();
+		    }
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	/**
 	 * Create a shader with the given id and shader strings.
 	 * 

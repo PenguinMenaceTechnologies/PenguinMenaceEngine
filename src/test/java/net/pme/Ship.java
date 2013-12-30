@@ -25,8 +25,9 @@ public class Ship extends RenderableObject {
 	 *            The up axis.
 	 **/
 	public Ship(long ID, Vector3D position, Vector3D front, Vector3D up) {
-		super(ID, position, front, up, ModelManager.get(Test.class.getResource(
-				"/assets/ship.obj").getPath()));
+//		super(ID, position, front, up, ModelManager.get(Test.class.getResource(
+//				"/assets/cube_small.obj").getPath()));
+		super(ID, position, front, up, 0);
 	}
 
 	@Override
@@ -35,8 +36,11 @@ public class Ship extends RenderableObject {
 		move(new Vector3D(0, 0, elapsedTime));
 	}
 
-	/*@Override
+	@Override
 	protected void specialFX() {
+		if (this.getGraphics() != 0) {
+			return;
+		}
 		GL11.glBegin(GL11.GL_QUADS);
 		{
 			// Quader
@@ -78,6 +82,6 @@ public class Ship extends RenderableObject {
 		}
 		GL11.glEnd();
 
-	}*/
+	}
 
 }

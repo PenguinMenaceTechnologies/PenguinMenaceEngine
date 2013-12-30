@@ -62,7 +62,6 @@ public abstract class HudObject extends GameObject {
 
 		GL11.glBegin(GL11.GL_QUADS);
 
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, tex);
 		GL11.glTexCoord2f(0, 0);
 		GL11.glVertex2i(x - bi.getWidth() / 2, y - bi.getHeight() / 2);
@@ -72,7 +71,6 @@ public abstract class HudObject extends GameObject {
 		GL11.glVertex2i(x + bi.getWidth() / 2, y + bi.getHeight() / 2);
 		GL11.glTexCoord2f(0, 1);
 		GL11.glVertex2i(x - bi.getWidth() / 2, y + bi.getHeight() / 2);
-		GL11.glDisable(GL11.GL_TEXTURE_2D);
 
 		GL11.glEnd();
 		

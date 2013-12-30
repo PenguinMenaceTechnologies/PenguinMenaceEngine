@@ -118,6 +118,12 @@ public final class GameDisplay {
 	 */
 	void update() {
 		Display.update();
+	}
+	
+	/**
+	 * Sync with the screen.
+	 */
+	void sync() {
 		Display.sync(fpsLimit);
 	}
 
@@ -125,20 +131,25 @@ public final class GameDisplay {
 	 * Initialize GL for the window.
 	 */
 	private void initGL() {
-		// run through some based OpenGL capability settings. Textures
-		// enabled, back face culling enabled, depth texting is on,
-		GL11.glEnable(GL11.GL_DEPTH_TEST);
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
-
 		// define the properties for the perspective of the scene
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
 		GLU.gluPerspective(FOVY, ((float) displayWidth)
 				/ ((float) displayHeight), Z_NEAR, Z_FAR);
+		
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+		GL11.glLoadIdentity();
+		
+		GL11.glClearColor(0.0f,0.0f,0.0f,1.0f);
+		GL11.glClearDepth(1.0f);
+		GL11.glDepthFunc(GL11.GL_LEQUAL);
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
+		
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+
 		GL11.glShadeModel(GL11.GL_SMOOTH);
+		
 		GL11.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_NICEST);
-		GL11.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	}
 
 	/**
@@ -158,6 +169,7 @@ public final class GameDisplay {
 	 */
 	void enterOrtho() {
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
+		
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
@@ -166,6 +178,8 @@ public final class GameDisplay {
 		GL11.glLoadIdentity();
 		GL11.glOrtho(0, displayWidth, displayHeight, 0, 0, 1);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+		GL11.glPushMatrix();
+		GL11.glLoadIdentity();
 	}
 
 	/**
@@ -173,6 +187,7 @@ public final class GameDisplay {
 	 * from org.netdawn.asteroids
 	 */
 	void leaveOrtho() {
+		GL11.glPopMatrix();
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glPopMatrix();
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);

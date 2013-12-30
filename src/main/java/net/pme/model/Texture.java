@@ -47,7 +47,9 @@ public class Texture {
 	 *            The target to bind to. (Usually GL_TEXTURE_2D):
 	 */
 	public final void bind(final int target) {
-		GL11.glEnable(target);
+		if (target != GL11.GL_TEXTURE_2D) {
+			GL11.glEnable(target);
+		}
 		GL11.glBindTexture(target, textureId);
 	}
 
@@ -58,7 +60,10 @@ public class Texture {
 	 *            The target to unbind from. (Usually GL_TEXTURE_2D):
 	 */
 	public static void unbind(final int target) {
-		GL11.glDisable(target);
+		if (target != GL11.GL_TEXTURE_2D) {
+			GL11.glDisable(target);
+		}
+		GL11.glBindTexture(target, 0);
 	}
 
 	/**
