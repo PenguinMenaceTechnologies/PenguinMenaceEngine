@@ -7,6 +7,7 @@ import org.lwjgl.opengl.GL11;
 import net.pme.math.MathUtils;
 import net.pme.math.Matrix;
 import net.pme.math.Vector3D;
+import net.pme.model.Model;
 
 /**
  * An object that can be rendered.
@@ -15,7 +16,7 @@ import net.pme.math.Vector3D;
  * @version 1.0
  */
 public class RenderableObject extends MovableObject {
-	private int graphics;
+	private Model graphics;
 	/**
 	 * The direction the object is facing at.
 	 */
@@ -52,7 +53,7 @@ public class RenderableObject extends MovableObject {
 	 *            The graphics identifier.
 	 */
 	public RenderableObject(final long id, final Vector3D position, final Vector3D front,
-			final Vector3D up, final int graphics) {
+			final Vector3D up, final Model graphics) {
 		super(id, position);
 		this.front = Vector3D.normalize(front);
 		this.up = Vector3D.normalize(up);
@@ -74,14 +75,14 @@ public class RenderableObject extends MovableObject {
 	/**
 	 * @return the graphics
 	 */
-	protected final int getGraphics() {
+	protected final Model getGraphics() {
 		return graphics;
 	}
 
 	/**
 	 * @param graphics the graphics to set
 	 */
-	protected final void setGraphics(final int graphics) {
+	protected final void setGraphics(final Model graphics) {
 		this.graphics = graphics;
 		needsUpdate = true;
 	}
@@ -250,8 +251,8 @@ public class RenderableObject extends MovableObject {
 		if (shader != null) {
 			shader.bind();
 		}
-		if (graphics > 0) {
-			GL11.glCallList(graphics);
+		if (graphics != null) {
+			graphics.draw();
 		}
 
 		specialFX();

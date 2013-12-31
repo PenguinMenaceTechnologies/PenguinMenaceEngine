@@ -6,6 +6,7 @@ import org.lwjgl.opengl.GL11;
 
 import net.pme.math.Matrix;
 import net.pme.math.Vector3D;
+import net.pme.model.Model;
 
 /**
  * A player represents the person sitting in front of the computer playing the
@@ -32,7 +33,7 @@ public abstract class Player extends RenderableObject implements Networkable {
 	 * @param graphics
 	 *            The graphics identifier.
 	 */
-	public Player(final Vector3D position, final Vector3D front, final Vector3D up, final int graphics) {
+	public Player(final Vector3D position, final Vector3D front, final Vector3D up, final Model graphics) {
 		super(1, position, front, up, graphics);
 	}
 

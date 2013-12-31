@@ -1,5 +1,7 @@
 package net.pme;
 
+import java.io.IOException;
+
 import org.lwjgl.opengl.GL11;
 
 import net.pme.math.Vector3D;
@@ -23,11 +25,12 @@ public class Ship extends RenderableObject {
 	 *            The front axis.
 	 * @param up
 	 *            The up axis.
+	 * @throws IOException 
 	 **/
-	public Ship(long ID, Vector3D position, Vector3D front, Vector3D up) {
-//		super(ID, position, front, up, ModelManager.get(Test.class.getResource(
-//				"/assets/cube_small.obj").getPath()));
-		super(ID, position, front, up, 0);
+	public Ship(long ID, Vector3D position, Vector3D front, Vector3D up) throws IOException {
+		super(ID, position, front, up, ModelManager.get(Test.class.getResource(
+				"/assets/ship.obj").getPath()));
+//		super(ID, position, front, up, 0);
 	}
 
 	@Override
@@ -38,7 +41,7 @@ public class Ship extends RenderableObject {
 
 	@Override
 	protected void specialFX() {
-		if (this.getGraphics() != 0) {
+		if (this.getGraphics() != null) {
 			return;
 		}
 		GL11.glBegin(GL11.GL_QUADS);

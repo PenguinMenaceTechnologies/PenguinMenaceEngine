@@ -22,6 +22,8 @@ public class TestPlayer extends Player {
 	private double yAxis = 0;
 	private double zAxis = 0;
 	private double rotate = 0;
+	private double elapsedTime = 0.0;
+	private int circle = 0;
 
 	/**
 	 * A Test player.
@@ -34,7 +36,13 @@ public class TestPlayer extends Player {
 	 *            Initial up axis.
 	 */
 	public TestPlayer(Vector3D position, Vector3D front, Vector3D up) {
-		super(position, front, up, -1);
+		super(position, front, up, null);
+	}
+	
+	@Override
+	protected void specialFX() {
+		Display.setTitle(String.format("PenguinMenaceEngine Test [%.0f@%.2f]",
+				1.0 / elapsedTime, ((double)ManagementFactory.getThreadMXBean().getCurrentThreadCpuTime())*1E-9));	
 	}
 
 	@Override
@@ -42,8 +50,11 @@ public class TestPlayer extends Player {
 		move(new Vector3D(xAxis * elapsedTime * 3.0, yAxis * elapsedTime * 3.0,
 				zAxis * elapsedTime * 6.0));
 		rotateAroundFrontAxis(elapsedTime * rotate * 50.0);
-		Display.setTitle(String.format("PenguinMenaceEngine Test [%.0f@%.2f]",
-				1.0 / elapsedTime, ((double)ManagementFactory.getThreadMXBean().getCurrentThreadCpuTime())*1E-9));
+		circle++;
+		if (circle >= 60) {
+			this.elapsedTime = elapsedTime;
+			circle = 0;
+		}
 	}
 
 	/*

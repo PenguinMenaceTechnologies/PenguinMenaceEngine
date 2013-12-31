@@ -2,6 +2,7 @@ package net.pme.objects;
 
 import net.pme.Game;
 import net.pme.math.Vector3D;
+import net.pme.model.Model;
 
 /**
  * A particle can decay.
@@ -34,7 +35,7 @@ public abstract class Particle extends RenderableObject {
 	 *            The game instance in which the particle should live.
 	 */
 	public Particle(final long id, final Vector3D position, final Vector3D front, final Vector3D up,
-			final double decay, final int graphics, final Game game) {
+			final double decay, final Model graphics, final Game game) {
 		super(id, position, front, up, graphics);
 		this.initialDecay = decay;
 		this.decay = decay;

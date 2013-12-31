@@ -1,22 +1,14 @@
 package net.pme;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.IndexColorModel;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.IntBuffer;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GLContext;
 
-import net.pme.model.TextureLoader;
 import net.pme.objects.HudObject;
 import net.pme.objects.MovableObject;
 import net.pme.objects.Particle;
@@ -24,12 +16,6 @@ import net.pme.objects.Player;
 import net.pme.objects.RenderableObject;
 
 import static org.lwjgl.opengl.EXTFramebufferObject.*;
-import static org.lwjgl.opengl.GL11.GL_QUADS;
-import static org.lwjgl.opengl.GL11.glBegin;
-import static org.lwjgl.opengl.GL11.glColor3f;
-import static org.lwjgl.opengl.GL11.glEnd;
-import static org.lwjgl.opengl.GL11.glTexCoord2f;
-import static org.lwjgl.opengl.GL11.glVertex3f;
 
 /**
  * This makes the gameengine pump.
@@ -41,6 +27,7 @@ final class GameLoop {
 	private static final double NANO_TO_SEC = 1E-9;
 	private boolean running = true;
 	private boolean postprocessing = true;
+	private boolean blocked = false;
 
 	/**
 	 * Do nothing, only visible inside engine.
@@ -69,9 +56,7 @@ final class GameLoop {
 			final List<RenderableObject> renderableObjects,
 			final LinkedList<Particle> particleObjects,
 			final List<HudObject> hudObjects, final Player player) {
-		List<Particle> localParticleObjects = new ArrayList<Particle>();
 
-		double elapsedTime = 0;
 		GameDisplay display = GameDisplay.getDisplay();
 
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
@@ -80,9 +65,9 @@ final class GameLoop {
 			postprocessing = false;
 			System.err.println("FBO not supported. Postprocessing disabled.");
 		}
-		
+
 		postprocessing = false;
-		
+
 		int fbo = 0;
 		int texture = 0;
 		int depth = 0;
@@ -95,130 +80,186 @@ final class GameLoop {
 			initFBO(fbo, texture, depth);
 		}
 
+		final GameLoop that = this;
+
+		new Thread() {
+			@Override
+			public void run() {
+				double elapsedTime = 0.0;
+
+				while (running) {
+					long timer = System.nanoTime();
+					synchronized (that) {
+						try {
+							while (blocked) {
+								that.wait();
+							}
+							blocked = true;
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+
+						update(movableObjects, renderableObjects,
+								particleObjects, hudObjects, player,
+								elapsedTime);
+
+						blocked = false;
+						that.notifyAll();
+					}
+					timer = System.nanoTime() - timer;
+					elapsedTime = timer * NANO_TO_SEC;
+				}
+			}
+		}.start();
+
 		while (running && !display.isCloseRequested()) {
-			long timer = System.nanoTime();
-
-			// Flush particle buffer to local buffer.
-			addAll(localParticleObjects, particleObjects);
-
-			// Move all objects
-			for (MovableObject o : movableObjects) {
-				o.move(elapsedTime);
-			}
-			for (RenderableObject o : renderableObjects) {
-				o.move(elapsedTime);
-			}
-			for (Particle o : particleObjects) {
-				o.move(elapsedTime);
-			}
-			for (HudObject o : hudObjects) {
-				o.move(elapsedTime);
-			}
-
-			if (player != null) {
-				if (Keyboard.next()) {
-					player.keyboardInputHandler(Keyboard.getEventKey(),
-							Keyboard.getEventKeyState());
-				}
-				if (Mouse.next()) {
-					player.mouseInputHandler(Mouse.getEventButton(),
-							Mouse.getEventButtonState());
-				}
-				if (Mouse.isGrabbed()) {
-					player.mouseMoveHandler(Mouse.getDX(), Mouse.getDY());
+			synchronized (this) {
+				try {
+					while (blocked) {
+						this.wait();
+					}
+					blocked = true;
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
 
-				player.move(elapsedTime);
-			}
+				GL11.glViewport(0, 0, display.getWidth(), display.getHeight());
 
-			display.sync();
-
-			GL11.glViewport(0, 0, display.getWidth(), display.getHeight());
-			
-			if (postprocessing) {
-				// unlink textures to avoid errors.
-				GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
-				glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo);
-			}
-
-			GL11.glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-			
-			GL11.glLoadIdentity();
-
-			if (player != null) {
-				player.applyCamera();
-			}
-
-			// Render all objects
-			for (RenderableObject o : renderableObjects) {
-				o.render();
-			}
-			for (Particle o : particleObjects) {
-				o.render();
-			}
-
-			if (hudObjects.size() > 0) {
-				display.enterOrtho();
-
-				// Render Hud ontop of all
-				for (HudObject o : hudObjects) {
-					o.render();
+				if (postprocessing) {
+					// unlink textures to avoid errors.
+					GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+					glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo);
 				}
-				display.leaveOrtho();
-			}
-			
 
-			if (postprocessing) {
-				glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
-
-				GL11.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+				GL11.glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 				GL11.glClear(GL11.GL_COLOR_BUFFER_BIT
 						| GL11.GL_DEPTH_BUFFER_BIT);
 
-				GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
-
-				GL11.glViewport(0, 0, display.getWidth(), display.getHeight());
-				
 				GL11.glLoadIdentity();
+
+				if (player != null) {
+					player.applyCamera();
+				}
+
+				// Render all objects
+				for (RenderableObject o : renderableObjects) {
+					o.render();
+				}
+				for (Particle o : particleObjects) {
+					o.render();
+				}
+
+				if (player != null) {
+					player.render();
+				}
 				
-				display.enterOrtho();
-				
-				GL11.glBegin(GL11.GL_QUADS);
-				GL11.glTexCoord2f(0, 1);
-				GL11.glVertex2i(0, 0);
-				GL11.glTexCoord2f(1, 1);
-				GL11.glVertex2i(display.getWidth(), 0);
-				GL11.glTexCoord2f(1, 0);
-				GL11.glVertex2i(display.getWidth(), display.getHeight());
-				GL11.glTexCoord2f(0, 0);
-				GL11.glVertex2i(0, display.getHeight());
+				if (hudObjects.size() > 0) {
+					display.enterOrtho();
 
-				GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+					// Render Hud ontop of all
+					for (HudObject o : hudObjects) {
+						o.render();
+					}
+					display.leaveOrtho();
+				}
 
-				display.leaveOrtho();
+				if (postprocessing) {
+					glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 
-				GL11.glEnd();
+					GL11.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+					GL11.glClear(GL11.GL_COLOR_BUFFER_BIT
+							| GL11.GL_DEPTH_BUFFER_BIT);
+
+					GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
+
+					GL11.glViewport(0, 0, display.getWidth(),
+							display.getHeight());
+
+					GL11.glLoadIdentity();
+
+					display.enterOrtho();
+
+					GL11.glBegin(GL11.GL_QUADS);
+					GL11.glTexCoord2f(0, 1);
+					GL11.glVertex2i(0, 0);
+					GL11.glTexCoord2f(1, 1);
+					GL11.glVertex2i(display.getWidth(), 0);
+					GL11.glTexCoord2f(1, 0);
+					GL11.glVertex2i(display.getWidth(), display.getHeight());
+					GL11.glTexCoord2f(0, 0);
+					GL11.glVertex2i(0, display.getHeight());
+
+					GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+
+					display.leaveOrtho();
+
+					GL11.glEnd();
+				}
+
+				// if (hudObjects.size() > 0) {
+				// display.enterOrtho();
+				//
+				// // Render Hud ontop of all
+				// for (HudObject o : hudObjects) {
+				// o.render();
+				// }
+				// display.leaveOrtho();
+				// }
+
+				blocked = false;
+				this.notifyAll();
 			}
 
-//			if (hudObjects.size() > 0) {
-//				display.enterOrtho();
-//
-//				// Render Hud ontop of all
-//				for (HudObject o : hudObjects) {
-//					o.render();
-//				}
-//				display.leaveOrtho();
-//			}
-			
 			GL11.glFlush();
+			GL11.glFinish();
+			
 			display.update();
+			display.sync();
+		}
+		running = false;
+	}
 
-			timer = System.nanoTime() - timer;
-			elapsedTime = timer * NANO_TO_SEC;
+	private void update(final List<MovableObject> movableObjects,
+			final List<RenderableObject> renderableObjects,
+			final LinkedList<Particle> particleObjects,
+			final List<HudObject> hudObjects, final Player player,
+			double elapsedTime) {
+		LinkedList<Particle> localParticleObjects = new LinkedList<Particle>();
+
+		// Flush particle buffer to local buffer.
+		addAll(localParticleObjects, particleObjects);
+		
+		// Move all objects
+		for (MovableObject o : movableObjects) {
+			o.move(elapsedTime);
+		}
+		for (RenderableObject o : renderableObjects) {
+			o.move(elapsedTime);
+		}
+		for (Particle o : particleObjects) {
+			o.move(elapsedTime);
+		}
+		for (HudObject o : hudObjects) {
+			o.move(elapsedTime);
+		}
+
+		if (player != null) {
+			if (Keyboard.next()) {
+				player.keyboardInputHandler(Keyboard.getEventKey(),
+						Keyboard.getEventKeyState());
+			}
+			if (Mouse.next()) {
+				player.mouseInputHandler(Mouse.getEventButton(),
+						Mouse.getEventButtonState());
+			}
+			if (Mouse.isGrabbed()) {
+				player.mouseMoveHandler(Mouse.getDX(), Mouse.getDY());
+			}
+
+			player.move(elapsedTime);
 		}
 	}
-	
+
 	/**
 	 * Initialize the FBO.
 	 * 
@@ -248,7 +289,7 @@ final class GameLoop {
 				GL14.GL_DEPTH_COMPONENT24, width, height);
 		glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,
 				GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, depth);
-		
+
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 	}
 

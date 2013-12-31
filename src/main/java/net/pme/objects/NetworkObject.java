@@ -1,6 +1,7 @@
 package net.pme.objects;
 
 import net.pme.math.Vector3D;
+import net.pme.model.Model;
 
 /**
  * Models an object that's supposed to be synced over the network.
@@ -25,7 +26,7 @@ public abstract class NetworkObject extends RenderableObject implements
 	 *            The model identifier.
 	 */
 	public NetworkObject(final long id, final Vector3D position, final Vector3D front,
-			final Vector3D up, final int graphics) {
+			final Vector3D up, final Model graphics) {
 		super(id, position, front, up, graphics);
 	}
 }

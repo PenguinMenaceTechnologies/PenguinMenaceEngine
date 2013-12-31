@@ -1,5 +1,6 @@
 package net.pme;
 
+import java.io.IOException;
 import java.util.HashMap;
 
 import net.pme.model.Model;
@@ -11,7 +12,7 @@ import net.pme.model.Model;
  * @version 1.0
  */
 public final class ModelManager {
-	private static final HashMap<String, Integer> MAP = new HashMap<String, Integer>();
+	private static final HashMap<String, Model> MAP = new HashMap<String, Model>();
 
 	/**
 	 * Utility classes should have no public constructor.
@@ -28,8 +29,9 @@ public final class ModelManager {
 	 * @param key
 	 *            The model name.
 	 * @return The id to the model. (-1 if the required model cannot be found)
+	 * @throws IOException When the requested model has errors.
 	 */
-	public static int get(final String key) {
+	public static Model get(final String key) throws IOException {
 		if (!MAP.containsKey(key)) {
 			MAP.put(key, Model.loadModel(key));
 		}
@@ -37,7 +39,7 @@ public final class ModelManager {
 		return MAP.get(key);
 	}
 
-	/**
+	/*/**
 	 * Load a model or just get the link if already loaded.
 	 * 
 	 * Warning: This method can be slow in some cases.
@@ -46,13 +48,13 @@ public final class ModelManager {
 	 *            The model name.
 	 * @return The id to the model. (-1 if the required model cannot be found)
 	 */
-	public static int getSpecialCoords(final String key) {
+	/*public static int getSpecialCoords(final String key) {
 		if (!MAP.containsKey(key)) {
 			MAP.put(key, Model.loadModelSpecialCoords(key));
 		}
 
 		return MAP.get(key);
-	}
+	}*/
 
 	/**
 	 * Remove all models.
@@ -71,7 +73,7 @@ public final class ModelManager {
 	 */
 	private static void unload(final String key) {
 		if (MAP.containsKey(key)) {
-			Model.unloadModel(MAP.get(key));
+			MAP.get(key).unloadModel();
 			MAP.remove(key);
 		}
 	}

@@ -2,16 +2,20 @@ package net.pme.model;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 
 import net.pme.utils.FileFormatException;
 
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
+import org.lwjgl.opengl.GL15;
+import org.lwjgl.opengl.GL32;
 import org.lwjgl.util.vector.Vector3f;
 
 /**
@@ -32,6 +36,11 @@ public class Model {
 	private HashMap<Integer, String> mtls = new HashMap<Integer, String>();
 	private HashMap<Integer, String> smoothing = new HashMap<Integer, String>();
 
+	private int vbo;
+	private int ibo;
+	private int nbo;
+	private int tbo;
+	
 	/**
 	 * Package visibility for model only.
 	 * 
@@ -43,6 +52,62 @@ public class Model {
 	 */
 	Model(final File file) throws IOException {
 		loadModelFromFile(file);
+
+		vbo = GL15.glGenBuffers();
+		ibo = GL15.glGenBuffers();
+			
+		FloatBuffer buffer = BufferUtils.createFloatBuffer(vertices.size()*3);
+		FloatBuffer nbuffer = BufferUtils.createFloatBuffer(normals.size()*3);
+		FloatBuffer tbuffer = BufferUtils.createFloatBuffer(textureCoords.size()*3);
+		
+		FloatBuffer ibuffer = BufferUtils.createFloatBuffer(faces.size()*(3*3));
+		
+		for(Vector3f t: vertices) {
+			buffer.put(t.x);
+			buffer.put(t.y);
+			buffer.put(t.z);
+		}
+		for(Vector3f t: normals) {
+			nbuffer.put(t.x);
+			nbuffer.put(t.y);
+			nbuffer.put(t.z);
+		}
+		for(Vector3f t: textureCoords) {
+			tbuffer.put(t.x);
+			tbuffer.put(t.y);
+			tbuffer.put(t.z);
+		}
+		for(Face f: faces) {
+			Vector3f n = f.getNormal();
+			Vector3f t = f.getTexture();
+			Vector3f v = f.getVertex();
+			ibuffer.put(v.x);
+			ibuffer.put(v.y);
+			ibuffer.put(v.z);
+			ibuffer.put(t.x);
+			ibuffer.put(t.y);
+			ibuffer.put(t.z);
+			ibuffer.put(n.x);
+			ibuffer.put(n.y);
+			ibuffer.put(n.z);
+		}
+		
+		buffer.rewind();
+		ibuffer.rewind();
+		nbuffer.rewind();
+		tbuffer.rewind();
+		
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbo);
+		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
+		
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, nbo);
+		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, nbuffer, GL15.GL_STATIC_DRAW);
+		
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, tbo);
+		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, tbuffer, GL15.GL_STATIC_DRAW);
+		
+		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, vbo);
+		GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, ibuffer, GL15.GL_STATIC_DRAW);
 	}
 
 	/**
@@ -171,161 +236,10 @@ public class Model {
 	 * @param path
 	 *            The path to the file where the model is in.
 	 * @return The id of the genList.
+	 * @throws IOException When the file format is wrong.
 	 */
-	public static int loadModel(final String path) {
-		return loadModel(new File(path));
-	}
-
-	/**
-	 * Loads the model into the GL lists and compiles it.
-	 * 
-	 * The model has other axis.
-	 * 
-	 * @param path
-	 *            The path to the file where the model is in.
-	 * @return The id of the genList.
-	 */
-	public static Integer loadModelSpecialCoords(final String path) {
-		return loadModelSpecialCoords(new File(path));
-
-	}
-
-	/**
-	 * Loads the model into the GL lists and compiles it.
-	 * 
-	 * The model has other axis.
-	 * 
-	 * @param file
-	 *            The file where the model is in.
-	 * @return The id of the genList.
-	 */
-	public static Integer loadModelSpecialCoords(final File file) {
-		int model = GL11.glGenLists(1);
-		GL11.glNewList(model, GL11.GL_COMPILE);
-
-		Model m = null;
-		try {
-			m = new Model(file);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return -1;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return -1;
-		}
-		GL11.glBegin(GL11.GL_TRIANGLES);
-		int i = 0;
-		boolean smoothing = true;
-		for (Face face : m.faces) {
-			if (m.smoothing.containsKey(i)) {
-				if (m.smoothing.get(i).equals("off")) {
-					smoothing = false;
-				} else {
-					smoothing = true;
-				}
-			}
-			if (m.mtls.containsKey(i)) {
-				m.mtllibs.get(m.mtls.get(i)).use();
-			}
-			GL11.glColor3f(COLOR, COLOR, COLOR);
-			Vector3f n1 = m.normals.get((int) face.getNormal().y - 1);
-			if (!smoothing) {
-				GL11.glNormal3f(n1.y, n1.x, -n1.z);
-			}
-			Vector3f t1 = m.textureCoords.get((int) face.getTexture().y - 1);
-			GL11.glTexCoord3f(t1.y, t1.x, -t1.z);
-			Vector3f v1 = m.vertices.get((int) face.getVertex().y - 1);
-			GL11.glVertex3f(v1.y, v1.x, -v1.z);
-			Vector3f n2 = m.normals.get((int) face.getNormal().x - 1);
-			if (!smoothing) {
-				GL11.glNormal3f(n2.y, n2.x, -n2.z);
-			}
-			Vector3f t2 = m.textureCoords.get((int) face.getTexture().x - 1);
-			GL11.glTexCoord3f(t2.y, t2.x, -t2.z);
-			Vector3f v2 = m.vertices.get((int) face.getVertex().x - 1);
-			GL11.glVertex3f(v2.y, v2.x, -v2.z);
-			Vector3f n3 = m.normals.get((int) face.getNormal().z - 1);
-			if (!smoothing) {
-				GL11.glNormal3f(n3.y, n3.x, -n3.z);
-			}
-			Vector3f t3 = m.textureCoords.get((int) face.getTexture().z - 1);
-			GL11.glTexCoord3f(t3.y, t3.x, -t3.z);
-			Vector3f v3 = m.vertices.get((int) face.getVertex().z - 1);
-			GL11.glVertex3f(v3.y, v3.x, -v3.z);
-			i++;
-		}
-		Material.resetMaterial();
-		GL11.glEnd();
-		GL11.glEndList();
-		return model;
-	}
-
-	/**
-	 * Loads the model into the GL lists and compiles it.
-	 * 
-	 * @param file
-	 *            The file where the model is in.
-	 * @return The id of the genList.
-	 */
-	public static int loadModel(final File file) {
-		int model = GL11.glGenLists(1);
-		GL11.glNewList(model, GL11.GL_COMPILE);
-		Model m = null;
-		try {
-			m = new Model(file);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return -1;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return -1;
-		}
-		GL11.glBegin(GL11.GL_TRIANGLES);
-		int i = 0;
-		boolean smoothing = true;
-		for (Face face : m.faces) {
-			if (m.smoothing.containsKey(i)) {
-				if (m.smoothing.get(i).equals("off")) {
-					smoothing = false;
-				} else {
-					smoothing = true;
-				}
-			}
-			if (m.mtls.containsKey(i)) {
-				m.mtllibs.get(m.mtls.get(i)).use();
-			}
-			GL11.glColor3f(COLOR, COLOR, COLOR);
-			Vector3f n1 = m.normals.get((int) face.getNormal().x - 1);
-			if (!smoothing) {
-				GL11.glNormal3f(n1.x, n1.y, n1.z);
-			}
-			Vector3f t1 = m.textureCoords.get((int) face.getTexture().x - 1);
-			GL11.glTexCoord3f(t1.x, -t1.y, t1.z);
-			Vector3f v1 = m.vertices.get((int) face.getVertex().x - 1);
-			GL11.glVertex3f(v1.y, v1.x, -v1.z);
-			Vector3f n2 = m.normals.get((int) face.getNormal().y - 1);
-			if (!smoothing) {
-				GL11.glNormal3f(n2.x, n2.y, n2.z);
-			}
-			Vector3f t2 = m.textureCoords.get((int) face.getTexture().y - 1);
-			GL11.glTexCoord3f(t2.x, -t2.y, t2.z);
-			Vector3f v2 = m.vertices.get((int) face.getVertex().y - 1);
-			GL11.glVertex3f(v2.y, v2.x, -v2.z);
-			Vector3f n3 = m.normals.get((int) face.getNormal().z - 1);
-			if (!smoothing) {
-				GL11.glNormal3f(n3.x, n3.y, n3.z);
-			}
-			Vector3f t3 = m.textureCoords.get((int) face.getTexture().z - 1);
-			GL11.glTexCoord3f(t3.x, -t3.y, t3.z);
-			Vector3f v3 = m.vertices.get((int) face.getVertex().z - 1);
-			GL11.glVertex3f(v3.y, v3.x, -v3.z);
-			i++;
-		}
-		Material.resetMaterial();
-		GL11.glEnd();
-
-		GL11.glEndList();
-		return model;
+	public static Model loadModel(final String path) throws IOException {
+		return new Model(new File(path));
 	}
 
 	/**
@@ -442,11 +356,37 @@ public class Model {
 
 	/**
 	 * Unload the given model.
-	 * 
-	 * @param model
-	 *            The ID of the model that should be removed.
 	 */
-	public static void unloadModel(final int model) {
-		GL11.glDeleteLists(model, 1);
+	public void unloadModel() {
+		GL15.glDeleteBuffers(ibo);
+		GL15.glDeleteBuffers(vbo);
+		GL15.glDeleteBuffers(nbo);
+		GL15.glDeleteBuffers(tbo);
+	}
+
+	public void draw() {
+		GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
+	    GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbo);
+	    GL11.glVertexPointer(3, GL11.GL_FLOAT, 0, 0);
+	    
+	    GL11.glEnableClientState(GL11.GL_NORMAL_ARRAY);
+	    GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, nbo);
+	    GL11.glNormalPointer(GL11.GL_FLOAT, 0, 0);
+	    
+	    GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+	    GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, tbo);
+	    GL11.glTexCoordPointer(3, GL11.GL_FLOAT, 0, 0);
+	    
+	    GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, ibo);
+	  
+	    int start = 0;
+	    int end = faces.size()*3;
+	    
+	    //The alternate glDrawElements.    
+	    GL12.glDrawRangeElements(GL11.GL_TRIANGLES, start, end, end-start,
+						GL11.GL_UNSIGNED_INT, 0);
+	    GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+	    GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
+		  
 	}
 }

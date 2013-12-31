@@ -1,5 +1,7 @@
 package net.pme;
 
+import java.io.IOException;
+
 import org.lwjgl.opengl.GL11;
 
 import net.pme.math.Vector3D;
@@ -23,9 +25,10 @@ public class TestCube1 extends RenderableObject {
 	 *            The front axis.
 	 * @param up
 	 *            The up axis.
+	 * @throws IOException 
 	 */
-	public TestCube1(long id, Vector3D position, Vector3D front, Vector3D up) {
-		super(id, position, front, up, ModelManager.getSpecialCoords(Test.class.getResource(
+	public TestCube1(long id, Vector3D position, Vector3D front, Vector3D up) throws IOException {
+		super(id, position, front, up, ModelManager.get(Test.class.getResource(
 				"/assets/cube_small.obj").getPath()));
 	}
 

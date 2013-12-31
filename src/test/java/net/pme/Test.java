@@ -13,6 +13,7 @@ import net.pme.GameDisplay;
 import net.pme.GameSettings;
 import net.pme.ModelManager;
 import net.pme.math.Vector3D;
+import net.pme.model.Model;
 import net.pme.objects.Player;
 import net.pme.objects.RenderableObject;
 
@@ -33,8 +34,9 @@ public class Test {
 	 * 
 	 * @param args
 	 *            The arguments for the program.
+	 * @throws IOException 
 	 */
-	public static void main(final String[] args) {
+	public static void main(final String[] args) throws IOException {
 		game = new Game();
 
 		// Set the game settings first
@@ -47,9 +49,9 @@ public class Test {
 		GameDisplay.create("PenguinMenaceEngine Test", 800, 600, false);
 		GameDisplay.getDisplay().setFPS(1000);
 
-		int model = ModelManager.get(Test.class.getResource(
+		Model model = ModelManager.get(Test.class.getResource(
 				"/assets/cube_small.obj").getPath());
-		int model2 = ModelManager.get(Test.class.getResource(
+		Model model2 = ModelManager.get(Test.class.getResource(
 				"/assets/cube_small.obj").getPath());
 		if (model == model2) {
 			System.out.println("Model loading is efficient!");
