@@ -1,5 +1,7 @@
 package net.pme;
 
+import org.lwjgl.opengl.GL11;
+
 import net.pme.math.Vector3D;
 import net.pme.objects.RenderableObject;
 
