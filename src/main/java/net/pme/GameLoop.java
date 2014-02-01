@@ -1,35 +1,25 @@
 package net.pme;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.IndexColorModel;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GLContext;
 
-import net.pme.model.TextureLoader;
 import net.pme.objects.HudObject;
 import net.pme.objects.MovableObject;
 import net.pme.objects.Particle;
 import net.pme.objects.Player;
 import net.pme.objects.RenderableObject;
+import net.pme.objects.Shader;
+import net.pme.objects.PostprocessingShader;
 
 import static org.lwjgl.opengl.EXTFramebufferObject.*;
-import static org.lwjgl.opengl.GL11.GL_QUADS;
-import static org.lwjgl.opengl.GL11.glBegin;
-import static org.lwjgl.opengl.GL11.glColor3f;
-import static org.lwjgl.opengl.GL11.glEnd;
-import static org.lwjgl.opengl.GL11.glTexCoord2f;
-import static org.lwjgl.opengl.GL11.glVertex3f;
 
 /**
  * This makes the gameengine pump.
@@ -64,11 +54,12 @@ final class GameLoop {
 	 *            thread-safe.)
 	 * @param hudObjects
 	 *            All hud objects.
+	 * @param game 
 	 */
 	void run(final List<MovableObject> movableObjects,
 			final List<RenderableObject> renderableObjects,
 			final LinkedList<Particle> particleObjects,
-			final List<HudObject> hudObjects, final Player player) {
+			final List<HudObject> hudObjects, final Player player, Game game) {
 		List<Particle> localParticleObjects = new ArrayList<Particle>();
 
 		double elapsedTime = 0;
@@ -80,8 +71,6 @@ final class GameLoop {
 			postprocessing = false;
 			System.err.println("FBO not supported. Postprocessing disabled.");
 		}
-		
-		postprocessing = false;
 		
 		int fbo = 0;
 		int texture = 0;
@@ -95,7 +84,12 @@ final class GameLoop {
 			initFBO(fbo, texture, depth);
 		}
 
+		GL11.glViewport(0, 0, display.getWidth(), display.getHeight());
+		Shader postprocessingShader = null;
+		Shader defaultPostprocessing = new PostprocessingShader(0);
+		
 		while (running && !display.isCloseRequested()) {
+			postprocessingShader = game.getPostprocessingShader();
 			long timer = System.nanoTime();
 
 			// Flush particle buffer to local buffer.
@@ -132,11 +126,10 @@ final class GameLoop {
 			}
 
 			display.sync();
-
-			GL11.glViewport(0, 0, display.getWidth(), display.getHeight());
 			
 			if (postprocessing) {
-				// unlink textures to avoid errors.
+				// unlink textures to avoid errors
+				GL13.glActiveTexture(GL13.GL_TEXTURE0);
 				GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 				glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo);
 			}
@@ -158,31 +151,24 @@ final class GameLoop {
 				o.render();
 			}
 
-			if (hudObjects.size() > 0) {
-				display.enterOrtho();
-
-				// Render Hud ontop of all
-				for (HudObject o : hudObjects) {
-					o.render();
-				}
-				display.leaveOrtho();
-			}
-			
-
 			if (postprocessing) {
 				glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 
 				GL11.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 				GL11.glClear(GL11.GL_COLOR_BUFFER_BIT
 						| GL11.GL_DEPTH_BUFFER_BIT);
-
-				GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
-
-				GL11.glViewport(0, 0, display.getWidth(), display.getHeight());
 				
 				GL11.glLoadIdentity();
 				
 				display.enterOrtho();
+				
+				if (postprocessingShader != null) {
+					postprocessingShader.bind();
+					postprocessingShader.setupTexture("texture", texture, 0);
+				} else {
+					defaultPostprocessing.bind();
+					defaultPostprocessing.setupTexture("texture", texture, 0);
+				}
 				
 				GL11.glBegin(GL11.GL_QUADS);
 				GL11.glTexCoord2f(0, 1);
@@ -193,12 +179,28 @@ final class GameLoop {
 				GL11.glVertex2i(display.getWidth(), display.getHeight());
 				GL11.glTexCoord2f(0, 0);
 				GL11.glVertex2i(0, display.getHeight());
-
+				GL11.glEnd();
+				
+				if (postprocessingShader != null) {
+					postprocessingShader.unbind();
+				} else {
+					defaultPostprocessing.unbind();
+				}
+				
 				GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 
 				display.leaveOrtho();
 
-				GL11.glEnd();
+			}
+			
+			if (hudObjects.size() > 0) {
+				display.enterOrtho();
+
+				// Render Hud ontop of all
+				for (HudObject o : hudObjects) {
+					o.render();
+				}
+				display.leaveOrtho();
 			}
 
 //			if (hudObjects.size() > 0) {

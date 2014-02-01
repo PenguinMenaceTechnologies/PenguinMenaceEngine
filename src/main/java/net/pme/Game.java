@@ -11,6 +11,7 @@ import net.pme.objects.MovableObject;
 import net.pme.objects.Particle;
 import net.pme.objects.Player;
 import net.pme.objects.RenderableObject;
+import net.pme.objects.Shader;
 
 /**
  * Creates the LWJGL object and invokes a game loop thread as well as a network
@@ -24,6 +25,7 @@ public final class Game {
 	private List<RenderableObject> renderableObjects = new CopyOnWriteArrayList<RenderableObject>();
 	private List<HudObject> hudObjects = new CopyOnWriteArrayList<HudObject>();
 	private LinkedList<Particle> particleObjects = new LinkedList<Particle>();
+	private Shader postprocessing = null;
 	private boolean isLoaded = false;
 	private GameLoop gameLoop = null;
 
@@ -66,6 +68,22 @@ public final class Game {
 	 */
 	public void addHud(final HudObject hudObject) {
 		hudObjects.add(hudObject);
+	}
+	
+	/**
+	 * Set a shader to be used for postprocessing.
+	 * @param shader The shader to use.
+	 */
+	public void setPostprocessingShader(Shader shader) {
+		postprocessing = shader;
+	}
+	
+	/**
+	 * Get an instance of the currently used postprocessing shader.
+	 * @return The currently used shader.
+	 */
+	public Shader getPostprocessingShader() {
+		return postprocessing;
 	}
 
 	/**
@@ -147,7 +165,7 @@ public final class Game {
 
 		// Start the gameLoop
 		gameLoop.run(movableObjects, renderableObjects, particleObjects,
-				hudObjects, player);
+				hudObjects, player, this);
 
 		gameLoop = null;
 	}

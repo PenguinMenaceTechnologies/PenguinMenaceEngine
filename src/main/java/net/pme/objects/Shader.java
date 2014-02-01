@@ -13,6 +13,7 @@ import org.lwjgl.opengl.ARBFragmentShader;
 import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.ARBVertexShader;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 
 /**
@@ -245,5 +246,13 @@ public class Shader extends GameObject {
 		return ARBShaderObjects.glGetInfoLogARB(obj, ARBShaderObjects
 				.glGetObjectParameteriARB(obj,
 						ARBShaderObjects.GL_OBJECT_INFO_LOG_LENGTH_ARB));
+	}
+
+	public void setupTexture(String name, int texture, int pos) {
+		GL13.glActiveTexture(GL13.GL_TEXTURE0 + pos);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
+		
+		int loc = GL20.glGetUniformLocation(program, name);
+		GL20.glUniform1i(loc, pos);
 	}
 }
