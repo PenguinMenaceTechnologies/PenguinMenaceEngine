@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.HashMap;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 
@@ -43,8 +44,7 @@ public final class TextureLoader {
 	 * @return The texture identifier.
 	 */
 	public static int loadFromFile(final String pathname) throws IOException {
-		if (!textures.containsKey(pathname)
-				|| openedTimes.get(textures.get(pathname)) == 0) {
+		if (!textures.containsKey(pathname)) {
 			textures.put(pathname,
 					loadTextureForceReload(ImageIO.read(new File(pathname))));
 			openedTimes.put(textures.get(pathname), 0);
@@ -71,11 +71,9 @@ public final class TextureLoader {
 				.createByteBuffer(src.length).put(src, 0x00000000, src.length)
 				.flip();
 
-		IntBuffer tex = BufferUtils.createIntBuffer(0x00000001);
+		int tex = GL11.glGenTextures();
 
-		GL11.glGenTextures(tex);
-
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, tex.get(0x00000000));
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, tex);
 
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER,
 				GL11.GL_LINEAR);
@@ -87,7 +85,7 @@ public final class TextureLoader {
 				img.getWidth(), img.getHeight(), 0x00000000, GL11.GL_RGB,
 				GL11.GL_UNSIGNED_BYTE, pixels);
 
-		return tex.get(0x00000000);
+		return tex;
 	}
 
 	/**
@@ -116,6 +114,12 @@ public final class TextureLoader {
 		}
 		openedTimes.put(textureId, openedTimes.get(textureId) - 1);
 		if (openedTimes.get(textureId) == 0) {
+			Set<String> keys = textures.keySet();
+			for (String key: keys) {
+				if (textureId == textures.get(key)) {
+					textures.remove(key);
+				}
+			}
 			GL11.glDeleteTextures(textureId);
 		}
 	}

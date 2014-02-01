@@ -104,6 +104,20 @@ public class Vector3D {
 		return new Vector3D(vect1.x + vect2.x, vect1.y + vect2.y, vect1.z
 				+ vect2.z);
 	}
+	
+	/**
+	 * Subtract 2 vectors.
+	 * 
+	 * @param vect1
+	 *            The first vector.
+	 * @param vect2
+	 *            The second vector.
+	 * @return The result.
+	 */
+	public static Vector3D subtract(final Vector3D vect1, final Vector3D vect2) {
+		return new Vector3D(vect1.x - vect2.x, vect1.y - vect2.y, vect1.z
+				- vect2.z);
+	}
 
 	/**
 	 * Normalize a given vector (v / length(v)).
@@ -174,7 +188,126 @@ public class Vector3D {
 
 		return vReuslt;
 	}
+	/**
+	 * Check equality of 2 vectors.
+	 * 
+	 * @param a
+	 *            The first vector.
+	 * @param b
+	 *            The second vector.
+	 * @return The result.
+	 */
+	public static boolean equals(final Vector3D a, final Vector3D b, final double precision) {
+		return Math.abs(a.getX() - b.getX()) < precision
+				&& Math.abs(a.getY() - b.getY()) < precision
+				&& Math.abs(a.getZ() - b.getZ()) < precision;
+	}
+	
+	/**
+	 * Multiply a vector with a scalar.
+	 * 
+	 * @param scalar
+	 *            The scalar.
+	 * @return The scaled vector.
+	 */
+	public Vector3D multiply(final double scalar) {
+		return multiply(this, scalar);
+	}
 
+	/**
+	 * Calculate the cross product of 2 vectors (vect1 x vect2).
+	 * 
+	 * @param other
+	 *            The second vector.
+	 * @return The product.
+	 */
+	public Vector3D crossProduct(final Vector3D other) {
+		return crossProduct(this, other);
+	}
+
+	/**
+	 * Calculate the dot product of 2 vectors (vect1*vect2).
+	 * 
+	 * @param other
+	 *            The second vector.
+	 * @return The product.
+	 */
+	public double dotProduct(final Vector3D other) {
+		return dotProduct(this, other);
+	}
+
+	/**
+	 * Add 2 vectors.
+	 * 
+	 * @param other
+	 *            The second vector.
+	 * @return The result.
+	 */
+	public Vector3D add(final Vector3D other) {
+		return add(this, other);
+	}
+	
+	/**
+	 * Subtract 2 vectors.
+	 * 
+	 * @param other
+	 *            The second vector.
+	 * @return The result.
+	 */
+	public Vector3D subtract(final Vector3D other) {
+		return subtract(this, other);
+	}
+
+	/**
+	 * Normalize a given vector (v / length(v)).
+	 * 
+	 * @return The normalized vector.
+	 */
+	public Vector3D normalize() {
+		return normalize(this);
+	}
+
+	/**
+	 * Calculate the length of a vector. (||v||)
+	 * 
+	 * @return The length of the vector.
+	 */
+	public double length() {
+		return length(this);
+	}
+
+	/**
+	 * Transform a vector by a matrix.
+	 * 
+	 * @param m
+	 *            The transformation matrix.
+	 * @return The transformed vector.
+	 */
+	public Vector3D transformCoords(final Matrix m) {
+		return transformCoords(this, m);
+	}
+
+	/**
+	 * Transform normals.
+	 * 
+	 * @param m
+	 *            The transformation matrix.
+	 * @return The transformed normal.
+	 */
+	public Vector3D transformNormal(final Matrix m) {
+		return transformNormal(this, m);
+	}
+	/**
+	 * Check equality of 2 vectors.
+	 * 
+	 * @param other
+	 *            The second vector.
+	 * @return The result.
+	 */
+	public boolean equals(final Vector3D other, final double precision) {
+		return equals(this, other, precision);
+	}
+	
 	/**
 	 * @return the x
 	 */

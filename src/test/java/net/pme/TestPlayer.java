@@ -1,5 +1,9 @@
 package net.pme;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.OperatingSystemMXBean;
+import java.lang.management.ThreadMXBean;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 
@@ -35,11 +39,11 @@ public class TestPlayer extends Player {
 
 	@Override
 	public void move(double elapsedTime) {
-		move(new Vector3D(xAxis * elapsedTime * 3, yAxis * elapsedTime * 3,
-				zAxis * elapsedTime * 6));
-		rotateAroundFrontAxis(elapsedTime * rotate * 50);
-		Display.setTitle(String.format("PenguinMenaceEngine Test [%.0f]",
-				1 / elapsedTime));
+		move(new Vector3D(xAxis * elapsedTime * 3.0, yAxis * elapsedTime * 3.0,
+				zAxis * elapsedTime * 6.0));
+		rotateAroundFrontAxis(elapsedTime * rotate * 50.0);
+		Display.setTitle(String.format("PenguinMenaceEngine Test [%.0f@%.2f]",
+				1.0 / elapsedTime, ((double)ManagementFactory.getThreadMXBean().getCurrentThreadCpuTime())*1E-9));
 	}
 
 	/*

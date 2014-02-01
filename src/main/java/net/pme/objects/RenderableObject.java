@@ -83,6 +83,7 @@ public class RenderableObject extends MovableObject {
 	 */
 	protected final void setGraphics(final int graphics) {
 		this.graphics = graphics;
+		needsUpdate = true;
 	}
 
 	/**
@@ -97,6 +98,7 @@ public class RenderableObject extends MovableObject {
 	 */
 	protected final void setFront(final Vector3D front) {
 		this.front = front;
+		needsUpdate = true;
 	}
 
 	/**
@@ -111,6 +113,7 @@ public class RenderableObject extends MovableObject {
 	 */
 	protected final void setUp(final Vector3D up) {
 		this.up = up;
+		needsUpdate = true;
 	}
 
 	/**

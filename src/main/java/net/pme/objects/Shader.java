@@ -3,7 +3,10 @@
  */
 package net.pme.objects;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.HashMap;
+import java.util.Scanner;
 import java.util.Set;
 
 import org.lwjgl.opengl.ARBFragmentShader;
@@ -23,8 +26,46 @@ public class Shader extends GameObject {
 	private int vsId = 0;
 	private int fsId = 0;
 	private int program = 0;
-	private HashMap<String, float[]> uniforms = new HashMap<String, float[]>();
+	private HashMap<Integer, float[]> uniforms = new HashMap<Integer, float[]>();
 
+	/**
+	 * Create a new shader from files in the given path.
+	 * 
+	 * There will be automatically laoded path.fsh and path.vsh.
+	 * 
+	 * @param id The id for the gameengine.
+	 * @param path The path to the files, without the file ending. There must be a path.vsh and a path.fsh.
+	 */
+	public Shader(long id, String path) {
+		this(id, readFromFile(path+".vsh"), readFromFile(path+".fsh"));
+	}
+	
+	/**
+	 * Load a shader from a file into a string.
+	 * @param pathname The file to open.
+	 * @return The string read from the file or null if not found.
+	 */
+	static private String readFromFile(String pathname) {
+		File file = new File(pathname);
+	    StringBuilder fileContents = new StringBuilder((int)file.length());
+		try {
+			Scanner scanner = new Scanner(file);
+			String lineSeparator = System.getProperty("line.separator");
+
+		    try {
+		        while(scanner.hasNextLine()) {        
+		            fileContents.append(scanner.nextLine() + lineSeparator);
+		        }
+		        return fileContents.toString();
+		    } finally {
+		        scanner.close();
+		    }
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	/**
 	 * Create a shader with the given id and shader strings.
 	 * 
@@ -113,7 +154,7 @@ public class Shader extends GameObject {
 
 		if (uniform != null && program > 0 && GL20.glGetUniformLocation(program, uniform) >= 0
 				&& value != null && value.length == UNIFORM4F_LENGTH) {
-			uniforms.put(uniform, value);
+			uniforms.put(GL20.glGetUniformLocation(program, uniform), value);
 			result = true;
 		}
 
@@ -129,7 +170,7 @@ public class Shader extends GameObject {
 	 *         long as the uniform was registered before)
 	 */
 	public final boolean removeUniform4f(final String uniform) {
-		return uniforms.remove(uniform) != null;
+		return uniforms.remove(GL20.glGetUniformLocation(program, uniform)) != null;
 	}
 
 	/**
@@ -141,9 +182,9 @@ public class Shader extends GameObject {
 	 * longer usefull.
 	 */
 	public final void delete() {
-		Set<String> keys = uniforms.keySet();
-		for (String k : keys) {
-			removeUniform4f(k);
+		Set<Integer> keys = uniforms.keySet();
+		for (Integer k : keys) {
+			uniforms.remove(k);
 		}
 		if (vsId != 0) {
 			ARBShaderObjects.glDeleteObjectARB(vsId);
@@ -163,10 +204,10 @@ public class Shader extends GameObject {
 	 * Update uniforms.
 	 */
 	private void updateUniforms() {
-		Set<String> keys = uniforms.keySet();
-		for (String k : keys) {
+		Set<Integer> keys = uniforms.keySet();
+		for (Integer k : keys) {
 			float[] value = uniforms.get(k);
-			GL20.glUniform4f(GL20.glGetUniformLocation(program, k), value[0],
+			GL20.glUniform4f(k, value[0],
 					value[1], value[2], value[3]);
 		}
 	}

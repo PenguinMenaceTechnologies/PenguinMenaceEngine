@@ -45,7 +45,7 @@ public class Test {
 		game.loadGame();
 
 		GameDisplay.create("PenguinMenaceEngine Test", 800, 600, false);
-		GameDisplay.getDisplay().setFPS(1000000);
+		GameDisplay.getDisplay().setFPS(1000);
 
 		int model = ModelManager.get(Test.class.getResource(
 				"/assets/cube_small.obj").getPath());
@@ -83,13 +83,13 @@ public class Test {
 				frontB, upB, ModelManager.get(Test.class.getResource(
 						"/assets/cube_small.obj").getPath())));
 
-		for (int j = 0; j < 10; j++) {
-			for (int i = 1; i < 10; i++) {
-				game.addRenderable(new RenderableObject(6, new Vector3D(
-						4 + 4 * i, 2.5 + 4 * j, -10), frontB, upB, model));
-
-			}
-		}
+//		for (int j = 0; j < 10; j++) {
+//			for (int i = 1; i < 10; i++) {
+//				game.addRenderable(new RenderableObject(6, new Vector3D(
+//						4 + 4 * i, 2.5 + 4 * j, -10), frontB, upB, model));
+//
+//			}
+//		}
 
 		try {
 			BufferedImage bi = ImageIO.read(new File(Test.class.getResource(

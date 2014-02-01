@@ -14,6 +14,8 @@ import net.pme.model.TextureLoader;
  */
 public abstract class HudObject extends GameObject {
 	private int x, y;
+	private int tex = 0;
+	private BufferedImage last = null;
 
 	/**
 	 * Create a new hud object.
@@ -44,12 +46,23 @@ public abstract class HudObject extends GameObject {
 	 */
 	public final void render() {
 		BufferedImage bi = offscreenRendering();
-		int texture = TextureLoader.loadTextureForceReload(bi);
+		
+		if (bi == null) {
+			return;
+		}
+		
+		if (bi != last || tex <= 0) {
+			last = bi;
+			if (tex > 0) {
+				TextureLoader.forceFree(tex);
+				tex = 0;
+			}
+			tex = TextureLoader.loadTextureForceReload(bi);
+		}
 
 		GL11.glBegin(GL11.GL_QUADS);
 
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, tex);
 		GL11.glTexCoord2f(0, 0);
 		GL11.glVertex2i(x - bi.getWidth() / 2, y - bi.getHeight() / 2);
 		GL11.glTexCoord2f(1, 0);
@@ -58,11 +71,14 @@ public abstract class HudObject extends GameObject {
 		GL11.glVertex2i(x + bi.getWidth() / 2, y + bi.getHeight() / 2);
 		GL11.glTexCoord2f(0, 1);
 		GL11.glVertex2i(x - bi.getWidth() / 2, y + bi.getHeight() / 2);
-		GL11.glDisable(GL11.GL_TEXTURE_2D);
 
 		GL11.glEnd();
-
-		TextureLoader.forceFree(texture);
+		
+		// Fixes a bug causing the hud to be drawn with the wrong texture.
+		if (tex > 0) {
+			TextureLoader.forceFree(tex);
+			tex = 0;
+		}
 	}
 
 	/**
