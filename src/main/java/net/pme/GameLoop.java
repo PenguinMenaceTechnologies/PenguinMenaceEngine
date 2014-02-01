@@ -7,6 +7,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
+import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GLContext;
 
 import net.pme.objects.HudObject;
@@ -60,6 +61,10 @@ final class GameLoop {
 		GameDisplay display = GameDisplay.getDisplay();
 
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		//GL11.glEnable(GL15.GL_ARRAY_BUFFER_BINDING);
+		GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
+		GL11.glEnableClientState(GL11.GL_NORMAL_ARRAY);
+		GL11.glEnableClientState(GL11.GL_COLOR_ARRAY);
 
 		if (!GLContext.getCapabilities().GL_EXT_framebuffer_object) {
 			postprocessing = false;

@@ -25,23 +25,29 @@ public class Shader extends GameObject {
 	private static final int UNIFORM4F_LENGTH = 4;
 	private static final String defaultVSH = 
 			"#version 140\n" +
-			"in vertexpos;" + 
-			"in texCoords;" + 
-			"in normals;"+
-			"out VertexPos;" + 
-			"out TexCoord;" + 
-			"out Normal;" + 
-			"function main() {" + 
-			
-			"}";
+			"in vec3 vertexpos;\n" + 
+			"in vec3 texCoords;\n" + 
+			"in vec3 normals;\n"+
+			"out vec3 VertexPos;\n" + 
+			"out vec3 TexCoord;\n" + 
+			"out vec3 Normal;\n" + 
+			"uniform mat4 MVP;\n" +
+			"uniform mat4 V;\n" +
+			"void main() {\n" + 
+			"gl_Position = MVP * vec4(vertexpos, 1.0);\n" +
+			"VertexPos = vertexpos;\n" + 
+			"TexCoord = texCoords;\n" + 
+			"Normal = normals;\n" + 
+			"}\n";
 	private static final String defaultFSH = 
 			"#version 140\n" +
-			"in VertexPos;" + 
-			"in TexCoord;" + 
-			"in Normal;" +
-			"function main() {" + 
-			
-			"}";
+			"in vec3 VertexPos;\n" + 
+			"in vec3 TexCoord;\n" + 
+			"in vec3 Normal;\n" +
+			"out vec4 color;\n" +
+			"void main() {\n" + 
+			"color = vec4(1.0,0.0,0.0,1.0);\n"+
+			"}\n";
 	
 	private static Shader defaultShader = null;
 	private int vsId = 0;
