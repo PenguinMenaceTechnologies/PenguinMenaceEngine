@@ -9,12 +9,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 
+import net.pme.objects.Shader;
 import net.pme.utils.FileFormatException;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
+import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GL15;
+import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL32;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -40,6 +43,10 @@ public class Model {
 	private int ibo;
 	private int nbo;
 	private int tbo;
+
+	private int vert;
+	private int tex;
+	private int norm;
 	
 	/**
 	 * Package visibility for model only.
@@ -53,6 +60,12 @@ public class Model {
 	Model(final File file) throws IOException {
 		loadModelFromFile(file);
 
+		int program = Shader.getDefaultShader().getProgram();
+		
+		vert = GL20.glGetAttribLocation(program, "vertexpos");
+		tex = GL20.glGetAttribLocation(program, "texCoords");
+		norm = GL20.glGetAttribLocation(program, "normals");
+		
 		vbo = GL15.glGenBuffers();
 		ibo = GL15.glGenBuffers();
 			
@@ -365,28 +378,31 @@ public class Model {
 	}
 
 	public void draw() {
-		GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
-	    GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbo);
-	    GL11.glVertexPointer(3, GL11.GL_FLOAT, 0, 0);
-	    
-	    GL11.glEnableClientState(GL11.GL_NORMAL_ARRAY);
-	    GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, nbo);
-	    GL11.glNormalPointer(GL11.GL_FLOAT, 0, 0);
-	    
-	    GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
-	    GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, tbo);
-	    GL11.glTexCoordPointer(3, GL11.GL_FLOAT, 0, 0);
-	    
+		GL20.glEnableVertexAttribArray(vert);
+		GL20.glEnableVertexAttribArray(norm);
+		GL20.glEnableVertexAttribArray(tex);
+		
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, nbo);
+		GL20.glVertexAttribPointer(norm, 3, GL11.GL_FLOAT, false, 0,0);
+		
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbo);
+		GL20.glVertexAttribPointer(vert, 3, GL11.GL_FLOAT, false, 0,0);
+		
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, tbo);
+		GL20.glVertexAttribPointer(tex, 3, GL11.GL_FLOAT, false, 0,0);
+
 	    GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, ibo);
-	  
-	    int start = 0;
+		int start = 0;
 	    int end = faces.size()*3;
 	    
 	    //The alternate glDrawElements.    
 	    GL12.glDrawRangeElements(GL11.GL_TRIANGLES, start, end, end-start,
 						GL11.GL_UNSIGNED_INT, 0);
+		GL20.glDisableVertexAttribArray(vert);
+		GL20.glDisableVertexAttribArray(norm);
+		GL20.glDisableVertexAttribArray(tex);
+	  
 	    GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 	    GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
-		  
 	}
 }

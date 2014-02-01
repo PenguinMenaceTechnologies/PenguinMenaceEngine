@@ -23,6 +23,27 @@ import org.lwjgl.opengl.GL20;
  */
 public class Shader extends GameObject {
 	private static final int UNIFORM4F_LENGTH = 4;
+	private static final String defaultVSH = 
+			"#version 140\n" +
+			"in vertexpos;" + 
+			"in texCoords;" + 
+			"in normals;"+
+			"out VertexPos;" + 
+			"out TexCoord;" + 
+			"out Normal;" + 
+			"function main() {" + 
+			
+			"}";
+	private static final String defaultFSH = 
+			"#version 140\n" +
+			"in VertexPos;" + 
+			"in TexCoord;" + 
+			"in Normal;" +
+			"function main() {" + 
+			
+			"}";
+	
+	private static Shader defaultShader = null;
 	private int vsId = 0;
 	private int fsId = 0;
 	private int program = 0;
@@ -76,8 +97,14 @@ public class Shader extends GameObject {
 	 * @param fsh
 	 *            The fragment shader. (as a string)
 	 */
-	public Shader(final long id, final String vsh, final String fsh) {
+	public Shader(final long id, String vsh, String fsh) {
 		super(id);
+		if (vsh == null) {
+			vsh = defaultVSH;
+		}
+		if (fsh == null) {
+			fsh = defaultFSH;
+		}
 		try {
 			if (vsh != null) {
 				vsId = createShader(vsh, ARBVertexShader.GL_VERTEX_SHADER_ARB);
@@ -114,6 +141,13 @@ public class Shader extends GameObject {
 			delete();
 			throw e;
 		}
+	}
+
+	/**
+	 * Create a default shader for an object without shader.
+	 */
+	public Shader() {
+		this(0, defaultVSH, defaultFSH);
 	}
 
 	/**
@@ -245,5 +279,16 @@ public class Shader extends GameObject {
 		return ARBShaderObjects.glGetInfoLogARB(obj, ARBShaderObjects
 				.glGetObjectParameteriARB(obj,
 						ARBShaderObjects.GL_OBJECT_INFO_LOG_LENGTH_ARB));
+	}
+
+	public int getProgram() {
+		return program;
+	}
+
+	public static Shader getDefaultShader() {
+		if (defaultShader == null) {
+			defaultShader = new Shader();
+		}
+		return defaultShader;
 	}
 }
