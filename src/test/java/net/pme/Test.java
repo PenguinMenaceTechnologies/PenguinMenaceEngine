@@ -106,6 +106,7 @@ public class Test {
 		Player player = new TestPlayer(new Vector3D(0, 0, 0), playerFront,
 				playerUp);
 		game.setPostprocessingShader(new PostprocessingShader(8));
+		game.setFinalShader(new PostprocessingShader2(9));
 
 		game.runGame(player);
 

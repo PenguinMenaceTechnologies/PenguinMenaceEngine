@@ -26,6 +26,7 @@ public final class Game {
 	private List<HudObject> hudObjects = new CopyOnWriteArrayList<HudObject>();
 	private LinkedList<Particle> particleObjects = new LinkedList<Particle>();
 	private Shader postprocessing = null;
+	private Shader finalShader = null;
 	private boolean isLoaded = false;
 	private GameLoop gameLoop = null;
 
@@ -79,11 +80,27 @@ public final class Game {
 	}
 	
 	/**
+	 * Set a shader to be used for final postprocessing (also applied on hud).
+	 * @param shader The shader to use.
+	 */
+	public void setFinalShader(Shader shader) {
+		finalShader = shader;
+	}
+	
+	/**
 	 * Get an instance of the currently used postprocessing shader.
 	 * @return The currently used shader.
 	 */
 	public Shader getPostprocessingShader() {
 		return postprocessing;
+	}
+	
+	/**
+	 * Get an instance of the currently used final postprocessing shader.
+	 * @return The currently used shader.
+	 */
+	public Shader getFinalShader() {
+		return finalShader;
 	}
 
 	/**
