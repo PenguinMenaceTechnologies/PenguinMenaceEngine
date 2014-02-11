@@ -60,7 +60,7 @@ public abstract class GameSettings {
 	 * 
 	 * @return A hash map containing the key mapping.
 	 */
-	final MemoryConfiguration getKeyMapping() {
+	public final MemoryConfiguration getKeyMapping() {
 		if (keyMapping != null) {
 			return keyMapping;
 		}
@@ -86,7 +86,7 @@ public abstract class GameSettings {
 	 * 
 	 * @return A hash map containing the setting strings.
 	 */
-	final MemoryConfiguration getSettings() {
+	public final MemoryConfiguration getSettings() {
 		if (settings != null) {
 			return settings;
 		}
