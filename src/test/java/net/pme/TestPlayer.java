@@ -1,8 +1,6 @@
 package net.pme;
 
 import java.lang.management.ManagementFactory;
-import java.lang.management.OperatingSystemMXBean;
-import java.lang.management.ThreadMXBean;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;

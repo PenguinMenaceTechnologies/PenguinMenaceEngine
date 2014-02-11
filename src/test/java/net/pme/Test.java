@@ -3,7 +3,6 @@ package net.pme;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.UnknownHostException;
 
 import javax.imageio.ImageIO;
 
@@ -14,7 +13,6 @@ import net.pme.GameDisplay;
 import net.pme.GameSettings;
 import net.pme.ModelManager;
 import net.pme.math.Vector3D;
-import net.pme.network.NetworkManager;
 import net.pme.objects.Player;
 import net.pme.objects.RenderableObject;
 
