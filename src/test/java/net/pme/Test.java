@@ -3,6 +3,7 @@ package net.pme;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.UnknownHostException;
 
 import javax.imageio.ImageIO;
 
@@ -13,6 +14,7 @@ import net.pme.GameDisplay;
 import net.pme.GameSettings;
 import net.pme.ModelManager;
 import net.pme.math.Vector3D;
+import net.pme.network.NetworkManager;
 import net.pme.objects.Player;
 import net.pme.objects.RenderableObject;
 
@@ -36,6 +38,13 @@ public class Test {
 	 */
 	public static void main(final String[] args) {
 		game = new Game();
+
+		// Initialize a default backloop localhost network connection.
+		try {
+			game.initializeNetwork(new TestNetworkInitializer());
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 
 		// Set the game settings first
 		GameSettings.set(new TestSettings());
@@ -72,8 +81,7 @@ public class Test {
 
 		game.addRenderable(new TestCube1(2, new Vector3D(1, 2, -10), front1,
 				up1));
-		game.addRenderable(new Ship(3, new Vector3D(1, -2, -10), front2,
-				up2));
+		game.addRenderable(new Ship(3, new Vector3D(1, -2, -10), front2, up2));
 		game.addRenderable(new TestCube3(4, new Vector3D(-2, 0, -10), front3,
 				up3));
 
@@ -83,13 +91,13 @@ public class Test {
 				frontB, upB, ModelManager.get(Test.class.getResource(
 						"/assets/cube_small.obj").getPath())));
 
-//		for (int j = 0; j < 10; j++) {
-//			for (int i = 1; i < 10; i++) {
-//				game.addRenderable(new RenderableObject(6, new Vector3D(
-//						4 + 4 * i, 2.5 + 4 * j, -10), frontB, upB, model));
-//
-//			}
-//		}
+		for (int j = 0; j < 10; j++) {
+			for (int i = 1; i < 10; i++) {
+				game.addRenderable(new RenderableObject(6, new Vector3D(
+						4 + 4 * i, 2.5 + 4 * j, -10), frontB, upB, model));
+
+			}
+		}
 
 		try {
 			BufferedImage bi = ImageIO.read(new File(Test.class.getResource(
@@ -109,6 +117,8 @@ public class Test {
 		game.setFinalShader(new PostprocessingShader2(9));
 
 		game.runGame(player);
+
+		game.deinitializeNetwork();
 
 		game.unload();
 

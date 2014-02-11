@@ -1,11 +1,15 @@
 package net.pme;
 
+import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.JOptionPane;
 
+import net.pme.network.NetworkInitializer;
+import net.pme.network.NetworkManager;
 import net.pme.objects.HudObject;
 import net.pme.objects.MovableObject;
 import net.pme.objects.Particle;
@@ -29,6 +33,7 @@ public final class Game {
 	private Shader finalShader = null;
 	private boolean isLoaded = false;
 	private GameLoop gameLoop = null;
+	private NetworkManager networkManager = null;
 
 	/**
 	 * Add a movable object to the movable objects.
@@ -226,6 +231,35 @@ public final class Game {
 		GameSettings s = GameSettings.get();
 		if (s != null) {
 			s.saveAll();
+		}
+	}
+
+	/**
+	 * Initialize a network with the given parameters.
+	 * @param NetworkInitializer The initializer.
+	 * @throws IOException Connecting failed.
+	 * @throws UnknownHostException Host is not known.
+	 */
+	public void initializeNetwork(NetworkInitializer networkInitializer) throws UnknownHostException, IOException {
+		if (networkManager == null) {
+			networkManager = new NetworkManager(networkInitializer);
+		}
+	}
+	
+	/**
+	 * Get the instance of the currently running network manager.
+	 * @return The active network manager.
+	 */
+	public NetworkManager getNetworkManager() {
+		return networkManager;
+	}
+	
+	/**
+	 * Deinitialize the network.
+	 */
+	public void deinitializeNetwork() {
+		if (networkManager != null) {
+			networkManager.deinitialize();
 		}
 	}
 }

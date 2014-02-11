@@ -1,5 +1,7 @@
 package net.pme.objects;
 
+import net.pme.network.Packet;
+
 /**
  * All classes that are capable of retrieving packets via network.
  * 

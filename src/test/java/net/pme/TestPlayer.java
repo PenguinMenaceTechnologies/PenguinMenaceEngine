@@ -8,7 +8,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 
 import net.pme.math.Vector3D;
-import net.pme.objects.Packet;
+import net.pme.network.Packet;
 import net.pme.objects.Player;
 
 /**
