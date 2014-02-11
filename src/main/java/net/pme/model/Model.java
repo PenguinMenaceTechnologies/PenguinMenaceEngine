@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 
+import net.pme.GameDisplay;
 import net.pme.utils.FileFormatException;
 
 import org.lwjgl.opengl.GL11;
@@ -200,6 +201,7 @@ public class Model {
 	 * @return The id of the genList.
 	 */
 	public static Integer loadModelSpecialCoords(final File file) {
+		if(GameDisplay.getDisplay() == null) throw new RuntimeException("You must create a display before model loading");
 		int model = GL11.glGenLists(1);
 		GL11.glNewList(model, GL11.GL_COMPILE);
 
@@ -268,6 +270,7 @@ public class Model {
 	 * @return The id of the genList.
 	 */
 	public static int loadModel(final File file) {
+		if(GameDisplay.getDisplay() == null) throw new RuntimeException("You must create a display before model loading");
 		int model = GL11.glGenLists(1);
 		GL11.glNewList(model, GL11.GL_COMPILE);
 		Model m = null;
