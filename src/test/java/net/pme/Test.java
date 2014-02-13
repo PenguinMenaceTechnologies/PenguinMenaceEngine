@@ -36,6 +36,7 @@ public class Test {
 	 * @throws UnknownHostException 
 	 */
 	public static void main(final String[] args) throws UnknownHostException, IOException {
+		// Yay, our game!
 		game = new Game();
 		
 		// Initialize the required modules.

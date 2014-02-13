@@ -8,6 +8,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.JOptionPane;
 
+import org.lwjgl.opengl.Display;
+
 import net.pme.network.NetworkInitializer;
 import net.pme.network.NetworkManager;
 import net.pme.objects.HudObject;
@@ -295,11 +297,11 @@ public final class Game {
 	 *            fullscreen will be set automatically)
 	 * @param fullscreen
 	 *            Weather to start in fullscreen or not.
-	 * @return
+	 * @return A game display.
 	 */
 	public GameDisplay initializeDisplay(String title, int width, int height,
 			boolean fullscreen, int fpscap) {
-		if (gameDisplay != null) {
+		if (gameDisplay != null || Display.isCreated()) {
 			throw new IllegalStateException(
 					"You can only initialize one display module at a time.");
 		}
