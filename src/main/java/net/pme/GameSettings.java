@@ -15,32 +15,12 @@ import net.pme.config.MemoryConfiguration;
  * @version 1.0
  */
 public abstract class GameSettings {
-	private static GameSettings instance;
 	private FileConfiguration keyMapping = null;
 	private FileConfiguration settings = null;
 
 	static {
 		File f = new File("config");
 		f.mkdirs();
-	}
-
-	/**
-	 * Get the game settings.
-	 * 
-	 * @return The current settings.
-	 */
-	public static final GameSettings get() {
-		return instance;
-	}
-
-	/**
-	 * Set the game Settings.
-	 * 
-	 * @param settings
-	 *            The new game settings.
-	 */
-	public static final void set(final GameSettings settings) {
-		instance = settings;
 	}
 
 	/**

@@ -41,7 +41,7 @@ public final class GameInput {
 	/**
 	 * This loads the key bindings, should be called upon loading.
 	 */
-	static void load() {
-		map = GameSettings.get().getKeyMapping();
+	static void load(GameSettings settings) {
+		map = settings.getKeyMapping();
 	}
 }

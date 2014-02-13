@@ -9,9 +9,12 @@ import java.util.HashMap;
 import java.util.Scanner;
 import java.util.Set;
 
+import net.pme.Game;
+
 import org.lwjgl.opengl.ARBFragmentShader;
 import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.ARBVertexShader;
+import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
@@ -79,6 +82,9 @@ public class Shader extends GameObject {
 	 */
 	public Shader(final long id, final String vsh, final String fsh) {
 		super(id);
+		if(!Display.isCreated()) {
+			throw new IllegalStateException("You need to initialize the display module first.");
+		}
 		try {
 			if (vsh != null) {
 				vsId = createShader(vsh, ARBVertexShader.GL_VERTEX_SHADER_ARB);

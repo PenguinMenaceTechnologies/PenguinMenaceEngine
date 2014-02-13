@@ -11,15 +11,14 @@ import net.pme.model.Model;
  * @version 1.0
  */
 public final class ModelManager {
-	private static final HashMap<String, Integer> MAP = new HashMap<String, Integer>();
+	private final HashMap<String, Integer> MAP = new HashMap<String, Integer>();
 
 	/**
 	 * Utility classes should have no public constructor.
 	 */
-	private ModelManager() {
-		
+	ModelManager() {
 	}
-	
+
 	/**
 	 * Load a model or just get the link if already loaded.
 	 * 
@@ -29,7 +28,7 @@ public final class ModelManager {
 	 *            The model name.
 	 * @return The id to the model. (-1 if the required model cannot be found)
 	 */
-	public static int get(final String key) {
+	public int get(final String key) {
 		if (!MAP.containsKey(key)) {
 			MAP.put(key, Model.loadModel(key));
 		}
@@ -46,7 +45,7 @@ public final class ModelManager {
 	 *            The model name.
 	 * @return The id to the model. (-1 if the required model cannot be found)
 	 */
-	public static int getSpecialCoords(final String key) {
+	public int getSpecialCoords(final String key) {
 		if (!MAP.containsKey(key)) {
 			MAP.put(key, Model.loadModelSpecialCoords(key));
 		}
@@ -59,7 +58,7 @@ public final class ModelManager {
 	 * 
 	 * (Free Memory)
 	 */
-	public static void clear() {
+	public void clear() {
 		for (String s : MAP.keySet()) {
 			unload(s);
 		}
@@ -67,9 +66,11 @@ public final class ModelManager {
 
 	/**
 	 * Unload a given model.
-	 * @param key The key for the model to unload.
+	 * 
+	 * @param key
+	 *            The key for the model to unload.
 	 */
-	private static void unload(final String key) {
+	private void unload(final String key) {
 		if (MAP.containsKey(key)) {
 			Model.unloadModel(MAP.get(key));
 			MAP.remove(key);

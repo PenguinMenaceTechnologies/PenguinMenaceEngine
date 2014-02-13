@@ -18,7 +18,6 @@ import net.pme.objects.Player;
 import net.pme.objects.RenderableObject;
 import net.pme.objects.Shader;
 import net.pme.objects.PostprocessingShader;
-
 import static org.lwjgl.opengl.EXTFramebufferObject.*;
 
 /**
@@ -30,12 +29,65 @@ import static org.lwjgl.opengl.EXTFramebufferObject.*;
 final class GameLoop {
 	private static final double NANO_TO_SEC = 1E-9;
 	private boolean running = true;
+
 	private boolean postprocessing = true;
+
+	private int fbo = 0;
+	private int texture = 0;
+	private int depth = 0;
+	private int fbo2 = 0;
+	private int texture2 = 0;
+	private int depth2 = 0;
+	private Shader defaultPostprocessing = null;
+	private Shader defaultFinal = null;
+	private boolean rendering = false;;
 
 	/**
 	 * Do nothing, only visible inside engine.
 	 */
 	GameLoop() {
+	}
+
+	public void initializeRendering(Game game) {
+		GameDisplay display = game.getDisplay();
+		if (display == null) {
+			rendering = false;
+			throw new IllegalStateException(
+					"You must initialize the display module before enabling rendering");
+		}
+		if (!GLContext.getCapabilities().GL_EXT_framebuffer_object) {
+			postprocessing = false;
+			System.err.println("FBO not supported. Postprocessing disabled.");
+		}
+
+		if (postprocessing) {
+			GL11.glEnable(GL11.GL_TEXTURE_2D);
+			fbo = glGenFramebuffersEXT();
+			texture = GL11.glGenTextures();
+			depth = GL11.glGenTextures();
+
+			fbo2 = glGenFramebuffersEXT();
+			texture2 = GL11.glGenTextures();
+			depth2 = GL11.glGenTextures();
+
+			initFBO(game, fbo, texture, depth);
+			initFBO(game, fbo2, texture2, depth2);
+		}
+
+		GL11.glViewport(0, 0, display.getWidth(), display.getHeight());
+
+		defaultPostprocessing = new PostprocessingShader(0);
+		defaultFinal = new PostprocessingShader(0);
+		rendering = true;
+	}
+
+	public void deinitializeRendering() {
+		if (rendering) {
+			defaultFinal.delete();
+			defaultPostprocessing.delete();
+			// TODO remove all rendering buffers
+			rendering = false;
+		}
 	}
 
 	/**
@@ -54,7 +106,7 @@ final class GameLoop {
 	 *            thread-safe.)
 	 * @param hudObjects
 	 *            All hud objects.
-	 * @param game 
+	 * @param game
 	 */
 	void run(final List<MovableObject> movableObjects,
 			final List<RenderableObject> renderableObjects,
@@ -63,45 +115,17 @@ final class GameLoop {
 		List<Particle> localParticleObjects = new ArrayList<Particle>();
 
 		double elapsedTime = 0;
-		GameDisplay display = GameDisplay.getDisplay();
 
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		GameDisplay display = game.getDisplay();
 
-		if (!GLContext.getCapabilities().GL_EXT_framebuffer_object) {
-			postprocessing = false;
-			System.err.println("FBO not supported. Postprocessing disabled.");
+		if (display != null) {
+			initializeRendering(game);
 		}
 
-		int fbo = 0;
-		int texture = 0;
-		int depth = 0;
-		
-		int fbo2 = 0;
-		int texture2 = 0;
-		int depth2 = 0;
-
-		if (postprocessing) {
-			fbo = glGenFramebuffersEXT();
-			texture = GL11.glGenTextures();
-			depth = GL11.glGenTextures();
-			
-			fbo2 = glGenFramebuffersEXT();
-			texture2 = GL11.glGenTextures();
-			depth2 = GL11.glGenTextures();
-
-			initFBO(fbo, texture, depth);
-			initFBO(fbo2, texture2, depth2);
-		}
-
-		GL11.glViewport(0, 0, display.getWidth(), display.getHeight());
 		Shader postprocessingShader = null;
 		Shader finalShader = null;
-		Shader defaultPostprocessing = new PostprocessingShader(0);
-		Shader defaultFinal = new PostprocessingShader(0);
-		
-		while (running && !display.isCloseRequested()) {
-			postprocessingShader = game.getPostprocessingShader();
-			finalShader = game.getFinalShader();
+
+		while (running && (display == null || !display.isCloseRequested())) {
 			long timer = System.nanoTime();
 
 			// Flush particle buffer to local buffer.
@@ -122,148 +146,167 @@ final class GameLoop {
 			}
 
 			if (player != null) {
-				if (Keyboard.next()) {
+				if (rendering && Keyboard.next()) {
 					player.keyboardInputHandler(Keyboard.getEventKey(),
 							Keyboard.getEventKeyState());
 				}
-				if (Mouse.next()) {
+				if (rendering && Mouse.next()) {
 					player.mouseInputHandler(Mouse.getEventButton(),
 							Mouse.getEventButtonState());
 				}
-				if (Mouse.isGrabbed()) {
+				if (rendering && Mouse.isGrabbed()) {
 					player.mouseMoveHandler(Mouse.getDX(), Mouse.getDY());
 				}
 
 				player.move(elapsedTime);
 			}
 
-			display.sync();
-			
-			if (postprocessing) {
-				// unlink textures to avoid errors
-				GL13.glActiveTexture(GL13.GL_TEXTURE0);
-				GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
-				glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo);
-			}
+			if (rendering) {
+				display = game.getDisplay();
+				postprocessingShader = game.getPostprocessingShader();
+				finalShader = game.getFinalShader();
+				display.sync();
 
-			GL11.glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-			
-			GL11.glLoadIdentity();
+				if (postprocessing) {
+					// unlink textures to avoid errors
+					GL13.glActiveTexture(GL13.GL_TEXTURE0);
+					GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+					glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo);
+				}
 
-			if (player != null) {
-				player.applyCamera();
-			}
-
-			// Render all objects
-			for (RenderableObject o : renderableObjects) {
-				o.render();
-			}
-			for (Particle o : particleObjects) {
-				o.render();
-			}
-
-			if (postprocessing) {
-				glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo2);
-
-				GL11.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+				GL11.glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 				GL11.glClear(GL11.GL_COLOR_BUFFER_BIT
 						| GL11.GL_DEPTH_BUFFER_BIT);
-				
+
 				GL11.glLoadIdentity();
-				
-				display.enterOrtho();
-				
-				if (postprocessingShader != null) {
-					postprocessingShader.bind();
-					postprocessingShader.setupTexture("texture", texture, 0);
-				} else {
-					defaultPostprocessing.bind();
-					defaultPostprocessing.setupTexture("texture", texture, 0);
+
+				if (player != null) {
+					player.applyCamera();
 				}
-				
-				GL11.glBegin(GL11.GL_QUADS);
-				GL11.glTexCoord2f(0, 1);
-				GL11.glVertex2i(0, 0);
-				GL11.glTexCoord2f(1, 1);
-				GL11.glVertex2i(display.getWidth(), 0);
-				GL11.glTexCoord2f(1, 0);
-				GL11.glVertex2i(display.getWidth(), display.getHeight());
-				GL11.glTexCoord2f(0, 0);
-				GL11.glVertex2i(0, display.getHeight());
-				GL11.glEnd();
-				
-				if (postprocessingShader != null) {
-					postprocessingShader.unbind();
-				} else {
-					defaultPostprocessing.unbind();
-				}
-				
-				GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 
-				display.leaveOrtho();
-
-			}
-			
-			if (hudObjects.size() > 0) {
-				display.enterOrtho();
-
-				// Render Hud ontop of all
-				for (HudObject o : hudObjects) {
+				// Render all objects
+				for (RenderableObject o : renderableObjects) {
 					o.render();
 				}
-				display.leaveOrtho();
-			}
-
-			if (postprocessing) {
-				glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
-
-				GL11.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-				GL11.glClear(GL11.GL_COLOR_BUFFER_BIT
-						| GL11.GL_DEPTH_BUFFER_BIT);
-				
-				GL11.glLoadIdentity();
-				
-				display.enterOrtho();
-				
-				if (finalShader != null) {
-					finalShader.bind();
-					finalShader.setupTexture("texture", texture2, 0);
-				} else {
-					defaultFinal.bind();
-					defaultFinal.setupTexture("texture", texture2, 0);
+				for (Particle o : particleObjects) {
+					o.render();
 				}
-				
-				GL11.glBegin(GL11.GL_QUADS);
-				GL11.glTexCoord2f(0, 1);
-				GL11.glVertex2i(0, 0);
-				GL11.glTexCoord2f(1, 1);
-				GL11.glVertex2i(display.getWidth(), 0);
-				GL11.glTexCoord2f(1, 0);
-				GL11.glVertex2i(display.getWidth(), display.getHeight());
-				GL11.glTexCoord2f(0, 0);
-				GL11.glVertex2i(0, display.getHeight());
-				GL11.glEnd();
-				
-				if (finalShader != null) {
-					finalShader.unbind();
-				} else {
-					defaultFinal.unbind();
-				}
-				
-				GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 
-				display.leaveOrtho();
+				if (postprocessing) {
+					glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo2);
+
+					GL11.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+					GL11.glClear(GL11.GL_COLOR_BUFFER_BIT
+							| GL11.GL_DEPTH_BUFFER_BIT);
+
+					GL11.glLoadIdentity();
+
+					display.enterOrtho();
+
+					if (postprocessingShader != null) {
+						postprocessingShader.bind();
+						postprocessingShader
+								.setupTexture("texture", texture, 0);
+					} else {
+						defaultPostprocessing.bind();
+						defaultPostprocessing.setupTexture("texture", texture,
+								0);
+					}
+
+					GL11.glBegin(GL11.GL_QUADS);
+					GL11.glTexCoord2f(0, 1);
+					GL11.glVertex2i(0, 0);
+					GL11.glTexCoord2f(1, 1);
+					GL11.glVertex2i(display.getWidth(), 0);
+					GL11.glTexCoord2f(1, 0);
+					GL11.glVertex2i(display.getWidth(), display.getHeight());
+					GL11.glTexCoord2f(0, 0);
+					GL11.glVertex2i(0, display.getHeight());
+					GL11.glEnd();
+
+					if (postprocessingShader != null) {
+						postprocessingShader.unbind();
+					} else {
+						defaultPostprocessing.unbind();
+					}
+
+					GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+
+					display.leaveOrtho();
+
+				}
+
+				if (hudObjects.size() > 0) {
+					display.enterOrtho();
+
+					// Render Hud ontop of all
+					for (HudObject o : hudObjects) {
+						o.render();
+					}
+					display.leaveOrtho();
+				}
+
+				if (postprocessing) {
+					glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+
+					GL11.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+					GL11.glClear(GL11.GL_COLOR_BUFFER_BIT
+							| GL11.GL_DEPTH_BUFFER_BIT);
+
+					GL11.glLoadIdentity();
+
+					display.enterOrtho();
+
+					if (finalShader != null) {
+						finalShader.bind();
+						finalShader.setupTexture("texture", texture2, 0);
+					} else {
+						defaultFinal.bind();
+						defaultFinal.setupTexture("texture", texture2, 0);
+					}
+
+					GL11.glBegin(GL11.GL_QUADS);
+					GL11.glTexCoord2f(0, 1);
+					GL11.glVertex2i(0, 0);
+					GL11.glTexCoord2f(1, 1);
+					GL11.glVertex2i(display.getWidth(), 0);
+					GL11.glTexCoord2f(1, 0);
+					GL11.glVertex2i(display.getWidth(), display.getHeight());
+					GL11.glTexCoord2f(0, 0);
+					GL11.glVertex2i(0, display.getHeight());
+					GL11.glEnd();
+
+					if (finalShader != null) {
+						finalShader.unbind();
+					} else {
+						defaultFinal.unbind();
+					}
+
+					GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+
+					display.leaveOrtho();
+				}
+
+				GL11.glFlush();
+				display.update();
+			} else {
+				// Sleep a bit when we are not rendering. To yield for other threads.
+				try {
+					Thread.sleep(1);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
-			
-			GL11.glFlush();
-			display.update();
 
 			timer = System.nanoTime() - timer;
 			elapsedTime = timer * NANO_TO_SEC;
 		}
+
+		if (rendering) {
+			deinitializeRendering();
+		}
 	}
-	
+
 	/**
 	 * Initialize the FBO.
 	 * 
@@ -274,9 +317,9 @@ final class GameLoop {
 	 * @param depth
 	 *            The depth buffer.
 	 */
-	private void initFBO(int fbo, int texture, int depth) {
-		int width = GameDisplay.getDisplay().getWidth();
-		int height = GameDisplay.getDisplay().getHeight();
+	private void initFBO(Game game, int fbo, int texture, int depth) {
+		int width = game.getDisplay().getWidth();
+		int height = game.getDisplay().getHeight();
 
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo);
 
@@ -293,7 +336,7 @@ final class GameLoop {
 				GL14.GL_DEPTH_COMPONENT24, width, height);
 		glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,
 				GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, depth);
-		
+
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 	}
 

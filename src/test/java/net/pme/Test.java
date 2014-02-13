@@ -3,14 +3,13 @@ package net.pme;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.UnknownHostException;
 
 import javax.imageio.ImageIO;
 
 import org.lwjgl.input.Mouse;
 
 import net.pme.Game;
-import net.pme.GameDisplay;
-import net.pme.GameSettings;
 import net.pme.ModelManager;
 import net.pme.math.Vector3D;
 import net.pme.objects.Player;
@@ -33,30 +32,27 @@ public class Test {
 	 * 
 	 * @param args
 	 *            The arguments for the program.
+	 * @throws IOException 
+	 * @throws UnknownHostException 
 	 */
-	public static void main(final String[] args) {
+	public static void main(final String[] args) throws UnknownHostException, IOException {
 		game = new Game();
+		
+		// Initialize the required modules.
+		// Core is independant.
+		game.initializeCore(new TestSettings());
+		// Display depends on core.
+		game.initializeDisplay("PenguinMenaceEngine Test", 800, 600, false, 10000);
+		// ModelManager depends on display.
+		game.initializeModelManager();
+		// Network Manager is independant.
+		game.initializeNetwork(new TestNetworkInitializer());
+		
+		ModelManager modelManager = game.getModelManager();
 
-		// Initialize a default backloop localhost network connection.
-		try {
-			game.initializeNetwork(new TestNetworkInitializer());
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-
-		// Set the game settings first
-		GameSettings.set(new TestSettings());
-		GameSettings.get().getKeyMapping();
-		GameSettings.get().getSettings();
-
-		game.loadGame();
-
-		GameDisplay.create("PenguinMenaceEngine Test", 800, 600, false);
-		GameDisplay.getDisplay().setFPS(1000);
-
-		int model = ModelManager.get(Test.class.getResource(
+		int model = modelManager.get(Test.class.getResource(
 				"/assets/cube_small.obj").getPath());
-		int model2 = ModelManager.get(Test.class.getResource(
+		int model2 = modelManager.get(Test.class.getResource(
 				"/assets/cube_small.obj").getPath());
 		if (model == model2) {
 			System.out.println("Model loading is efficient!");
@@ -78,7 +74,7 @@ public class Test {
 		Vector3D up3 = new Vector3D(1, 1, 0);
 
 		game.addRenderable(new TestCube1(2, new Vector3D(1, 2, -10), front1,
-				up1));
+				up1, modelManager));
 		game.addRenderable(new Ship(3, new Vector3D(1, -2, -10), front2, up2));
 		game.addRenderable(new TestCube3(4, new Vector3D(-2, 0, -10), front3,
 				up3));
@@ -86,7 +82,7 @@ public class Test {
 		game.addRenderable(new RenderableObject(5, new Vector3D(-4, 2.5, -10),
 				frontA, upA, model));
 		game.addRenderable(new RenderableObject(6, new Vector3D(4, 2.5, -10),
-				frontB, upB, ModelManager.get(Test.class.getResource(
+				frontB, upB, modelManager.get(Test.class.getResource(
 						"/assets/cube_small.obj").getPath())));
 
 		for (int j = 0; j < 10; j++) {
@@ -114,12 +110,13 @@ public class Test {
 		game.setPostprocessingShader(new PostprocessingShader(8));
 		game.setFinalShader(new PostprocessingShader2(9));
 
+		// Run our game.
 		game.runGame(player);
 
+		// Deinitialize all modules.
 		game.deinitializeNetwork();
-
+		game.deinitializeModelManager();
+		game.deinitializeDisplay();
 		game.unload();
-
-		GameDisplay.getDisplay().deinit();
 	}
 }

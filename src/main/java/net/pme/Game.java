@@ -34,6 +34,9 @@ public final class Game {
 	private boolean isLoaded = false;
 	private GameLoop gameLoop = null;
 	private NetworkManager networkManager = null;
+	private GameDisplay gameDisplay = null;
+	private ModelManager modelManager;
+	private GameSettings settings;
 
 	/**
 	 * Add a movable object to the movable objects.
@@ -75,33 +78,39 @@ public final class Game {
 	public void addHud(final HudObject hudObject) {
 		hudObjects.add(hudObject);
 	}
-	
+
 	/**
 	 * Set a shader to be used for postprocessing.
-	 * @param shader The shader to use.
+	 * 
+	 * @param shader
+	 *            The shader to use.
 	 */
 	public void setPostprocessingShader(Shader shader) {
 		postprocessing = shader;
 	}
-	
+
 	/**
 	 * Set a shader to be used for final postprocessing (also applied on hud).
-	 * @param shader The shader to use.
+	 * 
+	 * @param shader
+	 *            The shader to use.
 	 */
 	public void setFinalShader(Shader shader) {
 		finalShader = shader;
 	}
-	
+
 	/**
 	 * Get an instance of the currently used postprocessing shader.
+	 * 
 	 * @return The currently used shader.
 	 */
 	public Shader getPostprocessingShader() {
 		return postprocessing;
 	}
-	
+
 	/**
 	 * Get an instance of the currently used final postprocessing shader.
+	 * 
 	 * @return The currently used shader.
 	 */
 	public Shader getFinalShader() {
@@ -176,7 +185,8 @@ public final class Game {
 	 */
 	public void runGame(final Player player) {
 		if (!isLoaded) {
-			loadGame();
+			throw new IllegalStateException(
+					"You have to initialize the core module to run a game!");
 		}
 		if (gameLoop != null) {
 			throw new IllegalStateException(
@@ -205,7 +215,8 @@ public final class Game {
 	/**
 	 * Loads the game.
 	 */
-	public void loadGame() {
+	public void initializeCore(GameSettings settings) {
+		setSettings(settings);
 		try {
 			NativeLoader.loadLibraries();
 		} catch (Exception e) {
@@ -216,9 +227,12 @@ public final class Game {
 			System.exit(1);
 		}
 
-		GameInput.load();
-
-		// TODO invoke network listener thread.
+		// Cause the settings to really generate the settings and the mapping.
+		settings.getSettings();
+		settings.getKeyMapping();
+		
+		// Initialize the gameinput helper interface.
+		GameInput.load(getSettings());
 
 		isLoaded = true;
 	}
@@ -228,32 +242,37 @@ public final class Game {
 	 */
 	public void unload() {
 		NativeLoader.unloadLibraries();
-		GameSettings s = GameSettings.get();
-		if (s != null) {
-			s.saveAll();
+		if (settings != null) {
+			settings.saveAll();
 		}
 	}
 
 	/**
 	 * Initialize a network with the given parameters.
-	 * @param NetworkInitializer The initializer.
-	 * @throws IOException Connecting failed.
-	 * @throws UnknownHostException Host is not known.
+	 * 
+	 * @param NetworkInitializer
+	 *            The initializer.
+	 * @throws IOException
+	 *             Connecting failed.
+	 * @throws UnknownHostException
+	 *             Host is not known.
 	 */
-	public void initializeNetwork(NetworkInitializer networkInitializer) throws UnknownHostException, IOException {
+	public void initializeNetwork(NetworkInitializer networkInitializer)
+			throws UnknownHostException, IOException {
 		if (networkManager == null) {
 			networkManager = new NetworkManager(networkInitializer);
 		}
 	}
-	
+
 	/**
 	 * Get the instance of the currently running network manager.
+	 * 
 	 * @return The active network manager.
 	 */
 	public NetworkManager getNetworkManager() {
 		return networkManager;
 	}
-	
+
 	/**
 	 * Deinitialize the network.
 	 */
@@ -261,5 +280,105 @@ public final class Game {
 		if (networkManager != null) {
 			networkManager.deinitialize();
 		}
+	}
+
+	/**
+	 * Initialize the display module.
+	 * 
+	 * @param title
+	 *            The title of the window to create.
+	 * @param width
+	 *            The width of the window. (This is the default for window mode
+	 *            fullscreen will be set automatically)
+	 * @param height
+	 *            The height of the window. (This is the default for window mode
+	 *            fullscreen will be set automatically)
+	 * @param fullscreen
+	 *            Weather to start in fullscreen or not.
+	 * @return
+	 */
+	public GameDisplay initializeDisplay(String title, int width, int height,
+			boolean fullscreen, int fpscap) {
+		if (gameDisplay != null) {
+			throw new IllegalStateException(
+					"You can only initialize one display module at a time.");
+		}
+		if (!isLoaded) {
+			throw new IllegalStateException(
+					"Display module is dependant on the core module. Initialize it before initializing this.");
+		}
+		gameDisplay = GameDisplay.create(title, width, height, fullscreen);
+		gameDisplay.setFPS(fpscap);
+		return gameDisplay;
+	}
+
+	/**
+	 * Deinitialize the display module.
+	 */
+	public void deinitializeDisplay() {
+		if (gameDisplay != null) {
+			gameDisplay.deinit();
+			gameDisplay = null;
+		}
+	}
+
+	/**
+	 * Get the game display.
+	 * 
+	 * @return The current display or null if the display module is not
+	 *         initialized.
+	 */
+	public GameDisplay getDisplay() {
+		return gameDisplay;
+	}
+	
+	/**
+	 * Initialize the model manager.
+	 * @return An initialized ModelManager.
+	 */
+	public ModelManager initializeModelManager() {
+		if (modelManager != null) {
+			throw new IllegalStateException(
+					"You can only initialize one modelmanager module at a time.");
+		}
+		if (gameDisplay == null) {
+			throw new IllegalStateException("ModelManager is dependant on the display module. Initialize it before initializing this.");
+		}
+		modelManager = new ModelManager();
+		return modelManager;
+	}
+	
+	/**
+	 * Get the model manager.
+	 * @return
+	 */
+	public ModelManager getModelManager() {
+		return modelManager;
+	}
+	
+	/**
+	 * Deinitialize the mode manager.
+	 */
+	public void deinitializeModelManager() {
+		if (modelManager != null) {
+			modelManager.clear();
+			modelManager = null;
+		}
+	}
+	
+	/**
+	 * Get the settings.
+	 * @return The current settings.
+	 */
+	public GameSettings getSettings() {
+		return settings;
+	}
+	
+	/**
+	 * Set the game settings.
+	 * @param settings The settings to set as current.
+	 */
+	public void setSettings(GameSettings settings) {
+		this.settings = settings;
 	}
 }

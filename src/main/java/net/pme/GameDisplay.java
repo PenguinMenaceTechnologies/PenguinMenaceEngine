@@ -28,6 +28,13 @@ public final class GameDisplay {
 	private static GameDisplay instance = null;
 
 	/**
+	 * Private constructor for singleton.
+	 */
+	private GameDisplay() {
+		
+	}
+	
+	/**
 	 * Creates a display of the given size.
 	 * 
 	 * @param title
@@ -210,17 +217,11 @@ public final class GameDisplay {
 	 */
 	public static GameDisplay create(final String title, final int width, final int height,
 			final boolean fullscreen) {
+		if (instance != null) {
+			throw new IllegalStateException("You cannot create two displays.");
+		}
 		instance = new GameDisplay();
 		instance.init(title, width, height, fullscreen);
-		return instance;
-	}
-
-	/**
-	 * Get the instance of the display.
-	 * 
-	 * @return The instance of the display.
-	 */
-	public static GameDisplay getDisplay() {
 		return instance;
 	}
 

@@ -22,8 +22,8 @@ public class TestCube1 extends RenderableObject {
 	 * @param up
 	 *            The up axis.
 	 */
-	public TestCube1(long id, Vector3D position, Vector3D front, Vector3D up) {
-		super(id, position, front, up, ModelManager.getSpecialCoords(Test.class.getResource(
+	public TestCube1(long id, Vector3D position, Vector3D front, Vector3D up, ModelManager modelManager) {
+		super(id, position, front, up, modelManager.getSpecialCoords(Test.class.getResource(
 				"/assets/cube_small.obj").getPath()));
 	}
 
