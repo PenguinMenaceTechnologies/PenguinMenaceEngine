@@ -60,8 +60,10 @@ public final class ModelManager {
 	 */
 	public void clear() {
 		for (String s : MAP.keySet()) {
-			unload(s);
+			//unload(s);
+			Model.unloadModel(MAP.get(s));
 		}
+		MAP.clear();
 	}
 
 	/**
