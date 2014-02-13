@@ -9,8 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 
-import net.pme.Game;
-import net.pme.GameDisplay;
 import net.pme.utils.FileFormatException;
 
 import org.lwjgl.opengl.GL11;

@@ -9,8 +9,6 @@ import java.util.HashMap;
 import java.util.Scanner;
 import java.util.Set;
 
-import net.pme.Game;
-
 import org.lwjgl.opengl.ARBFragmentShader;
 import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.ARBVertexShader;
