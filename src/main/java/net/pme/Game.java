@@ -311,6 +311,9 @@ public final class Game {
 		}
 		gameDisplay = GameDisplay.create(title, width, height, fullscreen);
 		gameDisplay.setFPS(fpscap);
+		if (gameLoop != null) {
+			gameLoop.initializeRendering(this);
+		}
 		return gameDisplay;
 	}
 
@@ -319,6 +322,9 @@ public final class Game {
 	 */
 	public void deinitializeDisplay() {
 		if (gameDisplay != null) {
+			if (gameLoop != null) {
+				gameLoop.deinitializeRendering();
+			}
 			gameDisplay.deinit();
 			gameDisplay = null;
 		}
