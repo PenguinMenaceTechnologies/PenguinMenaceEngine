@@ -20,9 +20,9 @@ public final class NativeLoader {
 			"jinput-raw.dll", "lwjgl.dll", "OpenAL32.dll" };
 	private static final String[] WINDOWS_64 = { "jinput-dx8_64.dll",
 			"jinput-raw_64.dll", "lwjgl64.dll", "OpenAL64.dll" };
-	private static final String[] LINUX32 = { "libwjgl.so", "libopenal.so",
+	private static final String[] LINUX32 = { "liblwjgl.so", "libopenal.so",
 			"libjinput-linux.so" };
-	private static final String[] LINUX64 = { "libwjgl64.so", "libopenal64.so",
+	private static final String[] LINUX64 = { "liblwjgl64.so", "libopenal64.so",
 			"libjinput-linux64.so" };
 	private static final String[] MAC = { "liblwjgl.jnilib", "openal.dylib",
 			"libjinput-osx.jnilib" };
@@ -73,7 +73,7 @@ public final class NativeLoader {
 	 * Load the native libraries. This creates temporary objects.
 	 */
 	static void loadLibraries() {
-		String os = System.getProperty("os.arch");
+		String os = System.getProperty("os.name");
 		String arch = System.getProperty("os.arch");
 		if (os.equalsIgnoreCase("mac os x")) {
 			loadLibs(MAC);
