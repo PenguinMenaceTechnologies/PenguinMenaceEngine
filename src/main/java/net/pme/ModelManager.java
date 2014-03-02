@@ -72,10 +72,10 @@ public final class ModelManager {
 	 * @param key
 	 *            The key for the model to unload.
 	 */
-	private void unload(final String key) {
+	/*private void unload(final String key) {
 		if (MAP.containsKey(key)) {
 			Model.unloadModel(MAP.get(key));
 			MAP.remove(key);
 		}
-	}
+	}*/
 }
