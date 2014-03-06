@@ -85,7 +85,19 @@ final class GameLoop {
 		if (rendering) {
 			defaultFinal.delete();
 			defaultPostprocessing.delete();
-			// TODO remove all rendering buffers
+
+            defaultFinal = null;
+            defaultPostprocessing = null;
+
+            GL11.glDeleteTextures(texture);
+            GL11.glDeleteTextures(texture2);
+
+            GL11.glDeleteTextures(depth);
+            GL11.glDeleteTextures(depth2);
+
+            glDeleteFramebuffersEXT(fbo);
+            glDeleteFramebuffersEXT(fbo2);
+
 			rendering = false;
 		}
 	}
@@ -288,7 +300,7 @@ final class GameLoop {
 				}
 
 				GL11.glFlush();
-				display.update();
+				display.update(this, game);
 			} else {
 				// Sleep a bit when we are not rendering. To yield for other threads.
 				try {

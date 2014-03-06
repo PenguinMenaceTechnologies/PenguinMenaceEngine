@@ -68,6 +68,7 @@ public final class GameDisplay {
 		}
 		Display.setTitle(title);
 		Display.setVSyncEnabled(false);
+		Display.setResizable(true);
 		try {
 			Display.create();
 		} catch (LWJGLException ex) {
@@ -123,8 +124,15 @@ public final class GameDisplay {
 	/**
 	 * Updates the frame.
 	 */
-	void update() {
+	void update(GameLoop gameLoop, Game game) {
 		Display.update();
+        if (Display.wasResized()) {
+            resizeGL();
+        }
+        if (gameLoop != null) {
+            gameLoop.deinitializeRendering();
+            gameLoop.initializeRendering(game);
+        }
 	}
 	
 	/**
@@ -163,6 +171,9 @@ public final class GameDisplay {
 	 * Resize event of GL.
 	 */
 	private void resizeGL() {
+        displayWidth = Display.getWidth();
+        displayHeight = Display.getHeight();
+
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
 		GLU.gluPerspective(FOVY, ((float) displayWidth)
