@@ -78,4 +78,9 @@ public final class ModelManager {
 			MAP.remove(key);
 		}
 	}*/
+
+    @Override
+    public void finalize() {
+        clear();
+    }
 }

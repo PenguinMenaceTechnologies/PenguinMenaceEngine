@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.pme.offscreen.OffscreenRenderer;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -32,6 +33,7 @@ final class GameLoop {
 
 	private boolean postprocessing = true;
 
+    private ArrayList<OffscreenRendererWrapper> offscreenRenderers = new ArrayList<OffscreenRendererWrapper>();
 	private int fbo = 0;
 	private int texture = 0;
 	private int depth = 0;
@@ -40,7 +42,7 @@ final class GameLoop {
 	private int depth2 = 0;
 	private Shader defaultPostprocessing = null;
 	private Shader defaultFinal = null;
-	private boolean rendering = false;;
+	private boolean rendering = false;
 
 	/**
 	 * Do nothing, only visible inside engine.
@@ -74,6 +76,10 @@ final class GameLoop {
 			initFBO(game, fbo2, texture2, depth2);
 		}
 
+        for (OffscreenRendererWrapper tmp: offscreenRenderers) {
+            tmp.delete();
+        }
+
 		GL11.glViewport(0, 0, display.getWidth(), display.getHeight());
 
 		defaultPostprocessing = new PostprocessingShader(0);
@@ -98,9 +104,35 @@ final class GameLoop {
             glDeleteFramebuffersEXT(fbo);
             glDeleteFramebuffersEXT(fbo2);
 
+            for (OffscreenRendererWrapper tmp: offscreenRenderers) {
+                tmp.delete();
+            }
+
 			rendering = false;
 		}
 	}
+
+    /**
+     * Add an offscreen renderer.
+     * @param renderer The renderer to add.
+     * @param game The to which to add the renderer.
+     */
+    public void addOffscreenRenderer(OffscreenRenderer renderer, Game game) {
+        OffscreenRendererWrapper wrapper = new OffscreenRendererWrapper(renderer);
+        if (rendering) {
+            wrapper.init(game);
+        }
+        offscreenRenderers.add(wrapper);
+    }
+
+    /**
+     * Remove a offscreen renderer.
+     * @param renderer The renderer to remove.
+     */
+    public void removeOffscreenRenderer(OffscreenRenderer renderer) {
+        OffscreenRendererWrapper wrapper = new OffscreenRendererWrapper(renderer);
+        offscreenRenderers.remove(wrapper);
+    }
 
 	/**
 	 * This is the heart-beat of the engine.
@@ -178,6 +210,24 @@ final class GameLoop {
 				postprocessingShader = game.getPostprocessingShader();
 				finalShader = game.getFinalShader();
 				display.sync();
+
+				for(OffscreenRendererWrapper tmp: offscreenRenderers) {
+
+					GL13.glActiveTexture(GL13.GL_TEXTURE0);
+					GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+					
+	                tmp.preRender();
+	                
+	                // Render all objects
+					for (RenderableObject o : renderableObjects) {
+						o.render();
+					}
+					for (Particle o : particleObjects) {
+						o.render();
+					}
+	                
+	                tmp.postRender();
+	            }
 
 				if (postprocessing) {
 					// unlink textures to avoid errors
@@ -373,4 +423,126 @@ final class GameLoop {
 	void terminate() {
 		running = false;
 	}
+
+    class OffscreenRendererWrapper {
+        private int f;
+        private int t;
+        private int d;
+        private OffscreenRenderer renderer;
+
+
+        /**
+         * An offscreen renderer wrapper, to make it more comfortable to use.
+         * @param renderer The renderer.
+         */
+        OffscreenRendererWrapper(OffscreenRenderer renderer) {
+            this.renderer = renderer;
+        }
+
+        /**
+         * Initialize the fbo.
+         *
+         * @param game The game for which to initialize.
+         */
+        void init(Game game) {
+            f = glGenFramebuffersEXT();
+            t = GL11.glGenTextures();
+            d = GL11.glGenTextures();
+
+            int width = renderer.getWidth();
+            int height = renderer.getHeight();
+
+            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, f);
+
+            GL11.glBindTexture(GL11.GL_TEXTURE_2D, t);
+            GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER,
+                    GL11.GL_LINEAR);
+            GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA8, width, height,
+                    0, GL11.GL_RGBA, GL11.GL_INT, (java.nio.ByteBuffer) null);
+            glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT,
+                    GL11.GL_TEXTURE_2D, t, 0);
+
+            glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, d);
+            glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT,
+                    GL14.GL_DEPTH_COMPONENT24, width, height);
+            glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,
+                    GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, d);
+
+            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+        }
+
+        /**
+         * Delete the fbo.
+         */
+        void delete() {
+            if (d != 0)
+            GL11.glDeleteTextures(d);
+            if (t != 0)
+            GL11.glDeleteTextures(t);
+            if(f != 0)
+            glDeleteFramebuffersEXT(f);
+
+            f = 0;
+            d = 0;
+            t = 0;
+        }
+
+        /**
+         * Use the fbo.
+         * @return Weather it is usable or not.
+         */
+        private boolean useFBO() {
+            if (f != 0 && t != 0 && d != 0) {
+                glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, f);
+
+                GL11.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+                GL11.glClear(GL11.GL_COLOR_BUFFER_BIT
+                        | GL11.GL_DEPTH_BUFFER_BIT);
+
+                GL11.glLoadIdentity();
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        /**
+         * Render offscreen automatically binding the fbo.
+         */
+        boolean preRender() {
+            if(useFBO()) {
+                GL11.glViewport(0, 0, renderer.getWidth(), renderer.getHeight());
+
+                renderer.preRender();
+                return true;
+            }
+			return false;
+        }
+        
+        /**
+         * Called after rendering.
+         */
+        void postRender() {
+        	renderer.postRender(t, d);
+            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+        }
+
+        @Override
+        public void finalize() {
+            delete();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj instanceof OffscreenRendererWrapper) {
+                OffscreenRendererWrapper tmp = (OffscreenRendererWrapper) obj;
+
+                // They are equal if they have the same offscreen renderer.
+                if (tmp.renderer.equals(this.renderer)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
 }

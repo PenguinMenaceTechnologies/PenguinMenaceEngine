@@ -259,4 +259,9 @@ public class Shader extends GameObject {
 		int loc = GL20.glGetUniformLocation(program, name);
 		GL20.glUniform1i(loc, pos);
 	}
+
+    @Override
+    public void finalize() {
+        delete();
+    }
 }

@@ -18,6 +18,7 @@ import net.pme.objects.Particle;
 import net.pme.objects.Player;
 import net.pme.objects.RenderableObject;
 import net.pme.objects.Shader;
+import net.pme.offscreen.OffscreenRenderer;
 
 /**
  * Creates the LWJGL object and invokes a game loop thread as well as a network
@@ -79,6 +80,33 @@ public final class Game {
 	 */
 	public void addHud(final HudObject hudObject) {
 		hudObjects.add(hudObject);
+	}
+
+	/**
+	 * Add an offscreen renderer to the game.
+	 * 
+	 * @param renderer
+	 *            The offscreen renderer.
+	 */
+	public void addOffscreenRenderer(OffscreenRenderer renderer) {
+		if (gameLoop != null) {
+			gameLoop.addOffscreenRenderer(renderer, this);
+		} else {
+			throw new IllegalStateException(
+					"You need to start your game before you can add an offscreen renderer");
+		}
+	}
+
+	/**
+	 * Remove an offscreen renderer from the game.
+	 * 
+	 * @param renderer
+	 *            The offscreen renderer to remove.
+	 */
+	public void removeOffscreenRenderer(OffscreenRenderer renderer) {
+		if (gameLoop != null) {
+			gameLoop.removeOffscreenRenderer(renderer);
+		}
 	}
 
 	/**
@@ -232,7 +260,7 @@ public final class Game {
 		// Cause the settings to really generate the settings and the mapping.
 		settings.getSettings();
 		settings.getKeyMapping();
-		
+
 		// Initialize the gameinput helper interface.
 		GameInput.load(getSettings());
 
@@ -339,9 +367,10 @@ public final class Game {
 	public GameDisplay getDisplay() {
 		return gameDisplay;
 	}
-	
+
 	/**
 	 * Initialize the model manager.
+	 * 
 	 * @return An initialized ModelManager.
 	 */
 	public ModelManager initializeModelManager() {
@@ -350,20 +379,22 @@ public final class Game {
 					"You can only initialize one modelmanager module at a time.");
 		}
 		if (gameDisplay == null) {
-			throw new IllegalStateException("ModelManager is dependant on the display module. Initialize it before initializing this.");
+			throw new IllegalStateException(
+					"ModelManager is dependant on the display module. Initialize it before initializing this.");
 		}
 		modelManager = new ModelManager();
 		return modelManager;
 	}
-	
+
 	/**
 	 * Get the model manager.
+	 * 
 	 * @return
 	 */
 	public ModelManager getModelManager() {
 		return modelManager;
 	}
-	
+
 	/**
 	 * Deinitialize the mode manager.
 	 */
@@ -373,18 +404,21 @@ public final class Game {
 			modelManager = null;
 		}
 	}
-	
+
 	/**
 	 * Get the settings.
+	 * 
 	 * @return The current settings.
 	 */
 	public GameSettings getSettings() {
 		return settings;
 	}
-	
+
 	/**
 	 * Set the game settings.
-	 * @param settings The settings to set as current.
+	 * 
+	 * @param settings
+	 *            The settings to set as current.
 	 */
 	public void setSettings(GameSettings settings) {
 		this.settings = settings;
