@@ -11,6 +11,7 @@ import org.lwjgl.input.Mouse;
 import net.pme.math.Vector3D;
 import net.pme.objects.Player;
 import net.pme.objects.RenderableObject;
+import net.pme.offscreen.OffscreenRenderer;
 
 /**
  * A simple test of the game engine.
@@ -106,6 +107,24 @@ public class Test {
 				playerUp);
 		game.setPostprocessingShader(new PostprocessingShader(8));
 		game.setFinalShader(new PostprocessingShader2(9));
+
+        new Thread() {
+            public void run() {
+                try {
+                    Thread.sleep(2000);
+                } catch(Exception e) {
+                    return;
+                }
+                OffscreenRenderer o = new OffscreenRendererTest();
+                game.addOffscreenRenderer(o);
+                try {
+                    Thread.sleep(1000);
+                } catch(Exception e) {
+                    return;
+                }
+                game.removeOffscreenRenderer(o);
+            }
+        }.start();
 
 		// Run our game.
 		game.runGame(player);

@@ -50,7 +50,7 @@ final class GameLoop {
 	GameLoop() {
 	}
 
-	public void initializeRendering(Game game) {
+	public synchronized void initializeRendering(Game game) {
 		GameDisplay display = game.getDisplay();
 		if (display == null) {
 			rendering = false;
@@ -76,10 +76,6 @@ final class GameLoop {
 			initFBO(game, fbo2, texture2, depth2);
 		}
 
-        for (OffscreenRendererWrapper tmp: offscreenRenderers) {
-            tmp.init(game);
-        }
-
 		GL11.glViewport(0, 0, display.getWidth(), display.getHeight());
 
 		defaultPostprocessing = new PostprocessingShader(0);
@@ -87,7 +83,7 @@ final class GameLoop {
 		rendering = true;
 	}
 
-	public void deinitializeRendering() {
+	public synchronized void deinitializeRendering() {
 		if (rendering) {
 			defaultFinal.delete();
 			defaultPostprocessing.delete();
@@ -104,8 +100,8 @@ final class GameLoop {
             glDeleteFramebuffersEXT(fbo);
             glDeleteFramebuffersEXT(fbo2);
 
-            for (OffscreenRendererWrapper tmp: offscreenRenderers) {
-                tmp.delete();
+            for (OffscreenRendererWrapper o: offscreenRenderers) {
+                o.delete();
             }
 
 			rendering = false;
@@ -117,21 +113,25 @@ final class GameLoop {
      * @param renderer The renderer to add.
      * @param game The to which to add the renderer.
      */
-    public void addOffscreenRenderer(OffscreenRenderer renderer, Game game) {
+    public synchronized void addOffscreenRenderer(OffscreenRenderer renderer, Game game) {
         OffscreenRendererWrapper wrapper = new OffscreenRendererWrapper(renderer);
-        if (rendering) {
-            wrapper.init(game);
-        }
+        if (offscreenRenderers.contains(wrapper)) return;
         offscreenRenderers.add(wrapper);
+        System.out.println("Added");
     }
 
     /**
      * Remove a offscreen renderer.
      * @param renderer The renderer to remove.
      */
-    public void removeOffscreenRenderer(OffscreenRenderer renderer) {
-        OffscreenRendererWrapper wrapper = new OffscreenRendererWrapper(renderer);
-        offscreenRenderers.remove(wrapper);
+    public synchronized void removeOffscreenRenderer(OffscreenRenderer renderer) {
+        for (OffscreenRendererWrapper o: offscreenRenderers) {
+            if (o.equals(renderer)) {
+                o.disable();
+                System.out.println("Removed");
+                return;
+            }
+        }
     }
 
 	/**
@@ -211,26 +211,26 @@ final class GameLoop {
 				finalShader = game.getFinalShader();
 				display.sync();
 
-				for(OffscreenRendererWrapper tmp: offscreenRenderers) {
-
-					GL13.glActiveTexture(GL13.GL_TEXTURE0);
-					GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
-					
-	                if(tmp.preRender()) {
-	                    // Render all objects
-					    for (RenderableObject o : renderableObjects) {
-					    	o.render();
-					    }
-					    for (Particle o : particleObjects) {
-					    	o.render();
-					    }
-
-                        GL11.glFlush();
-	                    tmp.postRender();
-                    }
-	            }
-
 				if (postprocessing) {
+                    synchronized (this) {
+                        for(OffscreenRendererWrapper tmp: offscreenRenderers) {
+                            if(tmp.preRender(game)) {
+                                // Render all objects
+                                for (RenderableObject o : renderableObjects) {
+                                    o.render();
+                                }
+                                for (Particle o : particleObjects) {
+                                    o.render();
+                                }
+
+                                //GL11.glFlush();
+                                tmp.postRender();
+                            }
+                        }
+                    }
+
+                    GL11.glViewport(0, 0, display.getWidth(), display.getHeight());
+
 					// unlink textures to avoid errors
 					GL13.glActiveTexture(GL13.GL_TEXTURE0);
 					GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
@@ -430,6 +430,7 @@ final class GameLoop {
         private int t;
         private int d;
         private OffscreenRenderer renderer;
+        private boolean disabled = false;
 
 
         /**
@@ -495,28 +496,33 @@ final class GameLoop {
          * Use the fbo.
          * @return Weather it is usable or not.
          */
-        private boolean useFBO() {
-            if (f != 0 && t != 0 && d != 0) {
-                glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, f);
-
-                GL11.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-                GL11.glClear(GL11.GL_COLOR_BUFFER_BIT
-                        | GL11.GL_DEPTH_BUFFER_BIT);
-
-                GL11.glLoadIdentity();
-                return true;
-            } else {
-                return false;
+        private boolean useFBO(Game game) {
+            if (f == 0 && t == 0 && d == 0) {
+                init(game);
             }
+
+            GL13.glActiveTexture(GL13.GL_TEXTURE0);
+            GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+
+            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, f);
+
+            GL11.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+            GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+            GL11.glViewport(0, 0, renderer.getWidth(), renderer.getHeight());
+
+            GL11.glLoadIdentity();
+            return true;
         }
 
         /**
          * Render offscreen automatically binding the fbo.
          */
-        boolean preRender() {
-            if(useFBO()) {
-                GL11.glViewport(0, 0, renderer.getWidth(), renderer.getHeight());
-
+        boolean preRender(Game game) {
+            if (disabled) {
+                delete();
+                return false;
+            }
+            if(useFBO(game)) {
                 renderer.preRender();
                 return true;
             }
@@ -538,15 +544,29 @@ final class GameLoop {
 
         @Override
         public boolean equals(Object obj) {
+            if (obj instanceof OffscreenRenderer) {
+                OffscreenRenderer r = (OffscreenRenderer) obj;
+                return r.equals(this.renderer);
+            }
             if (obj instanceof OffscreenRendererWrapper) {
                 OffscreenRendererWrapper tmp = (OffscreenRendererWrapper) obj;
 
                 // They are equal if they have the same offscreen renderer.
-                if (tmp.renderer.equals(this.renderer)) {
-                    return true;
-                }
+                return tmp.renderer.equals(this.renderer);
             }
             return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return renderer.hashCode();
+        }
+
+        /**
+         * Disable the offscreen renderer.
+         */
+        void disable() {
+            disabled = true;
         }
     }
 }
