@@ -3,14 +3,11 @@ package net.pme;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.UnknownHostException;
 
 import javax.imageio.ImageIO;
 
 import org.lwjgl.input.Mouse;
 
-import net.pme.Game;
-import net.pme.ModelManager;
 import net.pme.math.Vector3D;
 import net.pme.objects.Player;
 import net.pme.objects.RenderableObject;
@@ -32,10 +29,9 @@ public class Test {
 	 * 
 	 * @param args
 	 *            The arguments for the program.
-	 * @throws IOException 
-	 * @throws UnknownHostException 
+	 * @throws IOException
 	 */
-	public static void main(final String[] args) throws UnknownHostException, IOException {
+	public static void main(final String[] args) throws IOException {
 		// Yay, our game!
 		game = new Game();
 		
