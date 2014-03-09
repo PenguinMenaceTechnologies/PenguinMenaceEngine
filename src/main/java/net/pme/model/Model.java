@@ -232,24 +232,30 @@ public class Model {
 			if (!smoothing) {
 				GL11.glNormal3f(n1.y, n1.x, -n1.z);
 			}
-			Vector3f t1 = m.textureCoords.get((int) face.getTexture().y - 1);
-			GL11.glTexCoord3f(t1.y, t1.x, -t1.z);
+            if (face.getTexture() != null) {
+			    Vector3f t1 = m.textureCoords.get((int) face.getTexture().y - 1);
+			    GL11.glTexCoord3f(t1.y, t1.x, -t1.z);
+            }
 			Vector3f v1 = m.vertices.get((int) face.getVertex().y - 1);
 			GL11.glVertex3f(v1.y, v1.x, -v1.z);
 			Vector3f n2 = m.normals.get((int) face.getNormal().x - 1);
 			if (!smoothing) {
 				GL11.glNormal3f(n2.y, n2.x, -n2.z);
 			}
-			Vector3f t2 = m.textureCoords.get((int) face.getTexture().x - 1);
-			GL11.glTexCoord3f(t2.y, t2.x, -t2.z);
+            if (face.getTexture() != null) {
+			    Vector3f t2 = m.textureCoords.get((int) face.getTexture().x - 1);
+			    GL11.glTexCoord3f(t2.y, t2.x, -t2.z);
+            }
 			Vector3f v2 = m.vertices.get((int) face.getVertex().x - 1);
 			GL11.glVertex3f(v2.y, v2.x, -v2.z);
 			Vector3f n3 = m.normals.get((int) face.getNormal().z - 1);
 			if (!smoothing) {
 				GL11.glNormal3f(n3.y, n3.x, -n3.z);
 			}
-			Vector3f t3 = m.textureCoords.get((int) face.getTexture().z - 1);
-			GL11.glTexCoord3f(t3.y, t3.x, -t3.z);
+            if (face.getTexture() != null) {
+			    Vector3f t3 = m.textureCoords.get((int) face.getTexture().z - 1);
+			    GL11.glTexCoord3f(t3.y, t3.x, -t3.z);
+            }
 			Vector3f v3 = m.vertices.get((int) face.getVertex().z - 1);
 			GL11.glVertex3f(v3.y, v3.x, -v3.z);
 			i++;
@@ -299,24 +305,30 @@ public class Model {
 			if (!smoothing) {
 				GL11.glNormal3f(n1.x, n1.y, n1.z);
 			}
-			Vector3f t1 = m.textureCoords.get((int) face.getTexture().x - 1);
-			GL11.glTexCoord3f(t1.x, -t1.y, t1.z);
+            if (face.getTexture() != null) {
+			    Vector3f t1 = m.textureCoords.get((int) face.getTexture().x - 1);
+			    GL11.glTexCoord3f(t1.x, -t1.y, t1.z);
+            }
 			Vector3f v1 = m.vertices.get((int) face.getVertex().x - 1);
 			GL11.glVertex3f(v1.y, v1.x, -v1.z);
 			Vector3f n2 = m.normals.get((int) face.getNormal().y - 1);
 			if (!smoothing) {
 				GL11.glNormal3f(n2.x, n2.y, n2.z);
-			}
-			Vector3f t2 = m.textureCoords.get((int) face.getTexture().y - 1);
-			GL11.glTexCoord3f(t2.x, -t2.y, t2.z);
+            }
+            if (face.getTexture() != null) {
+			    Vector3f t2 = m.textureCoords.get((int) face.getTexture().y - 1);
+			    GL11.glTexCoord3f(t2.x, -t2.y, t2.z);
+            }
 			Vector3f v2 = m.vertices.get((int) face.getVertex().y - 1);
 			GL11.glVertex3f(v2.y, v2.x, -v2.z);
 			Vector3f n3 = m.normals.get((int) face.getNormal().z - 1);
 			if (!smoothing) {
 				GL11.glNormal3f(n3.x, n3.y, n3.z);
 			}
-			Vector3f t3 = m.textureCoords.get((int) face.getTexture().z - 1);
-			GL11.glTexCoord3f(t3.x, -t3.y, t3.z);
+            if (face.getTexture() != null) {
+			    Vector3f t3 = m.textureCoords.get((int) face.getTexture().z - 1);
+			    GL11.glTexCoord3f(t3.x, -t3.y, t3.z);
+            }
 			Vector3f v3 = m.vertices.get((int) face.getVertex().z - 1);
 			GL11.glVertex3f(v3.y, v3.x, -v3.z);
 			i++;
@@ -403,10 +415,15 @@ public class Model {
 							Float.parseFloat(line.split(" ")[1].split("/")[0]),
 							Float.parseFloat(line.split(" ")[2].split("/")[0]),
 							Float.parseFloat(line.split(" ")[3].split("/")[0]));
-					Vector3f textureIndicies = new Vector3f(
+                    Vector3f textureIndicies;
+                    if(line.split(" ")[1].split("/")[1].equals("")) {
+                        textureIndicies = null;
+                    } else {
+                        textureIndicies = new Vector3f(
 							Float.parseFloat(line.split(" ")[1].split("/")[1]),
 							Float.parseFloat(line.split(" ")[2].split("/")[1]),
 							Float.parseFloat(line.split(" ")[3].split("/")[1]));
+                    }
 					Vector3f normalIndicies = new Vector3f(
 							Float.parseFloat(line.split(" ")[1].split("/")[2]),
 							Float.parseFloat(line.split(" ")[2].split("/")[2]),
@@ -418,10 +435,14 @@ public class Model {
 								Float.parseFloat(line.split(" ")[4].split("/")[0]),
 								Float.parseFloat(line.split(" ")[1].split("/")[0]),
 								Float.parseFloat(line.split(" ")[3].split("/")[0]));
-						textureIndicies = new Vector3f(
-								Float.parseFloat(line.split(" ")[4].split("/")[1]),
-								Float.parseFloat(line.split(" ")[1].split("/")[1]),
-								Float.parseFloat(line.split(" ")[3].split("/")[1]));
+                        if(line.split(" ")[1].split("/")[1].equals("")) {
+                            textureIndicies = null;
+                        } else {
+                            textureIndicies = new Vector3f(
+                                    Float.parseFloat(line.split(" ")[4].split("/")[1]),
+                                    Float.parseFloat(line.split(" ")[1].split("/")[1]),
+                                    Float.parseFloat(line.split(" ")[3].split("/")[1]));
+                        }
 						normalIndicies = new Vector3f(
 								Float.parseFloat(line.split(" ")[4].split("/")[2]),
 								Float.parseFloat(line.split(" ")[1].split("/")[2]),
