@@ -77,7 +77,7 @@ final class GameLoop {
 		}
 
         for (OffscreenRendererWrapper tmp: offscreenRenderers) {
-            tmp.delete();
+            tmp.init(game);
         }
 
 		GL11.glViewport(0, 0, display.getWidth(), display.getHeight());
