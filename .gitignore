@@ -3,3 +3,6 @@
 /.settings
 /config
 /.idea
+/.classpath
+/.project
+/PenguinMenaceEngine.iml

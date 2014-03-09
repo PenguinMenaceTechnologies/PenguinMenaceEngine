@@ -280,7 +280,7 @@ public final class Game {
 	/**
 	 * Initialize a network with the given parameters.
 	 * 
-	 * @param NetworkInitializer
+	 * @param networkInitializer
 	 *            The initializer.
 	 * @throws IOException
 	 *             Connecting failed.
