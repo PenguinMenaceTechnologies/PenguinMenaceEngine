@@ -216,18 +216,18 @@ final class GameLoop {
 					GL13.glActiveTexture(GL13.GL_TEXTURE0);
 					GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 					
-	                tmp.preRender();
-	                
-	                // Render all objects
-					for (RenderableObject o : renderableObjects) {
-						o.render();
-					}
-					for (Particle o : particleObjects) {
-						o.render();
-					}
+	                if(tmp.preRender()) {
+	                    // Render all objects
+					    for (RenderableObject o : renderableObjects) {
+					    	o.render();
+					    }
+					    for (Particle o : particleObjects) {
+					    	o.render();
+					    }
 
-                    GL11.glFlush();
-	                tmp.postRender();
+                        GL11.glFlush();
+	                    tmp.postRender();
+                    }
 	            }
 
 				if (postprocessing) {
@@ -446,6 +446,9 @@ final class GameLoop {
          * @param game The game for which to initialize.
          */
         void init(Game game) {
+            if ((f != 0) || (t != 0) ||(d != 0)) {
+                return;
+            }
             f = glGenFramebuffersEXT();
             t = GL11.glGenTextures();
             d = GL11.glGenTextures();
@@ -477,11 +480,11 @@ final class GameLoop {
          */
         void delete() {
             if (d != 0)
-            GL11.glDeleteTextures(d);
+                GL11.glDeleteTextures(d);
             if (t != 0)
-            GL11.glDeleteTextures(t);
+                GL11.glDeleteTextures(t);
             if(f != 0)
-            glDeleteFramebuffersEXT(f);
+                glDeleteFramebuffersEXT(f);
 
             f = 0;
             d = 0;
