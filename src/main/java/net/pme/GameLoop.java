@@ -225,7 +225,8 @@ final class GameLoop {
 					for (Particle o : particleObjects) {
 						o.render();
 					}
-	                
+
+                    GL11.glFlush();
 	                tmp.postRender();
 	            }
 
