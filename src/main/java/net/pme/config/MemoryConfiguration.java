@@ -61,38 +61,104 @@ public class MemoryConfiguration {
 		return res;
 	}
 
-	/**
-	 * Get an integer for the given key.
-	 * 
-	 * @param key
-	 *            The key.
-	 * @return The integer for the key.
-	 */
-	public final int getInteger(final String key) {
-		return getInteger(key, 0);
-	}
+    /**
+     * Get an integer for the given key.
+     *
+     * @param key
+     *            The key.
+     * @return The integer for the key.
+     */
+    public final int getInteger(final String key) {
+        return getInteger(key, 0);
+    }
 
-	/**
-	 * Get an integer for the given key.
-	 * 
-	 * @param key
-	 *            The key.
-	 * @param def
-	 *            The default value.
-	 * @return The integer for the key.
-	 */
-	public final int getInteger(final String key, final int def) {
-		String res = values.get(key);
-		if (res == null) {
-			return def;
-		}
+    /**
+     * Get an integer for the given key.
+     *
+     * @param key
+     *            The key.
+     * @param def
+     *            The default value.
+     * @return The integer for the key.
+     */
+    public final int getInteger(final String key, final int def) {
+        String res = values.get(key);
+        if (res == null) {
+            return def;
+        }
 
-		try {
-			return Integer.parseInt(res);
-		} catch (NumberFormatException e) {
-			return def;
-		}
-	}
+        try {
+            return Integer.parseInt(res);
+        } catch (NumberFormatException e) {
+            return def;
+        }
+    }
+
+    /**
+     * Get an float for the given key.
+     *
+     * @param key
+     *            The key.
+     * @return The float for the key.
+     */
+    public final float getFloat(final String key) {
+        return getFloat(key, 0);
+    }
+
+    /**
+     * Get an float for the given key.
+     *
+     * @param key
+     *            The key.
+     * @param def
+     *            The default value.
+     * @return The float for the key.
+     */
+    public final float getFloat(final String key, final float def) {
+        String res = values.get(key);
+        if (res == null) {
+            return def;
+        }
+
+        try {
+            return Float.parseFloat(res);
+        } catch (NumberFormatException e) {
+            return def;
+        }
+    }
+
+    /**
+     * Get an double for the given key.
+     *
+     * @param key
+     *            The key.
+     * @return The double for the key.
+     */
+    public final double getDouble(final String key) {
+        return getDouble(key, 0);
+    }
+
+    /**
+     * Get an double for the given key.
+     *
+     * @param key
+     *            The key.
+     * @param def
+     *            The default value.
+     * @return The double for the key.
+     */
+    public final double getDouble(final String key, final double def) {
+        String res = values.get(key);
+        if (res == null) {
+            return def;
+        }
+
+        try {
+            return Double.parseDouble(res);
+        } catch (NumberFormatException e) {
+            return def;
+        }
+    }
 
 	/**
 	 * Get a boolean for the given key.
