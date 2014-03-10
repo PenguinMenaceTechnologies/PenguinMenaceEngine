@@ -5,9 +5,11 @@ import java.lang.management.ManagementFactory;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 
-import net.pme.math.Vector3D;
+import net.pme.core.math.Vector3D;
+import net.pme.gameloop.LoopableAttachment;
+import net.pme.graphics.RenderAttachment;
 import net.pme.network.Packet;
-import net.pme.objects.Player;
+import net.pme.core.Player;
 
 /**
  * A basic player implementation
@@ -33,34 +35,40 @@ public class TestPlayer extends Player {
 	 */
 	public TestPlayer(Vector3D position, Vector3D front, Vector3D up) {
 		super(position, front, up, -1);
-	}
+        Player parent = this;
 
-	@Override
-	public void move(double elapsedTime) {
-		move(new Vector3D(xAxis * elapsedTime * 3.0, yAxis * elapsedTime * 3.0,
-				zAxis * elapsedTime * 6.0));
-		rotateAroundFrontAxis(elapsedTime * rotate * 50.0);
-		Display.setTitle(String.format("PenguinMenaceEngine Test [%.0f@%.2f]",
-				1.0 / elapsedTime, ((double)ManagementFactory.getThreadMXBean().getCurrentThreadCpuTime())*1E-9));
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.pme.objects.Networkable#retrievePacket(net.pme.objects.Packet)
-	 */
-	@Override
-	public void retrievePacket(Packet p) {
+        setLoopableAttachment(new LoopableAttachment() {
+            @Override
+            public void update(double elapsedTime) {
+                getRenderAttachment().move(new Vector3D(xAxis * elapsedTime * 3.0, yAxis * elapsedTime * 3.0,
+                        zAxis * elapsedTime * 6.0));
+                getRenderAttachment().rotateAroundFrontAxis(elapsedTime * rotate * 50.0);
+                Display.setTitle(String.format("PenguinMenaceEngine Test [%.0f@%.2f]",
+                        1.0 / elapsedTime, ((double) ManagementFactory.getThreadMXBean().getCurrentThreadCpuTime()) * 1E-9));
+            }
+        });
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see net.pme.objects.Player#keyboardInputHandler(int, boolean)
+	 * @see net.pme.core.Player#keyboardInputHandler(int, boolean)
 	 */
 	@Override
 	public void keyboardInputHandler(int eventKey, boolean eventKeyState) {
 		if (eventKey == Keyboard.KEY_ESCAPE) {
+            new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        sleep(1000);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        System.out.println("This should never happen.");
+                    }
+                    System.exit(0);
+                }
+            }.start();
 			Test.game.stopGame();
 		}
 		if (eventKey == Keyboard.KEY_E) {
@@ -128,7 +136,7 @@ public class TestPlayer extends Player {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see net.pme.objects.Player#mouseInputHandler(int, boolean)
+	 * @see net.pme.core.Player#mouseInputHandler(int, boolean)
 	 */
 	@Override
 	public void mouseInputHandler(int eventButton, boolean eventButtonState) {
@@ -137,12 +145,12 @@ public class TestPlayer extends Player {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see net.pme.objects.Player#mouseMoveHandler(int, int)
+	 * @see net.pme.core.Player#mouseMoveHandler(int, int)
 	 */
 	@Override
 	public void mouseMoveHandler(int dx, int dy) {
-		rotateAroundPitchAxis(-dy * 0.2);
-		rotateAroundUpAxis(dx * 0.2);
+        getRenderAttachment().rotateAroundPitchAxis(-dy * 0.2);
+        getRenderAttachment().rotateAroundUpAxis(dx * 0.2);
 	}
 
 }

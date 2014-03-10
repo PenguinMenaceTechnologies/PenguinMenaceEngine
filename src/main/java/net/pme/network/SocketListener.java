@@ -23,18 +23,18 @@ class SocketListener extends Thread {
 	/**
 	 * The networkmanager.
 	 */
-	private NetworkManager networkManager;
+	private Network network;
 
 	/**
 	 * Create a new SocketListener.
 	 * 
-	 * @param networkManager
+	 * @param network
 	 *            The networkmanager with which to cooperate.
 	 * @param socket
 	 *            The socket of our connection.
 	 */
-	SocketListener(NetworkManager networkManager, Socket socket) {
-		this.networkManager = networkManager;
+	SocketListener(Network network, Socket socket) {
+		this.network = network;
 		this.socket = socket;
 	}
 
@@ -50,7 +50,7 @@ class SocketListener extends Thread {
 		while (!this.isInterrupted()) {
 			try {
 				int id = is.readInt();
-				networkManager.retrievePacket(socket, id, is);
+				network.retrievePacket(socket, id, is);
 			} catch(EOFException e) {
 				// We just got closed our socket.
 				break;
@@ -65,7 +65,7 @@ class SocketListener extends Thread {
 		}
 		try {
 			is.close();
-			networkManager.removeSocket(socket);
+			network.removeSocket(socket);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

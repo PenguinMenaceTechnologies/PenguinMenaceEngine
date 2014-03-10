@@ -2,9 +2,11 @@ package net.pme;
 
 import org.lwjgl.opengl.GL11;
 
-import net.pme.math.Vector3D;
-import net.pme.objects.RenderableObject;
-import net.pme.objects.Shader;
+import net.pme.core.GameObject;
+import net.pme.core.math.Vector3D;
+import net.pme.gameloop.LoopableAttachment;
+import net.pme.graphics.RenderAttachment;
+import net.pme.graphics.Shader;
 
 /**
  * A simple cube.
@@ -12,7 +14,7 @@ import net.pme.objects.Shader;
  * @author Michael FÃ¼rst
  * @version 1.0
  */
-public class TestCube3 extends RenderableObject {
+public class TestCube3 extends GameObject {
 	private float[] uniform = null;
 	private Shader sh = null;
 	private double t;
@@ -29,67 +31,70 @@ public class TestCube3 extends RenderableObject {
 	 * @param up
 	 *            The up axis.
 	 **/
-	public TestCube3(long ID, Vector3D position, Vector3D front, Vector3D up) {
-		super(ID, position, front, up, -1);
-		sh = new Shader(8, null, Shaders.fsh);
-		attachShader(sh);
+	public TestCube3(long id, Vector3D position, Vector3D front, Vector3D up) {
+		super(id, position);
+
+        setRenderAttachment(new RenderAttachment(this, front, up, -1) {
+            @Override
+            protected void specialFX() {
+                GL11.glBegin(GL11.GL_QUADS);
+                {
+                    // Quader
+                    GL11.glColor3f(0.5f, 0.5f, 0.0f);
+                    GL11.glVertex3f(-1.0f, -1.0f, -1.0f);
+                    GL11.glVertex3f(-1.0f, 1.0f, -1.0f);
+                    GL11.glVertex3f(1.0f, 1.0f, -1.0f);
+                    GL11.glVertex3f(1.0f, -1.0f, -1.0f);
+
+                    GL11.glColor3f(0.5f, 0.8f, 0.0f);
+                    GL11.glVertex3f(-1.0f, 1.0f, -1.0f);
+                    GL11.glVertex3f(-1.0f, 1.0f, 1.0f);
+                    GL11.glVertex3f(1.0f, 1.0f, 1.0f);
+                    GL11.glVertex3f(1.0f, 1.0f, -1.0f);
+
+                    GL11.glColor3f(0.8f, 0.5f, 0.0f);
+                    GL11.glVertex3f(-1.0f, -1.0f, -1.0f);
+                    GL11.glVertex3f(-1.0f, -1.0f, 1.0f);
+                    GL11.glVertex3f(1.0f, -1.0f, 1.0f);
+                    GL11.glVertex3f(1.0f, -1.0f, -1.0f);
+
+                    GL11.glColor3f(0.5f, 0.0f, 0.5f);
+                    GL11.glVertex3f(-1.0f, -1.0f, -1.0f);
+                    GL11.glVertex3f(-1.0f, -1.0f, 1.0f);
+                    GL11.glVertex3f(-1.0f, 1.0f, 1.0f);
+                    GL11.glVertex3f(-1.0f, 1.0f, -1.0f);
+
+                    GL11.glColor3f(0.5f, 0.5f, 0.5f);
+                    GL11.glVertex3f(-1.0f, -1.0f, 1.0f);
+                    GL11.glVertex3f(-1.0f, 1.0f, 1.0f);
+                    GL11.glVertex3f(1.0f, 1.0f, 1.0f);
+                    GL11.glVertex3f(1.0f, -1.0f, 1.0f);
+
+                    GL11.glColor3f(0.0f, 0.0f, 0.5f);
+                    GL11.glVertex3f(1.0f, -1.0f, -1.0f);
+                    GL11.glVertex3f(1.0f, -1.0f, 1.0f);
+                    GL11.glVertex3f(1.0f, 1.0f, 1.0f);
+                    GL11.glVertex3f(1.0f, 1.0f, -1.0f);
+                }
+                GL11.glEnd();
+
+            }
+        });
+        setLoopableAttachment(new LoopableAttachment() {
+            @Override
+            public void update(double elapsedTime) {
+                getRenderAttachment().rotateAroundPitchAxis(elapsedTime * 10.0);
+                uniform[0] = (float) Math.abs(Math.sin(t));
+                uniform[1] = (float) Math.abs(Math.cos(t));
+                uniform[2] = 0.0f;
+                uniform[3] = 1.0f;
+                t += elapsedTime;
+            }
+        });
+
+		sh = new Shader(null, Shaders.fsh);
+		getRenderAttachment().attachShader(sh);
 		uniform = new float[4];
 		sh.setUniform4f("color", uniform);
 	}
-
-	@Override
-	public void move(double elapsedTime) {
-		rotateAroundPitchAxis(elapsedTime * 10.0);
-		uniform[0] = (float) Math.abs(Math.sin(t));
-		uniform[1] = (float) Math.abs(Math.cos(t));
-		uniform[2] = 0.0f;
-		uniform[3] = 1.0f;
-		t += elapsedTime;
-	}
-
-	@Override
-	protected void specialFX() {
-		GL11.glBegin(GL11.GL_QUADS);
-		{
-			// Quader
-			GL11.glColor3f(0.5f, 0.5f, 0.0f);
-			GL11.glVertex3f(-1.0f, -1.0f, -1.0f);
-			GL11.glVertex3f(-1.0f, 1.0f, -1.0f);
-			GL11.glVertex3f(1.0f, 1.0f, -1.0f);
-			GL11.glVertex3f(1.0f, -1.0f, -1.0f);
-
-			GL11.glColor3f(0.5f, 0.8f, 0.0f);
-			GL11.glVertex3f(-1.0f, 1.0f, -1.0f);
-			GL11.glVertex3f(-1.0f, 1.0f, 1.0f);
-			GL11.glVertex3f(1.0f, 1.0f, 1.0f);
-			GL11.glVertex3f(1.0f, 1.0f, -1.0f);
-
-			GL11.glColor3f(0.8f, 0.5f, 0.0f);
-			GL11.glVertex3f(-1.0f, -1.0f, -1.0f);
-			GL11.glVertex3f(-1.0f, -1.0f, 1.0f);
-			GL11.glVertex3f(1.0f, -1.0f, 1.0f);
-			GL11.glVertex3f(1.0f, -1.0f, -1.0f);
-
-			GL11.glColor3f(0.5f, 0.0f, 0.5f);
-			GL11.glVertex3f(-1.0f, -1.0f, -1.0f);
-			GL11.glVertex3f(-1.0f, -1.0f, 1.0f);
-			GL11.glVertex3f(-1.0f, 1.0f, 1.0f);
-			GL11.glVertex3f(-1.0f, 1.0f, -1.0f);
-
-			GL11.glColor3f(0.5f, 0.5f, 0.5f);
-			GL11.glVertex3f(-1.0f, -1.0f, 1.0f);
-			GL11.glVertex3f(-1.0f, 1.0f, 1.0f);
-			GL11.glVertex3f(1.0f, 1.0f, 1.0f);
-			GL11.glVertex3f(1.0f, -1.0f, 1.0f);
-
-			GL11.glColor3f(0.0f, 0.0f, 0.5f);
-			GL11.glVertex3f(1.0f, -1.0f, -1.0f);
-			GL11.glVertex3f(1.0f, -1.0f, 1.0f);
-			GL11.glVertex3f(1.0f, 1.0f, 1.0f);
-			GL11.glVertex3f(1.0f, 1.0f, -1.0f);
-		}
-		GL11.glEnd();
-
-	}
-
 }

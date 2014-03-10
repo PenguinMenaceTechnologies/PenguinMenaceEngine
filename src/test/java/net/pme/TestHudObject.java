@@ -5,7 +5,7 @@ package net.pme;
 
 import java.awt.image.BufferedImage;
 
-import net.pme.objects.HudObject;
+import net.pme.graphics.HudObject;
 
 /**
  * @author Michael
@@ -14,15 +14,15 @@ import net.pme.objects.HudObject;
 public class TestHudObject extends HudObject {
 	private BufferedImage bi;
 
-	public TestHudObject(long id, int x, int y, BufferedImage bi) {
-		super(id, x, y);
+	public TestHudObject(int x, int y, BufferedImage bi) {
+		super(x, y);
 		this.bi = bi;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see net.pme.objects.HudObject#move(double)
+	 * @see net.pme.graphics.HudObject#update(double)
 	 */
 	@Override
 	public void move(double elapsedTime) {
@@ -32,7 +32,7 @@ public class TestHudObject extends HudObject {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see net.pme.objects.HudObject#offscreenRendering()
+	 * @see net.pme.graphics.HudObject#offscreenRendering()
 	 */
 	@Override
 	public BufferedImage offscreenRendering() {

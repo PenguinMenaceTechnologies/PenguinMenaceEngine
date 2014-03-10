@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 
-import net.pme.utils.FileFormatException;
+import net.pme.core.utils.FileFormatException;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;

@@ -1,7 +1,7 @@
 package net.pme;
 
-import net.pme.GameSettings;
-import net.pme.config.MemoryConfiguration;
+import net.pme.core.config.GameSettings;
+import net.pme.core.config.MemoryConfiguration;
 
 /**
  * The settings for the test.

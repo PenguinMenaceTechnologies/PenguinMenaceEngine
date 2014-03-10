@@ -17,7 +17,7 @@ public class NetworkConnectionListener extends Thread {
 	/**
 	 * The networkmanager where to add the sockets to.
 	 */
-	private NetworkManager networkManager;
+	private Network network;
 	/**
 	 * The port on which we run.
 	 */
@@ -30,13 +30,13 @@ public class NetworkConnectionListener extends Thread {
 	/**
 	 * Initialize the connection listener.
 	 * 
-	 * @param networkManager
+	 * @param network
 	 *            The network manager where to add new connections.
 	 * @param port
 	 *            The port on which to listen.
 	 */
-	public void initialize(NetworkManager networkManager, int port) {
-		this.networkManager = networkManager;
+	public void initialize(Network network, int port) {
+		this.network = network;
 		this.port = port;
 	}
 
@@ -49,7 +49,7 @@ public class NetworkConnectionListener extends Thread {
 		}
 		while (!this.isInterrupted()) {
 			try {
-				networkManager.addSocket(serverSocket.accept());
+				network.addSocket(serverSocket.accept());
 			} catch (SocketException e) {
 			    // We cannot connect to that socket, so wayne.
 				System.out.println("(NetworkConnectionListener) Socket closed.");

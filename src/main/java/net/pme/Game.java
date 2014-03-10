@@ -2,7 +2,6 @@ package net.pme;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -10,15 +9,15 @@ import javax.swing.JOptionPane;
 
 import org.lwjgl.opengl.Display;
 
+import net.pme.core.GameObject;
+import net.pme.core.config.GameSettings;
+import net.pme.gameloop.GameLoop;
+import net.pme.graphics.Graphics;
+import net.pme.model.ModelManager;
 import net.pme.network.NetworkInitializer;
-import net.pme.network.NetworkManager;
-import net.pme.objects.HudObject;
-import net.pme.objects.MovableObject;
-import net.pme.objects.Particle;
-import net.pme.objects.Player;
-import net.pme.objects.RenderableObject;
-import net.pme.objects.Shader;
-import net.pme.offscreen.OffscreenRenderer;
+import net.pme.network.Network;
+import net.pme.graphics.HudObject;
+import net.pme.core.Player;
 
 /**
  * Creates the LWJGL object and invokes a game loop thread as well as a network
@@ -28,47 +27,25 @@ import net.pme.offscreen.OffscreenRenderer;
  * @version 1.0
  */
 public final class Game {
-	private List<MovableObject> movableObjects = new CopyOnWriteArrayList<MovableObject>();
-	private List<RenderableObject> renderableObjects = new CopyOnWriteArrayList<RenderableObject>();
+	private List<GameObject> gameObjects = new CopyOnWriteArrayList<>();
 	private List<HudObject> hudObjects = new CopyOnWriteArrayList<HudObject>();
-	private LinkedList<Particle> particleObjects = new LinkedList<Particle>();
-	private Shader postprocessing = null;
-	private Shader finalShader = null;
+
 	private boolean isLoaded = false;
 	private GameLoop gameLoop = null;
-	private NetworkManager networkManager = null;
-	private GameDisplay gameDisplay = null;
+	private Network network = null;
+	private Graphics graphics = null;
 	private ModelManager modelManager;
 	private GameSettings settings;
 
 	/**
-	 * Add a movable object to the movable objects.
-	 * 
-	 * Only works for objects that are not in renderable objects.
-	 * 
-	 * @param movableObject
+	 * Add a gameObject to the game.
+	 *
+	 * @param gameObject
 	 *            The object that should be added.
 	 */
-	public void addMovable(final MovableObject movableObject) {
-		if (!renderableObjects.contains(movableObject)) {
-			movableObjects.add(movableObject);
-		}
-	}
-
-	/**
-	 * Add a renderable object to the renderable objects.
-	 * 
-	 * Removes objects from movable list, to reduce redundancy.
-	 * 
-	 * @param renderableObject
-	 *            The object that should be added.
-	 */
-	public void addRenderable(final RenderableObject renderableObject) {
-		if (movableObjects.contains(renderableObject)) {
-			removeMovable(renderableObject);
-		}
-		if (!renderableObjects.contains(renderableObject)) {
-			renderableObjects.add(renderableObject);
+	public void addGameObject(final GameObject gameObject) {
+		if (!gameObjects.contains(gameObject)) {
+            gameObjects.add(gameObject);
 		}
 	}
 
@@ -83,88 +60,13 @@ public final class Game {
 	}
 
 	/**
-	 * Add an offscreen renderer to the game.
+	 * Remove an object from the game objecst.
 	 * 
-	 * @param renderer
-	 *            The offscreen renderer.
-	 */
-	public void addOffscreenRenderer(OffscreenRenderer renderer) {
-		if (gameLoop != null) {
-			gameLoop.addOffscreenRenderer(renderer, this);
-		} else {
-			throw new IllegalStateException(
-					"You need to start your game before you can add an offscreen renderer");
-		}
-	}
-
-	/**
-	 * Remove an offscreen renderer from the game.
-	 * 
-	 * @param renderer
-	 *            The offscreen renderer to remove.
-	 */
-	public void removeOffscreenRenderer(OffscreenRenderer renderer) {
-		if (gameLoop != null) {
-			gameLoop.removeOffscreenRenderer(renderer);
-		}
-	}
-
-	/**
-	 * Set a shader to be used for postprocessing.
-	 * 
-	 * @param shader
-	 *            The shader to use.
-	 */
-	public void setPostprocessingShader(Shader shader) {
-		postprocessing = shader;
-	}
-
-	/**
-	 * Set a shader to be used for final postprocessing (also applied on hud).
-	 * 
-	 * @param shader
-	 *            The shader to use.
-	 */
-	public void setFinalShader(Shader shader) {
-		finalShader = shader;
-	}
-
-	/**
-	 * Get an instance of the currently used postprocessing shader.
-	 * 
-	 * @return The currently used shader.
-	 */
-	public Shader getPostprocessingShader() {
-		return postprocessing;
-	}
-
-	/**
-	 * Get an instance of the currently used final postprocessing shader.
-	 * 
-	 * @return The currently used shader.
-	 */
-	public Shader getFinalShader() {
-		return finalShader;
-	}
-
-	/**
-	 * Remove an object from movable objects list.
-	 * 
-	 * @param movableObject
+	 * @param gameObject
 	 *            The object that should be removed.
 	 */
-	public void removeMovable(final MovableObject movableObject) {
-		movableObjects.remove(movableObject);
-	}
-
-	/**
-	 * Remove an object from the renderable objects list.
-	 * 
-	 * @param renderableObject
-	 *            The object that should be removed.
-	 */
-	public void removeRenderable(final RenderableObject renderableObject) {
-		renderableObjects.remove(renderableObject);
+	public void removeGameObject(final GameObject gameObject) {
+		gameObjects.remove(gameObject);
 	}
 
 	/**
@@ -180,15 +82,8 @@ public final class Game {
 	/**
 	 * Clear the movable object list.
 	 */
-	public void clearMovable() {
-		movableObjects.clear();
-	}
-
-	/**
-	 * Clear the renderable object list.
-	 */
-	public void clearRenderable() {
-		renderableObjects.clear();
+	public void clearGameObjects() {
+        gameObjects.clear();
 	}
 
 	/**
@@ -202,8 +97,7 @@ public final class Game {
 	 * Clear the renderable, movable and hud object list.
 	 */
 	public void clearAll() {
-		clearMovable();
-		clearRenderable();
+        clearGameObjects();
 		clearHud();
 	}
 
@@ -225,9 +119,11 @@ public final class Game {
 
 		gameLoop = new GameLoop();
 
+
+        addGameObject(player);
+
 		// Start the gameLoop
-		gameLoop.run(movableObjects, renderableObjects, particleObjects,
-				hudObjects, player, this);
+		gameLoop.run(gameObjects, hudObjects, player, this);
 
 		gameLoop = null;
 	}
@@ -261,16 +157,13 @@ public final class Game {
 		settings.getSettings();
 		settings.getKeyMapping();
 
-		// Initialize the gameinput helper interface.
-		GameInput.load(getSettings());
-
 		isLoaded = true;
 	}
 
 	/**
 	 * Unload the game.
 	 */
-	public void unload() {
+	public void deinitializeCore() {
 		NativeLoader.unloadLibraries();
 		if (settings != null) {
 			settings.saveAll();
@@ -289,8 +182,8 @@ public final class Game {
 	 */
 	public void initializeNetwork(NetworkInitializer networkInitializer)
 			throws UnknownHostException, IOException {
-		if (networkManager == null) {
-			networkManager = new NetworkManager(networkInitializer);
+		if (network == null) {
+			network = new Network(networkInitializer);
 		}
 	}
 
@@ -299,21 +192,21 @@ public final class Game {
 	 * 
 	 * @return The active network manager.
 	 */
-	public NetworkManager getNetworkManager() {
-		return networkManager;
+	public Network getNetwork() {
+		return network;
 	}
 
 	/**
 	 * Deinitialize the network.
 	 */
 	public void deinitializeNetwork() {
-		if (networkManager != null) {
-			networkManager.deinitialize();
+		if (network != null) {
+			network.deinitialize();
 		}
 	}
 
 	/**
-	 * Initialize the display module.
+	 * Initialize the graphics module.
 	 * 
 	 * @param title
 	 *            The title of the window to create.
@@ -325,11 +218,11 @@ public final class Game {
 	 *            fullscreen will be set automatically)
 	 * @param fullscreen
 	 *            Weather to start in fullscreen or not.
-	 * @return A game display.
+	 * @return A game graphics.
 	 */
-	public GameDisplay initializeDisplay(String title, int width, int height,
-			boolean fullscreen, int fpscap) {
-		if (gameDisplay != null || Display.isCreated()) {
+	public Graphics initializeGraphics(String title, int width, int height,
+                                       boolean fullscreen, int fpscap) {
+		if (graphics != null || Display.isCreated()) {
 			throw new IllegalStateException(
 					"You can only initialize one display module at a time.");
 		}
@@ -337,24 +230,19 @@ public final class Game {
 			throw new IllegalStateException(
 					"Display module is dependant on the core module. Initialize it before initializing this.");
 		}
-		gameDisplay = GameDisplay.create(title, width, height, fullscreen);
-		gameDisplay.setFPS(fpscap);
-		if (gameLoop != null) {
-			gameLoop.initializeRendering(this);
-		}
-		return gameDisplay;
+		graphics = Graphics.create(this, title, width, height, fullscreen);
+		graphics.setFPS(fpscap);
+
+		return graphics;
 	}
 
 	/**
-	 * Deinitialize the display module.
+	 * Deinitialize the graphics module.
 	 */
-	public void deinitializeDisplay() {
-		if (gameDisplay != null) {
-			if (gameLoop != null) {
-				gameLoop.deinitializeRendering();
-			}
-			gameDisplay.deinit();
-			gameDisplay = null;
+	public void deinitializeGraphics() {
+		if (graphics != null) {
+			graphics.deinit();
+			graphics = null;
 		}
 	}
 
@@ -364,8 +252,8 @@ public final class Game {
 	 * @return The current display or null if the display module is not
 	 *         initialized.
 	 */
-	public GameDisplay getDisplay() {
-		return gameDisplay;
+	public Graphics getDisplay() {
+		return graphics;
 	}
 
 	/**
@@ -378,7 +266,7 @@ public final class Game {
 			throw new IllegalStateException(
 					"You can only initialize one modelmanager module at a time.");
 		}
-		if (gameDisplay == null) {
+		if (graphics == null) {
 			throw new IllegalStateException(
 					"ModelManager is dependant on the display module. Initialize it before initializing this.");
 		}

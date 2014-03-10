@@ -3,7 +3,7 @@ package net.pme.network;
 import java.io.DataOutputStream;
 import java.net.Socket;
 
-import net.pme.objects.GameObject;
+import net.pme.core.GameObject;
 
 /**
  * A network packet.
@@ -11,21 +11,18 @@ import net.pme.objects.GameObject;
  * @author Michael Fürst
  * @version 1.0
  */
-public class Packet extends GameObject {
+public class Packet {
 	private Socket sender;
 
 	/**
 	 * A new packet.
 	 * 
 	 * Used for incoming packets.
-	 * 
-	 * @param id
-	 *            The id.
+	 *
 	 * @param sender
 	 *            The sender socket of this packet.
 	 */
-	Packet(final long id, Socket sender) {
-		super(id);
+	Packet(Socket sender) {
 		this.sender = sender;
 	}
 
@@ -38,7 +35,7 @@ public class Packet extends GameObject {
 	 *            The id.
 	 */
 	Packet(final long id) {
-		this(id, null);
+		this(null);
 	}
 
 	/**
@@ -59,4 +56,8 @@ public class Packet extends GameObject {
 	public void send(DataOutputStream os) {
 
 	}
+
+    public int getId() {
+        return 0;
+    }
 }

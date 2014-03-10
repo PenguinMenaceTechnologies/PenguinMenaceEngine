@@ -1,6 +1,6 @@
 package net.pme;
 
-import net.pme.offscreen.OffscreenRenderer;
+import net.pme.graphics.OffscreenRenderer;
 
 /**
  * Created by michael on 10.03.14.
