@@ -117,7 +117,6 @@ final class GameLoop {
         OffscreenRendererWrapper wrapper = new OffscreenRendererWrapper(renderer);
         if (offscreenRenderers.contains(wrapper)) return;
         offscreenRenderers.add(wrapper);
-        System.out.println("Added");
     }
 
     /**
@@ -128,7 +127,6 @@ final class GameLoop {
         for (OffscreenRendererWrapper o: offscreenRenderers) {
             if (o.equals(renderer)) {
                 o.disable();
-                System.out.println("Removed");
                 return;
             }
         }
