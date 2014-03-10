@@ -43,14 +43,14 @@ public abstract class Player extends GameObject {
 	 * call of this function.
 	 */
 	public final void applyCamera() {
-		if (getRenderAttachment() != null && getRenderAttachment().isNeedsUpdate()) {
-			Matrix m = Matrix.camera(getPosition(),
-					Vector3D.crossProduct(getRenderAttachment().getFront(), getRenderAttachment().getUp()), getRenderAttachment().getUp(), getRenderAttachment().getFront());
+        if (getRenderAttachment() != null) {
+            Matrix m = Matrix.camera(getPosition(),
+                Vector3D.crossProduct(getRenderAttachment().getFront(), getRenderAttachment().getUp()), getRenderAttachment().getUp(), getRenderAttachment().getFront());
 
-			matrixBuffer = m.getValues(matrixBuffer);
-		}
-		matrixBuffer.position(0);
-		GL11.glMultMatrix(matrixBuffer);
+            matrixBuffer = m.getValues(matrixBuffer);
+            matrixBuffer.position(0);
+            GL11.glMultMatrix(matrixBuffer);
+        }
 	}
 
 	/**

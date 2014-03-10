@@ -97,7 +97,7 @@ public class RenderAttachment {
 	/**
 	 * @param front the front to set
 	 */
-	protected final void setFront(final Vector3D front) {
+    public final void setFront(final Vector3D front) {
 		this.front = front;
 		needsUpdate = true;
 	}
@@ -112,7 +112,7 @@ public class RenderAttachment {
 	/**
 	 * @param up the up to set
 	 */
-	protected final void setUp(final Vector3D up) {
+    public final void setUp(final Vector3D up) {
 		this.up = up;
 		needsUpdate = true;
 	}
@@ -127,7 +127,7 @@ public class RenderAttachment {
 	/**
 	 * @param needsUpdate the needsUpdate to set
 	 */
-	protected final void setNeedsUpdate(final boolean needsUpdate) {
+    public final void setNeedsUpdate(final boolean needsUpdate) {
 		this.needsUpdate = needsUpdate;
 	}
 
@@ -148,14 +148,14 @@ public class RenderAttachment {
 	/**
 	 * @return the shader
 	 */
-	protected final Shader getShader() {
+	public final Shader getShader() {
 		return shader;
 	}
 
 	/**
 	 * @param shader the shader to set
 	 */
-	protected final void setShader(final Shader shader) {
+    protected final void setShader(final Shader shader) {
 		this.shader = shader;
 	}
 
