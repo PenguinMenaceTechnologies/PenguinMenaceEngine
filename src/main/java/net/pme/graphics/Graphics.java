@@ -17,6 +17,7 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL14;
+import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GLContext;
 import org.lwjgl.util.glu.GLU;
 
@@ -575,11 +576,23 @@ public final class Graphics {
         glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT,
                 GL11.GL_TEXTURE_2D, texture, 0);
 
-        glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, depth);
+        /*glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, depth);
         glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT,
-                GL14.GL_DEPTH_COMPONENT24, width, height);
+                GL30.GL_DEPTH24_STENCIL8, width, height);
         glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,
-                GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, depth);
+                GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, depth);*/
+
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, depth);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL14.GL_DEPTH_TEXTURE_MODE, GL11.GL_INTENSITY);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_COMPARE_MODE, GL14.GL_COMPARE_R_TO_TEXTURE);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_COMPARE_FUNC, GL11.GL_LEQUAL);
+
+        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL14.GL_DEPTH_COMPONENT32, width, height,
+                0, GL11.GL_DEPTH_COMPONENT, GL11.GL_FLOAT, (java.nio.ByteBuffer) null);
+
+        glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL11.GL_TEXTURE_2D, depth, 0);
 
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
     }

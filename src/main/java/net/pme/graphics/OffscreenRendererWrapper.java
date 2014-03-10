@@ -63,11 +63,23 @@ public class OffscreenRendererWrapper {
             glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT,
                     GL11.GL_TEXTURE_2D, t, 0);
 
-            glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, d);
-            glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT,
-                    GL14.GL_DEPTH_COMPONENT24, width, height);
-            glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,
-                    GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, d);
+            //glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, d);
+            //glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT,
+            //        GL14.GL_DEPTH_COMPONENT24, width, height);
+            //glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,
+            //        GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, d);
+
+            GL11.glBindTexture(GL11.GL_TEXTURE_2D, d);
+            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
+            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
+            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL14.GL_DEPTH_TEXTURE_MODE, GL11.GL_INTENSITY);
+            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_COMPARE_MODE, GL14.GL_COMPARE_R_TO_TEXTURE);
+            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_COMPARE_FUNC, GL11.GL_LEQUAL);
+
+            GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL14.GL_DEPTH_COMPONENT32, width, height,
+                    0, GL11.GL_DEPTH_COMPONENT, GL11.GL_FLOAT, (java.nio.ByteBuffer) null);
+
+            glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL11.GL_TEXTURE_2D, d, 0);
 
             glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
         }
