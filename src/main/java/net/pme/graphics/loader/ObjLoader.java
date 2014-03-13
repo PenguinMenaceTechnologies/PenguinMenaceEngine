@@ -18,7 +18,8 @@ import net.pme.graphics.data.VertexData;
  * @since 2014-03-12
  */
 public class ObjLoader {
-    ArrayList<VertexData> models;
+    public static ArrayList<VertexData> models;
+
     public static Model loadObj(final String path) throws IOException {
         return loadObj(path, false);
     }
@@ -37,11 +38,15 @@ public class ObjLoader {
         BufferedReader reader = new BufferedReader(new InputStreamReader(fis), 4096);
         String line; String tokens[];
 
-        // TODO: actually check this constructor args
-        VertexData vertexData = new VertexData(true, false, true);
+        models = new ArrayList<VertexData>();
+        int currentObject = 0;
 
-        int currentLine = 0;
+        // TODO: actually check this constructor args
+
+        models.add(new VertexData(true, false, true));
+
         try {
+            int currentLine = 0;
             while ((line = reader.readLine()) != null) {
                 // Escape all whitespace characters. The \\s is equivalent to [ \\t\\n\\x0B\\f\\r]
                 tokens = line.split("\\s+");
@@ -52,7 +57,8 @@ public class ObjLoader {
                     continue;
 
                 char first = tokens[0].toLowerCase().charAt(0);
-                if (first == '#')
+                // ignore groups for now
+                if (first == '#' || first == 'g')
                     continue;
 
                 if (first == 'v' && tokens.length > 2) {
@@ -60,7 +66,7 @@ public class ObjLoader {
                     float y = Float.parseFloat(tokens[2]);
 
                     if (tokens[0].length() > 1 && tokens[0].charAt(1) == 't') {
-                        vertexData.addTexCoord(x, y);
+                        models.get(currentObject).addTexCoord(x, y);
                     }
 
                     if (tokens.length < 4) {
@@ -71,15 +77,15 @@ public class ObjLoader {
 
                     if (tokens[0].length() == 1) {
                         if (tokens.length == 4) {
-                            vertexData.addVertex(x, y, z);
+                            models.get(currentObject).addVertex(x, y, z);
                         } else if (tokens.length == 5) {
-                            vertexData.addVertex(x, y, z, Float.parseFloat(tokens[4]));
+                            models.get(currentObject).addVertex(x, y, z, Float.parseFloat(tokens[4]));
                         }
                     } else if (tokens[0].charAt(1) == 'n') {
                         if (!flipZ) {
-                            vertexData.addNormal(x, y, z);
+                            models.get(currentObject).addNormal(x, y, z);
                         } else {
-                            vertexData.addNormal(x, y, -z);
+                            models.get(currentObject).addNormal(x, y, -z);
                         }
                     }
                 } else if (first == 'f') {
@@ -95,21 +101,20 @@ public class ObjLoader {
                         face[i * 3 + 1] = Integer.parseInt(currentFace[1]);
                         face[i * 3 + 2] = Integer.parseInt(currentFace[2]);
                     }
-                    vertexData.addFace(face);
-                } /* else if (first == 'o' || first == 'g') {
-                    if (tokens.length > 1)
-                        activeGroup = setActiveGroup(tokens[1]);
-                    else
-                        activeGroup = setActiveGroup("default");
+                    models.get(currentObject).addFace(face);
+                } else if (first == 'o') {
+                    if (tokens.length > 1) {
+                        models.add(new VertexData(true, false, true));
+                        currentObject++;
+                    }
                 } else if (tokens[0].equals("mtllib")) {
-                    mtl.load(file.parent().child(tokens[1]));
-                } else if (tokens[0].equals("usemtl")) {
+                     loadMtl(tokens[1]);
+                } /*else if (tokens[0].equals("usemtl")) {
                     if (tokens.length == 1)
                         activeGroup.materialName = "default";
                     else
                         activeGroup.materialName = tokens[1];
                 }*/
-
                 currentLine++;
             }
             reader.close();
@@ -123,5 +128,9 @@ public class ObjLoader {
         }
 
         return null;
+    }
+
+    private static void loadMtl(String path) {
+
     }
 }
