@@ -14,8 +14,6 @@ public class Vector4D extends Vector {
         this(0.0, 0.0, 0.0, 0.0);
     }
 
-
-
     /**
      * Create a vector with the given parameters.
      * @param x x-component
