@@ -1,5 +1,6 @@
 package net.pme;
 
+import net.pme.graphics.Shader;
 import org.lwjgl.opengl.GL11;
 
 import net.pme.core.GameObject;
@@ -81,6 +82,7 @@ public class Ship extends GameObject {
 
             }
         });
+        this.getRenderAttachment().attachShader(new Shader(null, Shaders.fsh));
         setLoopableAttachment(new LoopableAttachment() {
             @Override
             public void update(double elapsedTime) {

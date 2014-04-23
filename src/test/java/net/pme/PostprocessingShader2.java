@@ -15,7 +15,7 @@ public class PostprocessingShader2 extends Shader {
 			+ "#version 110\n"
 			+ "uniform sampler2D texture1;"
 			+ "void main(void) {"
-			+ "gl_FragColor = vec4(0.4,0.0,0.0,0.1) + texture2D(texture1, gl_TexCoord[0].st);" + "}";
+			+ "gl_FragColor = vec4(0.4,0.0,0.0,0.1) + texture2D( texture1, gl_TexCoord[0].st );" + "}";
 	
 
 	public PostprocessingShader2() {
