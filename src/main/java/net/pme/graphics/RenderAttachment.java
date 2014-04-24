@@ -2,12 +2,18 @@ package net.pme.graphics;
 
 import java.nio.DoubleBuffer;
 
+import net.pme.graphics.data.VertexData;
+import net.pme.model.Face;
+import net.pme.model.Material;
+import net.pme.model.Model;
 import org.lwjgl.opengl.GL11;
 
 import net.pme.core.GameObject;
 import net.pme.core.math.MathUtils;
 import net.pme.core.math.Matrix;
 import net.pme.core.math.Vector3D;
+import org.lwjgl.opengl.GL15;
+import org.lwjgl.util.vector.Vector3f;
 
 /**
  * An object that can be rendered.
@@ -16,7 +22,10 @@ import net.pme.core.math.Vector3D;
  * @version 1.0
  */
 public class RenderAttachment {
-	private int graphics;
+    private Model model;
+    private VertexData vertexData;
+    private Material material;
+
 
     private GameObject parent;
 	/**
@@ -49,17 +58,19 @@ public class RenderAttachment {
 	 *            The front vector.
 	 * @param up
 	 *            The up vector.
-	 * @param graphics
+	 * @param model
 	 *            The graphics identifier.
 	 */
 	public RenderAttachment(final GameObject parent, final Vector3D front,
-                            final Vector3D up, final int graphics) {
+                            final Vector3D up, final Model model) {
         this.parent = parent;
 		this.front = Vector3D.normalize(front);
 		this.up = Vector3D.normalize(up);
-		this.graphics = graphics;
+		this.model = model;
 		this.needsUpdate = true;
 		this.matrixBuffer = null;
+
+        setModel(model);
 	}
 
 	/**
@@ -69,21 +80,56 @@ public class RenderAttachment {
 	 *            The shader to attach to this object.
 	 */
 	public final void attachShader(final Shader newShader) {
-		this.shader = newShader;
+        this.shader = newShader;
 	}
 
 	/**
-	 * @return the graphics
+	 * @return the model
 	 */
-	protected final int getGraphics() {
-		return graphics;
+	protected final Model getModel() {
+		return model;
 	}
 
 	/**
-	 * @param graphics the graphics to set
+	 * @param model the model to set
 	 */
-	protected final void setGraphics(final int graphics) {
-		this.graphics = graphics;
+	protected final void setModel(final Model model) {
+        if (vertexData != null) {
+            vertexData.unloadFromGraphicsCard();
+        }
+        this.model = model;
+        if (model != null) {
+            // Initialise the VertexData
+            boolean normal = false;
+            boolean color = false;
+            boolean uv = false;
+            if (model.getNormals().size() > 0) {
+                normal = true;
+            }
+            if (model.getTextureCoords().size() > 0) {
+                uv = true;
+            }
+
+            vertexData = new VertexData( normal, color, uv );
+
+            for (Vector3f v: model.getVertices()) {
+                vertexData.addVertex(v.x,v.y,v.z);
+            }
+            if (normal)
+            for (Vector3f n: model.getNormals()) {
+                vertexData.addNormal(n.x, n.y, n.z);
+            }
+            if (uv)
+            for (Vector3f t: model.getTextureCoords()) {
+                vertexData.addTexCoord(t.x,t.y);
+            }
+
+            for (Face f: model.getFaces()) {
+                vertexData.addFace(f);
+            }
+
+            vertexData.loadToGraphicsCard();
+        }
 		needsUpdate = true;
 	}
 
@@ -251,8 +297,14 @@ public class RenderAttachment {
 		if (shader != null) {
 			shader.bind();
 		}
-		if (graphics > 0) {
-			GL11.glCallList(graphics);
+		if (vertexData != null) {
+            // TODO bind materials
+            if (shader != null) {
+                // TODO setup shader for this rendering
+            } else {
+                // TODO use a default shader
+            }
+            vertexData.render();
 		}
 
 		specialFX();

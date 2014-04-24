@@ -9,7 +9,7 @@ import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.InvalidPropertiesFormatException;
 
-import net.pme.graphics.Model;
+import net.pme.graphics.data.Model;
 import net.pme.graphics.data.VertexData;
 
 /**

@@ -1,15 +1,22 @@
 package net.pme.graphics.data;
 
+import java.nio.FloatBuffer;
 import java.util.List;
 import java.util.ArrayList;
 
 import net.pme.core.math.Vector3D;
 import net.pme.core.math.Vector2D;
+import net.pme.graphics.Shader;
+import net.pme.model.Face;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL15;
 
 /**
  * @author Johannes Schuck <jojoschuck@googlemail.com>
- * @version 0.1
- * @since 2014-03-12
+ * @author Michael Fürst <mail@michaelfuerst.de>
+ * @version 1.0
+ * @since 2014-04-24
  */
 public class VertexData {
     private List<Vector3D> vertices;
@@ -28,32 +35,43 @@ public class VertexData {
     private final int NORMAL_COMPONENTS = 3;
     private final int COLOR_COMPONENTS = 3;
     private final int UV_COMPONENTS = 2;
+    private int buffer = -1;
+    private int stride = 0;
 
     public VertexData() {
         this(false, false, false);
     }
 
     public VertexData(boolean normal, boolean color, boolean uv) {
-        vertices = new ArrayList<Vector3D>();
-        faces = new ArrayList<int[]>();
+        vertices = new ArrayList<>();
+        faces = new ArrayList<>();
 
 
         this.hasNormal = normal;
         this.hasColor = color;
         this.hasUV = uv;
 
+        // Calculate the stride
+        stride = VERTEX_COMPONENTS;
+        if (hasColor)
+            stride += COLOR_COMPONENTS;
+        if (hasNormal)
+            stride += NORMAL_COMPONENTS;
+        if (hasUV)
+            stride += UV_COMPONENTS;
+
         if (hasNormal) {
-            normals = new ArrayList<Vector3D>();
+            normals = new ArrayList<>();
             numComponents++;
         }
 
         if (hasUV) {
-            uvs = new ArrayList<Vector2D>();
+            uvs = new ArrayList<>();
             numComponents++;
         }
 
         if (hasColor) {
-            colors = new ArrayList<Vector3D>();
+            colors = new ArrayList<>();
             numComponents++;
         }
     }
@@ -88,48 +106,37 @@ public class VertexData {
     }
 
     public float[] getVertexData() {
-        // Calculate the stride
-        int numFloats = VERTEX_COMPONENTS;
-        if (hasColor)
-            numFloats += COLOR_COMPONENTS;
-        if (hasNormal)
-            numFloats += NORMAL_COMPONENTS;
-        if (hasUV)
-            numFloats += UV_COMPONENTS;
-
         int bufferCount = 0;
         for (int[] face : faces) {
             bufferCount += face.length / numComponents;
         }
 
-        float vertexData[] = new float[numFloats * bufferCount];
+        float vertexData[] = new float[stride * bufferCount];
 
         int i = 0;
         for (int[] face : faces) {
             for (int j = 0; j < face.length / numComponents; j++) {
-                int currOffset = 0; int p = 0;
-                vertexData[i * numFloats + p++] = (float) vertices.get(face[currOffset]).getX();
-                vertexData[i * numFloats + p++] = (float) vertices.get(face[currOffset]).getY();
-                vertexData[i * numFloats + p++] = (float) vertices.get(face[currOffset]).getZ();
+                int p = 0;
+                vertexData[i * stride + p] = (float) vertices.get(face[p++]).getX();
+                vertexData[i * stride + p] = (float) vertices.get(face[p++]).getY();
+                vertexData[i * stride + p] = (float) vertices.get(face[p++]).getZ();
+
 
                 if (hasNormal) {
-                    currOffset++;
-                    vertexData[i * numFloats + p++] = (float) vertices.get(face[currOffset]).getX();
-                    vertexData[i * numFloats + p++] = (float) vertices.get(face[currOffset]).getY();
-                    vertexData[i * numFloats + p++] = (float) vertices.get(face[currOffset]).getZ();
+                    vertexData[i * stride + p] = (float) normals.get(face[p++]).getX();
+                    vertexData[i * stride + p] = (float) normals.get(face[p++]).getY();
+                    vertexData[i * stride + p] = (float) normals.get(face[p++]).getZ();
                 }
 
                 if (hasColor) {
-                    currOffset++;
-                    vertexData[i * numFloats + p++] = (float) vertices.get(face[currOffset]).getX();
-                    vertexData[i * numFloats + p++] = (float) vertices.get(face[currOffset]).getY();
-                    vertexData[i * numFloats + p++] = (float) vertices.get(face[currOffset]).getZ();
+                    vertexData[i * stride + p] = (float) colors.get(face[p++]).getX();
+                    vertexData[i * stride + p] = (float) colors.get(face[p++]).getY();
+                    vertexData[i * stride + p] = (float) colors.get(face[p++]).getZ();
                 }
 
                 if (hasUV) {
-                    currOffset++;
-                    vertexData[i * numFloats + p++] = (float) vertices.get(face[currOffset]).getX();
-                    vertexData[i * numFloats + p++] = (float) vertices.get(face[currOffset]).getY();
+                    vertexData[i * stride + p] = (float) uvs.get(face[p++]).getX();
+                    vertexData[i * stride + p] = (float) uvs.get(face[p++]).getY();
                 }
                 i++;
             }
@@ -186,6 +193,30 @@ public class VertexData {
         faces.add(face);
     }
 
+    public void addFace(Face f) {
+        int[] face = new int[stride];
+
+        int i = 0;
+
+        face[i++] = (int)f.getVertex().getX() - 1;
+        face[i++] = (int)f.getVertex().getY() - 1;
+        face[i++] = (int)f.getVertex().getZ() - 1;
+
+        if (hasNormal) {
+            face[i++] = (int)f.getNormal().getX() - 1;
+            face[i++] = (int)f.getNormal().getY() - 1;
+            face[i++] = (int)f.getNormal().getZ() - 1;
+        }
+
+        if (hasUV) {
+            face[i++] = (int)f.getTexture().getX() - 1;
+            face[i++] = (int)f.getTexture().getY() - 1;
+            //face[i++] = (int)f.getTexture().getZ() - 1;
+        }
+
+        faces.add(face);
+    }
+
     public final int getVertexOffset() {
         return 0;
     }
@@ -195,11 +226,77 @@ public class VertexData {
     }
 
     public final int getColorOffset() {
-        return VERTEX_COMPONENTS + NORMAL_COMPONENTS;
+        return VERTEX_COMPONENTS + (hasNormal?NORMAL_COMPONENTS:0);
     }
 
     public final int getUVOffset() {
-        return VERTEX_COMPONENTS + NORMAL_COMPONENTS + COLOR_COMPONENTS;
+        return VERTEX_COMPONENTS + (hasNormal?NORMAL_COMPONENTS:0) + (hasColor?COLOR_COMPONENTS:0);
     }
 
+    public void unloadFromGraphicsCard() {
+        if (buffer >= 0) {
+            GL15.glDeleteBuffers(buffer);
+            buffer = -1;
+        } else {
+            throw new RuntimeException("There is no data to unload!");
+        }
+    }
+
+    public void loadToGraphicsCard() {
+        if (buffer < 0) {
+            float[] vertexData = getVertexData();
+            FloatBuffer data = BufferUtils.createFloatBuffer(vertexData.length);
+            data.put(vertexData);
+            data.flip();
+
+            buffer = GL15.glGenBuffers();
+            bind();
+            GL15.glBufferData(GL15.GL_ARRAY_BUFFER, data, GL15.GL_STATIC_DRAW);
+            unbind();
+        } else {
+            throw new RuntimeException("You must unload the vertexdata first!");
+        }
+    }
+
+    public void bind() {
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, buffer);
+    }
+
+    public void render() {
+        bind();
+
+        GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
+        GL11.glVertexPointer(VERTEX_COMPONENTS, GL11.GL_FLOAT, stride, getVertexOffset());
+        if (hasNormal) {
+            GL11.glEnableClientState(GL11.GL_NORMAL_ARRAY);
+            GL11.glNormalPointer(GL11.GL_FLOAT, stride, getNormalOffset());
+        }
+        if (hasColor) {
+            GL11.glEnableClientState(GL11.GL_COLOR_ARRAY);
+            GL11.glColorPointer(COLOR_COMPONENTS, GL11.GL_FLOAT, stride, getColorOffset());
+        }
+        if (hasUV) {
+            GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+            GL11.glTexCoordPointer(UV_COMPONENTS, GL11.GL_FLOAT, stride, getUVOffset());
+        }
+
+        GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, faces.size() * 3 - 1);
+
+        GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
+        if (hasNormal) {
+            GL11.glDisableClientState(GL11.GL_NORMAL_ARRAY);
+        }
+        if (hasColor) {
+            GL11.glDisableClientState(GL11.GL_COLOR_ARRAY);
+        }
+        if (hasUV) {
+            GL11.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+        }
+
+        unbind();
+    }
+
+    public void unbind() {
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+    }
 }

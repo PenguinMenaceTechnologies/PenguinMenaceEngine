@@ -20,7 +20,7 @@ import org.lwjgl.util.vector.Vector3f;
  * @author Michael Fürst
  * @version 1.0
  */
-class Material {
+public class Material {
 	private String name;
 	/**
 	 * @return the name

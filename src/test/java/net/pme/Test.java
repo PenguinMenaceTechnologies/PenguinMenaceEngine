@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import net.pme.model.Model;
 import org.lwjgl.input.Mouse;
 
 import net.pme.core.math.Vector3D;
@@ -48,9 +49,9 @@ public class Test {
 		
 		ModelManager modelManager = game.getModelManager();
 
-		int model = modelManager.get(Test.class.getResource(
+		Model model = modelManager.get(Test.class.getResource(
 				"/assets/cube_small.obj").getPath());
-		int model2 = modelManager.get(Test.class.getResource(
+        Model model2 = modelManager.get(Test.class.getResource(
 				"/assets/cube_small.obj").getPath());
 		if (model == model2) {
 			System.out.println("Model loading is efficient!");

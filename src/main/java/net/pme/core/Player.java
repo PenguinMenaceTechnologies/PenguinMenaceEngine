@@ -2,6 +2,7 @@ package net.pme.core;
 
 import java.nio.DoubleBuffer;
 
+import net.pme.model.Model;
 import org.lwjgl.opengl.GL11;
 
 import net.pme.core.math.Matrix;
@@ -33,7 +34,7 @@ public abstract class Player extends GameObject {
 	 * @param graphics
 	 *            The graphics identifier.
 	 */
-	public Player(final Vector3D position, final Vector3D front, final Vector3D up, final int graphics) {
+	public Player(final Vector3D position, final Vector3D front, final Vector3D up, final Model graphics) {
 		super(1, position);
         setRenderAttachment(new RenderAttachment(this, front, up, graphics));
 	}

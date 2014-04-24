@@ -1,6 +1,7 @@
 package net.pme;
 
 import net.pme.graphics.Shader;
+import net.pme.model.Model;
 import org.lwjgl.opengl.GL11;
 
 import net.pme.core.GameObject;
@@ -27,16 +28,16 @@ public class Ship extends GameObject {
 	 *            The front axis.
      * @param up
      *            The up axis.
-     * @param graphics
+     * @param model
      *            The up axis.
 	 **/
-	public Ship(long id, Vector3D position, Vector3D front, Vector3D up, int graphics) {
+	public Ship(long id, Vector3D position, Vector3D front, Vector3D up,final Model model) {
 		super(id, position);
         final GameObject parent = this;
-        setRenderAttachment(new RenderAttachment(this, front, up, graphics) {
+        setRenderAttachment(new RenderAttachment(this, front, up, model) {
             @Override
             protected void specialFX() {
-                if (this.getGraphics() >= 0) {
+                if (this.getModel() != null) {
                     return;
                 }
                 GL11.glBegin(GL11.GL_QUADS);
@@ -82,7 +83,7 @@ public class Ship extends GameObject {
 
             }
         });
-        this.getRenderAttachment().attachShader(new Shader(null, Shaders.fsh));
+        //this.getRenderAttachment().attachShader(new Shader(null, Shaders.fsh));
         setLoopableAttachment(new LoopableAttachment() {
             @Override
             public void update(double elapsedTime) {

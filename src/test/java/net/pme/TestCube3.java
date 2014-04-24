@@ -34,7 +34,7 @@ public class TestCube3 extends GameObject {
 	public TestCube3(long id, Vector3D position, Vector3D front, Vector3D up) {
 		super(id, position);
 
-        setRenderAttachment(new RenderAttachment(this, front, up, -1) {
+        setRenderAttachment(new RenderAttachment(this, front, up, null) {
             @Override
             protected void specialFX() {
                 GL11.glBegin(GL11.GL_QUADS);

@@ -8,7 +8,7 @@ import org.lwjgl.util.vector.Vector3f;
  * @author Michael Fürst
  * @version 1.0
  */
-class Face {
+public class Face {
 	/**
 	 * The vertex of a face.
 	 */
