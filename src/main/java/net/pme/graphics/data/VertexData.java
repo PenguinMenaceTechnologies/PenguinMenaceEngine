@@ -276,7 +276,7 @@ public class VertexData {
             System.out.println("Stride = "+ stride);
             FloatBuffer data = BufferUtils.createFloatBuffer(vertexData.length);
             data.put(vertexData);
-            data.rewind();
+            data.flip();
 
             buffer = GL15.glGenBuffers();
             bind();
@@ -295,7 +295,7 @@ public class VertexData {
         bind();
 
         GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
-        GL11.glVertexPointer(VERTEX_COMPONENTS, GL11.GL_FLOAT, stride, getVertexOffset());
+        GL11.glVertexPointer(VERTEX_COMPONENTS, GL11.GL_FLOAT, 0, getVertexOffset());
         if (hasNormal) {
             GL11.glEnableClientState(GL11.GL_NORMAL_ARRAY);
             GL11.glNormalPointer(GL11.GL_FLOAT, stride, getNormalOffset());
@@ -309,7 +309,7 @@ public class VertexData {
             GL11.glTexCoordPointer(UV_COMPONENTS, GL11.GL_FLOAT, stride, getUVOffset());
         }
 
-        GL11.glDrawArrays(GL11.GL_POINTS, 0, faces.size() * 300);
+        GL11.glDrawArrays(GL11.GL_POINTS, 0, faces.size() * 3);
 
         GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
         if (hasNormal) {
