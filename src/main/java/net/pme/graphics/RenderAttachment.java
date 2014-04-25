@@ -110,18 +110,21 @@ public class RenderAttachment {
                 uv = true;
             }
 
+            normal = false;
+            uv = false;
             vertexData = new VertexData( normal, color, uv );
 
             for (Vector3f v: model.getVertices()) {
-                vertexData.addVertex(v.x,v.y,v.z);
+                vertexData.addVertex(v.y,v.x,-v.z);
             }
+
             if (normal)
             for (Vector3f n: model.getNormals()) {
-                vertexData.addNormal(n.x, n.y, n.z);
+                vertexData.addNormal(n.y, n.x, -n.z);
             }
             if (uv)
             for (Vector3f t: model.getTextureCoords()) {
-                vertexData.addTexCoord(t.x,t.y);
+                vertexData.addTexCoord(t.y,t.x);
             }
 
             for (Face f: model.getFaces()) {

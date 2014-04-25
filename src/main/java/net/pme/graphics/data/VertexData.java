@@ -116,27 +116,30 @@ public class VertexData {
         int i = 0;
         for (int[] face : faces) {
             for (int j = 0; j < face.length / numComponents; j++) {
-                int p = 0;
-                vertexData[i * stride + p] = (float) vertices.get(face[p++]).getX();
-                vertexData[i * stride + p] = (float) vertices.get(face[p++]).getY();
-                vertexData[i * stride + p] = (float) vertices.get(face[p++]).getZ();
+                int currOffset = 0; int p = 0;
+                vertexData[i * stride + p++] = (float) vertices.get(face[currOffset]).getX();
+                vertexData[i * stride + p++] = (float) vertices.get(face[currOffset]).getY();
+                vertexData[i * stride + p++] = (float) vertices.get(face[currOffset]).getZ();
 
 
                 if (hasNormal) {
-                    vertexData[i * stride + p] = (float) normals.get(face[p++]).getX();
-                    vertexData[i * stride + p] = (float) normals.get(face[p++]).getY();
-                    vertexData[i * stride + p] = (float) normals.get(face[p++]).getZ();
+                    currOffset++;
+                    vertexData[i * stride + p++] = (float) normals.get(face[currOffset]).getX();
+                    vertexData[i * stride + p++] = (float) normals.get(face[currOffset]).getY();
+                    vertexData[i * stride + p++] = (float) normals.get(face[currOffset]).getZ();
                 }
 
                 if (hasColor) {
-                    vertexData[i * stride + p] = (float) colors.get(face[p++]).getX();
-                    vertexData[i * stride + p] = (float) colors.get(face[p++]).getY();
-                    vertexData[i * stride + p] = (float) colors.get(face[p++]).getZ();
+                    currOffset++;
+                    vertexData[i * stride + p++] = (float) colors.get(face[currOffset]).getX();
+                    vertexData[i * stride + p++] = (float) colors.get(face[currOffset]).getY();
+                    vertexData[i * stride + p++] = (float) colors.get(face[currOffset]).getZ();
                 }
 
                 if (hasUV) {
-                    vertexData[i * stride + p] = (float) uvs.get(face[p++]).getX();
-                    vertexData[i * stride + p] = (float) uvs.get(face[p++]).getY();
+                    currOffset++;
+                    vertexData[i * stride + p++] = (float) uvs.get(face[currOffset]).getX();
+                    vertexData[i * stride + p++] = (float) uvs.get(face[currOffset]).getY();
                 }
                 i++;
             }
@@ -194,25 +197,50 @@ public class VertexData {
     }
 
     public void addFace(Face f) {
-        int[] face = new int[stride];
+        int size = 3;
+
+        if (hasNormal) {
+            size += 3;
+        }
+
+        if (hasUV) {
+            size += 3;
+        }
+
+        int[] face = new int[size];
 
         int i = 0;
 
         face[i++] = (int)f.getVertex().getX() - 1;
-        face[i++] = (int)f.getVertex().getY() - 1;
-        face[i++] = (int)f.getVertex().getZ() - 1;
 
         if (hasNormal) {
             face[i++] = (int)f.getNormal().getX() - 1;
-            face[i++] = (int)f.getNormal().getY() - 1;
-            face[i++] = (int)f.getNormal().getZ() - 1;
         }
 
         if (hasUV) {
             face[i++] = (int)f.getTexture().getX() - 1;
-            face[i++] = (int)f.getTexture().getY() - 1;
-            //face[i++] = (int)f.getTexture().getZ() - 1;
         }
+
+        face[i++] = (int)f.getVertex().getY() - 1;
+
+        if (hasNormal) {
+            face[i++] = (int)f.getNormal().getY() - 1;
+        }
+
+        if (hasUV) {
+            face[i++] = (int)f.getTexture().getY() - 1;
+        }
+
+        face[i++] = (int)f.getVertex().getZ() - 1;
+
+        if (hasNormal) {
+            face[i++] = (int)f.getNormal().getZ() - 1;
+        }
+
+        if (hasUV) {
+            face[i++] = (int)f.getTexture().getZ() - 1;
+        }
+
 
         faces.add(face);
     }
@@ -245,9 +273,10 @@ public class VertexData {
     public void loadToGraphicsCard() {
         if (buffer < 0) {
             float[] vertexData = getVertexData();
+            System.out.println("Stride = "+ stride);
             FloatBuffer data = BufferUtils.createFloatBuffer(vertexData.length);
             data.put(vertexData);
-            data.flip();
+            data.rewind();
 
             buffer = GL15.glGenBuffers();
             bind();
@@ -280,7 +309,7 @@ public class VertexData {
             GL11.glTexCoordPointer(UV_COMPONENTS, GL11.GL_FLOAT, stride, getUVOffset());
         }
 
-        GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, faces.size() * 3 - 1);
+        GL11.glDrawArrays(GL11.GL_POINTS, 0, faces.size() * 300);
 
         GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
         if (hasNormal) {
