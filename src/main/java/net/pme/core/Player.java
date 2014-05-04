@@ -3,6 +3,7 @@ package net.pme.core;
 import net.pme.core.math.Matrix;
 import net.pme.core.math.Vector3D;
 import net.pme.graphics.RenderAttachment;
+import net.pme.model.Model;
 import org.lwjgl.opengl.GL11;
 
 import java.nio.DoubleBuffer;
@@ -26,11 +27,11 @@ public abstract class Player extends GameObject {
      * @param position The position.
      * @param front    The direction the player is facing to.
      * @param up       The direction where the players top is.
-     * @param graphics The graphics identifier.
+     * @param model    The graphics identifier.
      */
-    public Player(final Vector3D position, final Vector3D front, final Vector3D up, final int graphics) {
+    public Player(final Vector3D position, final Vector3D front, final Vector3D up, final Model model) {
         super(1, position, front, up);
-        setRenderAttachment(new RenderAttachment(this, graphics));
+        setRenderAttachment(new RenderAttachment(this, model));
     }
 
     /**

@@ -1,9 +1,9 @@
 package net.pme.graphics;
 
 import net.pme.core.GameObject;
-import net.pme.core.math.MathUtils;
 import net.pme.core.math.Matrix;
 import net.pme.core.math.Vector3D;
+import net.pme.model.Model;
 import org.lwjgl.opengl.GL11;
 
 import java.nio.DoubleBuffer;
@@ -15,7 +15,7 @@ import java.nio.DoubleBuffer;
  * @version 1.0
  */
 public class RenderAttachment {
-    private int model;
+    private Model model;
 
     private GameObject parent;
     /**
@@ -37,7 +37,7 @@ public class RenderAttachment {
      * @param parent   The parent of this attachment.
      * @param model The graphics identifier.
      */
-    public RenderAttachment(final GameObject parent, final int model) {
+    public RenderAttachment(final GameObject parent, final Model model) {
         this.parent = parent;
         this.model = model;
         this.needsUpdate = true;
@@ -47,15 +47,15 @@ public class RenderAttachment {
     /**
      * @return the graphics
      */
-    protected final int getModel() {
+    protected final Model getModel() {
         return model;
     }
 
     /**
-     * @param graphics the graphics to set
+     * @param model the graphics to set
      */
-    protected final void setModel(final int graphics) {
-        this.model = graphics;
+    protected final void setModel(final Model model) {
+        this.model = model;
         needsUpdate = true;
     }
 
@@ -117,14 +117,16 @@ public class RenderAttachment {
             matrixBuffer = m.getValues(matrixBuffer);
             needsUpdate = false;
         }
+
         matrixBuffer.position(0);
         GL11.glMultMatrix(matrixBuffer);
 
         if (shader != null) {
             shader.bind();
         }
-        if (model > 0) {
-            GL11.glCallList(model);
+
+        if (model != null && model.getDisplayList() > 0) {
+            GL11.glCallList(model.getDisplayList());
         }
 
         specialFX();

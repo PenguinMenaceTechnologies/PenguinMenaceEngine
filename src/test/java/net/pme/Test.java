@@ -3,6 +3,7 @@ package net.pme;
 import net.pme.core.Player;
 import net.pme.core.math.Vector3D;
 import net.pme.graphics.OffscreenRenderer;
+import net.pme.model.Model;
 import net.pme.model.ModelManager;
 import org.lwjgl.input.Mouse;
 
@@ -45,9 +46,9 @@ public class Test {
 
         ModelManager modelManager = game.getModelManager();
 
-        int model = modelManager.get(Test.class.getResource(
+        Model model = modelManager.get(Test.class.getResource(
                 "/assets/cube_small.obj").getPath());
-        int model2 = modelManager.get(Test.class.getResource(
+        Model model2 = modelManager.get(Test.class.getResource(
                 "/assets/cube_small.obj").getPath());
         if (model == model2) {
             System.out.println("Model loading is efficient!");

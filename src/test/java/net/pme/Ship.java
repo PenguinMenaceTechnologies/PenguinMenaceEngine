@@ -5,6 +5,7 @@ import net.pme.core.math.Vector3D;
 import net.pme.gameloop.LoopableAttachment;
 import net.pme.graphics.RenderAttachment;
 import net.pme.graphics.Shader;
+import net.pme.model.Model;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -23,13 +24,13 @@ public class Ship extends GameObject {
      * @param up       The up axis.
      * @param graphics The up axis.
      */
-    public Ship(long id, Vector3D position, Vector3D front, Vector3D up, int graphics) {
+    public Ship(long id, Vector3D position, Vector3D front, Vector3D up, Model graphics) {
         super(id, position, front, up);
         final GameObject parent = this;
         setRenderAttachment(new RenderAttachment(this, graphics) {
             @Override
             protected void specialFX() {
-                if (this.getModel() >= 0) {
+                if (this.getModel() != null) {
                     return;
                 }
                 GL11.glBegin(GL11.GL_QUADS);

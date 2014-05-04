@@ -1,5 +1,6 @@
 package net.pme.model;
 
+import net.pme.core.math.Vector3D;
 import net.pme.core.utils.FileFormatException;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
@@ -18,258 +19,153 @@ import java.util.List;
 public class Model {
     private static final float COLOR = 0.5f;
     private static final int VECTOR_LENGTH = 4;
-    private List<Vector3f> vertices = new ArrayList<Vector3f>();
-    private List<Vector3f> normals = new ArrayList<Vector3f>();
-    private List<Vector3f> textureCoords = new ArrayList<Vector3f>();
-    private List<Vector3f> spaceVertices = new ArrayList<Vector3f>();
-    private List<Face> faces = new ArrayList<Face>();
-    private HashMap<String, Material> mtllibs = new HashMap<String, Material>();
-    private HashMap<Integer, String> mtls = new HashMap<Integer, String>();
-    private HashMap<Integer, String> smoothing = new HashMap<Integer, String>();
+    private int displayList;
+    private List<Vector3D> vertices = new ArrayList<>();
+    private List<Vector3D> normals = new ArrayList<>();
+    private List<Vector3D> textureCoords = new ArrayList<>();
+    private List<Vector3D> spaceVertices = new ArrayList<>();
+    private List<Face> faces = new ArrayList<>();
+    private HashMap<String, Material> mtllibs = new HashMap<>();
+    private HashMap<Integer, String> mtls = new HashMap<>();
+    private HashMap<Integer, String> smoothing = new HashMap<>();
 
+    /**
+     * Package visibility for model only.
+     *
+     * @param path The path from which to load the model.
+     * @throws IOException When the given file cannot be loaded.
+     */
+    public Model(final String path) throws IOException {
+        this(new File(path));
+    }
     /**
      * Package visibility for model only.
      *
      * @param file The file from which to load the model.
      * @throws IOException When the given file cannot be loaded.
      */
-    Model(final File file) throws IOException {
+    public Model(final File file) throws IOException {
+        setupDisplayList(file); // TODO on removal mve the loadModelFromFile to here!
+    }
+
+    @Deprecated
+    private void setupDisplayList(File file) throws IOException {
+        displayList = GL11.glGenLists(1);
+        GL11.glNewList(displayList, GL11.GL_COMPILE);
         loadModelFromFile(file);
-    }
-
-    /**
-     * Loads the model into the GL lists and compiles it.
-     *
-     * @param path The path to the file where the model is in.
-     * @return The id of the genList.
-     */
-    public static int loadModel(final String path) {
-        return loadModel(new File(path));
-    }
-
-    /**
-     * Loads the model into the GL lists and compiles it.
-     * <p/>
-     * The model has other axis.
-     *
-     * @param path The path to the file where the model is in.
-     * @return The id of the genList.
-     */
-    public static Integer loadModelSpecialCoords(final String path) {
-        return loadModelSpecialCoords(new File(path));
-
-    }
-
-    /**
-     * Loads the model into the GL lists and compiles it.
-     * <p/>
-     * The model has other axis.
-     *
-     * @param file The file where the model is in.
-     * @return The id of the genList.
-     */
-    public static Integer loadModelSpecialCoords(final File file) {
-        int model = GL11.glGenLists(1);
-        GL11.glNewList(model, GL11.GL_COMPILE);
-
-        Model m = null;
-        try {
-            m = new Model(file);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return -1;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return -1;
-        }
         GL11.glBegin(GL11.GL_TRIANGLES);
         int i = 0;
         boolean smoothing = true;
-        for (Face face : m.faces) {
-            if (m.smoothing.containsKey(i)) {
-                if (m.smoothing.get(i).equals("off")) {
+        for (Face face : faces) {
+            if (this.smoothing.containsKey(i)) {
+                if (this.smoothing.get(i).equals("off")) {
                     smoothing = false;
                 } else {
                     smoothing = true;
                 }
             }
-            if (m.mtls.containsKey(i)) {
-                m.mtllibs.get(m.mtls.get(i)).use();
+            if (mtls.containsKey(i)) {
+                mtllibs.get(mtls.get(i)).use();
             }
             GL11.glColor3f(COLOR, COLOR, COLOR);
-            Vector3f n1 = m.normals.get((int) face.getNormal().y - 1);
+            Vector3D n1 = normals.get((int) face.getNormal().getX() - 1);
             if (!smoothing) {
-                GL11.glNormal3f(n1.y, n1.x, -n1.z);
+                GL11.glNormal3d(n1.getX(), n1.getY(), n1.getZ());
             }
             if (face.getTexture() != null) {
-                Vector3f t1 = m.textureCoords.get((int) face.getTexture().y - 1);
-                GL11.glTexCoord3f(t1.y, t1.x, -t1.z);
+                Vector3D t1 = textureCoords.get((int) face.getTexture().getX() - 1);
+                GL11.glTexCoord3d(t1.getX(), -t1.getY(), t1.getZ());
             }
-            Vector3f v1 = m.vertices.get((int) face.getVertex().y - 1);
-            GL11.glVertex3f(v1.y, v1.x, -v1.z);
-            Vector3f n2 = m.normals.get((int) face.getNormal().x - 1);
+            Vector3D v1 = vertices.get((int) face.getVertex().getX() - 1);
+            GL11.glVertex3d(v1.getY(), v1.getX(), -v1.getZ());
+            Vector3D n2 = normals.get((int) face.getNormal().getY() - 1);
             if (!smoothing) {
-                GL11.glNormal3f(n2.y, n2.x, -n2.z);
+                GL11.glNormal3d(n2.getX(), n2.getY(), n2.getZ());
             }
             if (face.getTexture() != null) {
-                Vector3f t2 = m.textureCoords.get((int) face.getTexture().x - 1);
-                GL11.glTexCoord3f(t2.y, t2.x, -t2.z);
+                Vector3D t2 = textureCoords.get((int) face.getTexture().getY() - 1);
+                GL11.glTexCoord3d(t2.getX(), -t2.getY(), t2.getZ());
             }
-            Vector3f v2 = m.vertices.get((int) face.getVertex().x - 1);
-            GL11.glVertex3f(v2.y, v2.x, -v2.z);
-            Vector3f n3 = m.normals.get((int) face.getNormal().z - 1);
+            Vector3D v2 = vertices.get((int) face.getVertex().getY() - 1);
+            GL11.glVertex3d(v2.getY(), v2.getX(), -v2.getZ());
+            Vector3D n3 = normals.get((int) face.getNormal().getZ() - 1);
             if (!smoothing) {
-                GL11.glNormal3f(n3.y, n3.x, -n3.z);
+                GL11.glNormal3d(n3.getX(), n3.getY(), n3.getZ());
             }
             if (face.getTexture() != null) {
-                Vector3f t3 = m.textureCoords.get((int) face.getTexture().z - 1);
-                GL11.glTexCoord3f(t3.y, t3.x, -t3.z);
+                Vector3D t3 = textureCoords.get((int) face.getTexture().getZ() - 1);
+                GL11.glTexCoord3d(t3.getX(), -t3.getY(), t3.getZ());
             }
-            Vector3f v3 = m.vertices.get((int) face.getVertex().z - 1);
-            GL11.glVertex3f(v3.y, v3.x, -v3.z);
-            i++;
-        }
-        Material.resetMaterial();
-        GL11.glEnd();
-        GL11.glEndList();
-        return model;
-    }
-
-    /**
-     * Loads the model into the GL lists and compiles it.
-     *
-     * @param file The file where the model is in.
-     * @return The id of the genList.
-     */
-    public static int loadModel(final File file) {
-        int model = GL11.glGenLists(1);
-        GL11.glNewList(model, GL11.GL_COMPILE);
-        Model m = null;
-        try {
-            m = new Model(file);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return -1;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return -1;
-        }
-        GL11.glBegin(GL11.GL_TRIANGLES);
-        int i = 0;
-        boolean smoothing = true;
-        for (Face face : m.faces) {
-            if (m.smoothing.containsKey(i)) {
-                if (m.smoothing.get(i).equals("off")) {
-                    smoothing = false;
-                } else {
-                    smoothing = true;
-                }
-            }
-            if (m.mtls.containsKey(i)) {
-                m.mtllibs.get(m.mtls.get(i)).use();
-            }
-            GL11.glColor3f(COLOR, COLOR, COLOR);
-            Vector3f n1 = m.normals.get((int) face.getNormal().x - 1);
-            if (!smoothing) {
-                GL11.glNormal3f(n1.x, n1.y, n1.z);
-            }
-            if (face.getTexture() != null) {
-                Vector3f t1 = m.textureCoords.get((int) face.getTexture().x - 1);
-                GL11.glTexCoord3f(t1.x, -t1.y, t1.z);
-            }
-            Vector3f v1 = m.vertices.get((int) face.getVertex().x - 1);
-            GL11.glVertex3f(v1.y, v1.x, -v1.z);
-            Vector3f n2 = m.normals.get((int) face.getNormal().y - 1);
-            if (!smoothing) {
-                GL11.glNormal3f(n2.x, n2.y, n2.z);
-            }
-            if (face.getTexture() != null) {
-                Vector3f t2 = m.textureCoords.get((int) face.getTexture().y - 1);
-                GL11.glTexCoord3f(t2.x, -t2.y, t2.z);
-            }
-            Vector3f v2 = m.vertices.get((int) face.getVertex().y - 1);
-            GL11.glVertex3f(v2.y, v2.x, -v2.z);
-            Vector3f n3 = m.normals.get((int) face.getNormal().z - 1);
-            if (!smoothing) {
-                GL11.glNormal3f(n3.x, n3.y, n3.z);
-            }
-            if (face.getTexture() != null) {
-                Vector3f t3 = m.textureCoords.get((int) face.getTexture().z - 1);
-                GL11.glTexCoord3f(t3.x, -t3.y, t3.z);
-            }
-            Vector3f v3 = m.vertices.get((int) face.getVertex().z - 1);
-            GL11.glVertex3f(v3.y, v3.x, -v3.z);
+            Vector3D v3 = vertices.get((int) face.getVertex().getZ() - 1);
+            GL11.glVertex3d(v3.getY(), v3.getX(), -v3.getZ());
             i++;
         }
         Material.resetMaterial();
         GL11.glEnd();
 
         GL11.glEndList();
-        return model;
     }
 
     /**
      * Unload the given model.
-     *
-     * @param model The ID of the model that should be removed.
      */
-    public static void unloadModel(final int model) {
-        GL11.glDeleteLists(model, 1);
+    public void unloadModel() {
+        GL11.glDeleteLists(displayList, 1);
     }
 
     /**
      * @return the vertices
      */
-    public final List<Vector3f> getVertices() {
+    public final List<Vector3D> getVertices() {
         return vertices;
     }
 
     /**
      * @param vertices the vertices to set
      */
-    public final void setVertices(final List<Vector3f> vertices) {
+    public final void setVertices(final List<Vector3D> vertices) {
         this.vertices = vertices;
     }
 
     /**
      * @return the normals
      */
-    public final List<Vector3f> getNormals() {
+    public final List<Vector3D> getNormals() {
         return normals;
     }
 
     /**
      * @param normals the normals to set
      */
-    public final void setNormals(final List<Vector3f> normals) {
+    public final void setNormals(final List<Vector3D> normals) {
         this.normals = normals;
     }
 
     /**
      * @return the textureCoords
      */
-    public final List<Vector3f> getTextureCoords() {
+    public final List<Vector3D> getTextureCoords() {
         return textureCoords;
     }
 
     /**
      * @param textureCoords the textureCoords to set
      */
-    public final void setTextureCoords(final List<Vector3f> textureCoords) {
+    public final void setTextureCoords(final List<Vector3D> textureCoords) {
         this.textureCoords = textureCoords;
     }
 
     /**
      * @return the spaceVertices
      */
-    public final List<Vector3f> getSpaceVertices() {
+    public final List<Vector3D> getSpaceVertices() {
         return spaceVertices;
     }
 
     /**
      * @param spaceVertices the spaceVertices to set
      */
-    public final void setSpaceVertices(final List<Vector3f> spaceVertices) {
+    public final void setSpaceVertices(final List<Vector3D> spaceVertices) {
         this.spaceVertices = spaceVertices;
     }
 
@@ -330,6 +226,15 @@ public class Model {
     }
 
     /**
+     * Get the display list of the model.
+     * @return The display list of the model.
+     */
+    @Deprecated
+    public final int getDisplayList() {
+        return displayList;
+    }
+
+    /**
      * Load a model from a file.
      *
      * @param f The file where the model is stored in.
@@ -337,7 +242,6 @@ public class Model {
      */
     private void loadModelFromFile(final File f) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(f));
-        Model m = this;
         String line;
         int lineNumber = 0;
         while ((line = reader.readLine()) != null) {
@@ -355,27 +259,27 @@ public class Model {
                         s = "/";
                     }
                     Material.loadMaterials(new File(f.getParent() + s + mtl),
-                            m.mtllibs);
+                            mtllibs);
                 } else if (line.startsWith("usemtl ")) {
                     String[] splitline = line.split(" ");
                     String mtl = splitline[1];
-                    m.mtls.put(m.faces.size(), mtl);
+                    mtls.put(faces.size(), mtl);
                 } else if (line.startsWith("s ")) {
                     String[] splitline = line.split(" ");
                     String smooth = splitline[1];
-                    m.smoothing.put(m.faces.size(), smooth);
+                    smoothing.put(faces.size(), smooth);
                 } else if (line.startsWith("v ")) {
                     String[] splitline = line.split(" ");
                     float x = Float.parseFloat(splitline[1]);
                     float y = Float.parseFloat(splitline[2]);
                     float z = Float.parseFloat(splitline[3]);
-                    m.vertices.add(new Vector3f(x, y, z));
+                    vertices.add(new Vector3D(x, y, z));
                 } else if (line.startsWith("vn ")) {
                     String[] splitline = line.split(" ");
                     float x = Float.parseFloat(splitline[1]);
                     float y = Float.parseFloat(splitline[2]);
                     float z = Float.parseFloat(splitline[3]);
-                    m.normals.add(new Vector3f(x, y, z));
+                    normals.add(new Vector3D(x, y, z));
                 } else if (line.startsWith("vt ")) {
                     String[] splitline = line.split(" ");
                     float x = Float.parseFloat(splitline[1]);
@@ -384,7 +288,7 @@ public class Model {
                     if (splitline.length >= VECTOR_LENGTH) {
                         z = Float.parseFloat(splitline[3]);
                     }
-                    m.textureCoords.add(new Vector3f(x, y, z));
+                    textureCoords.add(new Vector3D(x, y, z));
                 } else if (line.startsWith("vp ")) {
                     String[] splitline = line.split(" ");
                     float x = Float.parseFloat(splitline[1]);
@@ -396,45 +300,45 @@ public class Model {
                     if (splitline.length >= VECTOR_LENGTH) {
                         z = Float.parseFloat(splitline[3]);
                     }
-                    m.spaceVertices.add(new Vector3f(x, y, z));
+                    spaceVertices.add(new Vector3D(x, y, z));
                 } else if (line.startsWith("f ")) {
-                    Vector3f vertexIndicies = new Vector3f(
+                    Vector3D vertexIndicies = new Vector3D(
                             Float.parseFloat(line.split(" ")[1].split("/")[0]),
                             Float.parseFloat(line.split(" ")[2].split("/")[0]),
                             Float.parseFloat(line.split(" ")[3].split("/")[0]));
-                    Vector3f textureIndicies;
+                    Vector3D textureIndicies;
                     if (line.split(" ")[1].split("/")[1].equals("")) {
                         textureIndicies = null;
                     } else {
-                        textureIndicies = new Vector3f(
+                        textureIndicies = new Vector3D(
                                 Float.parseFloat(line.split(" ")[1].split("/")[1]),
                                 Float.parseFloat(line.split(" ")[2].split("/")[1]),
                                 Float.parseFloat(line.split(" ")[3].split("/")[1]));
                     }
-                    Vector3f normalIndicies = new Vector3f(
+                    Vector3D normalIndicies = new Vector3D(
                             Float.parseFloat(line.split(" ")[1].split("/")[2]),
                             Float.parseFloat(line.split(" ")[2].split("/")[2]),
                             Float.parseFloat(line.split(" ")[3].split("/")[2]));
-                    m.faces.add(new Face(vertexIndicies, textureIndicies,
+                    faces.add(new Face(vertexIndicies, textureIndicies,
                             normalIndicies));
                     if (line.split(" ").length == 5) {
-                        vertexIndicies = new Vector3f(
+                        vertexIndicies = new Vector3D(
                                 Float.parseFloat(line.split(" ")[4].split("/")[0]),
                                 Float.parseFloat(line.split(" ")[1].split("/")[0]),
                                 Float.parseFloat(line.split(" ")[3].split("/")[0]));
                         if (line.split(" ")[1].split("/")[1].equals("")) {
                             textureIndicies = null;
                         } else {
-                            textureIndicies = new Vector3f(
+                            textureIndicies = new Vector3D(
                                     Float.parseFloat(line.split(" ")[4].split("/")[1]),
                                     Float.parseFloat(line.split(" ")[1].split("/")[1]),
                                     Float.parseFloat(line.split(" ")[3].split("/")[1]));
                         }
-                        normalIndicies = new Vector3f(
+                        normalIndicies = new Vector3D(
                                 Float.parseFloat(line.split(" ")[4].split("/")[2]),
                                 Float.parseFloat(line.split(" ")[1].split("/")[2]),
                                 Float.parseFloat(line.split(" ")[3].split("/")[2]));
-                        m.faces.add(new Face(vertexIndicies, textureIndicies,
+                        faces.add(new Face(vertexIndicies, textureIndicies,
                                 normalIndicies));
                     }
                 }

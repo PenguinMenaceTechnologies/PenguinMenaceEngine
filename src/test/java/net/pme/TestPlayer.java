@@ -28,7 +28,7 @@ public class TestPlayer extends Player {
      * @param up       Initial up axis.
      */
     public TestPlayer(Vector3D position, Vector3D front, Vector3D up) {
-        super(position, front, up, -1);
+        super(position, front, up, null);
         Player parent = this;
 
         setLoopableAttachment(new LoopableAttachment() {
