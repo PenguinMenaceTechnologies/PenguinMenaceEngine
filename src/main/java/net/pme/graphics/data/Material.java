@@ -1,6 +1,7 @@
 package net.pme.graphics.data;
 
 import org.lwjgl.util.Color;
+
 /**
  * @author Johannes Schuck <jojoschuck@googlemail.com>
  * @version 0.1
@@ -20,10 +21,6 @@ public class Material {
     private Texture bumpMap;
     private Texture displacementMap;
     private Texture stencilTexture;
-
-    public enum IlluminationModel {
-        COLOR_ON_AMBIENT_OFF, COLOR_ON_AMBIENT_ON, HIGHLIGHT_ON, REFLECTION_ON_RAYTRACE_ON;
-    }
 
     public Material() {
         this.transparancy = 1.0f;
@@ -132,5 +129,9 @@ public class Material {
 
     public void setStencilTexture(Texture stencilTexture) {
         this.stencilTexture = stencilTexture;
+    }
+
+    public enum IlluminationModel {
+        COLOR_ON_AMBIENT_OFF, COLOR_ON_AMBIENT_ON, HIGHLIGHT_ON, REFLECTION_ON_RAYTRACE_ON;
     }
 }

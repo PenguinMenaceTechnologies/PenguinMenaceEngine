@@ -1,6 +1,5 @@
 package net.pme.core.math;
 
-import net.pme.core.math.Vector;
 /**
  * @author Johannes Schuck <jojoschuck@googlemail.com>
  * @version 0.1
@@ -16,16 +15,13 @@ public class Vector2D extends Vector {
 
     /**
      * Create a vector with the given parameters.
+     *
      * @param x x-component
      * @param y y-component
      */
     public Vector2D(final double x, final double y) {
         this.x = x;
         this.y = y;
-    }
-
-    public double length() {
-        return length(this);
     }
 
     /**
@@ -38,10 +34,6 @@ public class Vector2D extends Vector {
         return Math.sqrt((v.x * v.x) + (v.y * v.y));
     }
 
-    public Vector2D normalize() {
-        return normalize(this);
-    }
-
     /**
      * Normalize a given vector (v / length(v)).
      *
@@ -50,20 +42,6 @@ public class Vector2D extends Vector {
      */
     public static Vector2D normalize(final Vector2D v) {
         return multiply(v, 1.0 / length(v));
-    }
-
-    public Vector2D scale(final double scalar) {
-        return multiply(this, scalar);
-    }
-
-    /**
-     * Add 2 vectors.
-     *
-     * @param other The second vector.
-     * @return The result.
-     */
-    public Vector2D add(final Vector2D other) {
-        return add(this, other);
     }
 
     /**
@@ -75,16 +53,6 @@ public class Vector2D extends Vector {
      */
     public static Vector2D add(final Vector2D vect1, final Vector2D vect2) {
         return new Vector2D(vect1.x + vect2.x, vect1.y + vect2.y);
-    }
-
-    /**
-     * Subtract 2 vectors.
-     *
-     * @param other The second vector.
-     * @return The result.
-     */
-    public Vector2D subtract(final Vector2D other) {
-        return subtract(this, other);
     }
 
     /**
@@ -115,22 +83,65 @@ public class Vector2D extends Vector {
     /**
      * Calculate the dot product of 2 vectors (vect1*vect2).
      *
-     * @param other The second vector.
-     * @return The product.
-     */
-    public double dotProduct(final Vector2D other) {
-        return dotProduct(this, other);
-    }
-
-    /**
-     * Calculate the dot product of 2 vectors (vect1*vect2).
-     *
      * @param vect1 The first vector.
      * @param vect2 The second vector.
      * @return The product.
      */
     public static double dotProduct(final Vector2D vect1, final Vector2D vect2) {
         return vect1.x * vect2.x + vect1.y * vect2.y;
+    }
+
+    /**
+     * Check equality of 2 vectors.
+     *
+     * @param a The first vector.
+     * @param b The second vector.
+     * @return The result.
+     */
+    public static boolean equals(final Vector2D a, final Vector2D b, final double precision) {
+        return Math.abs(a.getX() - b.getX()) < precision && Math.abs(a.getY() - b.getY()) < precision;
+    }
+
+    public double length() {
+        return length(this);
+    }
+
+    public Vector2D normalize() {
+        return normalize(this);
+    }
+
+    public Vector2D scale(final double scalar) {
+        return multiply(this, scalar);
+    }
+
+    /**
+     * Add 2 vectors.
+     *
+     * @param other The second vector.
+     * @return The result.
+     */
+    public Vector2D add(final Vector2D other) {
+        return add(this, other);
+    }
+
+    /**
+     * Subtract 2 vectors.
+     *
+     * @param other The second vector.
+     * @return The result.
+     */
+    public Vector2D subtract(final Vector2D other) {
+        return subtract(this, other);
+    }
+
+    /**
+     * Calculate the dot product of 2 vectors (vect1*vect2).
+     *
+     * @param other The second vector.
+     * @return The product.
+     */
+    public double dotProduct(final Vector2D other) {
+        return dotProduct(this, other);
     }
 
     public final double[] toArray() {
@@ -155,17 +166,6 @@ public class Vector2D extends Vector {
      */
     public boolean equals(final Vector2D other, final double precision) {
         return equals(this, other, precision);
-    }
-
-    /**
-     * Check equality of 2 vectors.
-     *
-     * @param a The first vector.
-     * @param b The second vector.
-     * @return The result.
-     */
-    public static boolean equals(final Vector2D a, final Vector2D b, final double precision) {
-        return Math.abs(a.getX() - b.getX()) < precision && Math.abs(a.getY() - b.getY()) < precision;
     }
 
     /**

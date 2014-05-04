@@ -28,10 +28,6 @@ public class Vector3D extends Vector {
         this.z = z;
     }
 
-    public double length() {
-        return length(this);
-    }
-
     /**
      * Calculate the length of a vector.
      *
@@ -40,10 +36,6 @@ public class Vector3D extends Vector {
      */
     public static double length(final Vector3D v) {
         return Math.sqrt((v.x * v.x) + (v.y * v.y) + (v.z * v.z));
-    }
-
-    public Vector3D normalize() {
-        return normalize(this);
     }
 
     /**
@@ -56,20 +48,6 @@ public class Vector3D extends Vector {
         return multiply(v, 1.0 / length(v));
     }
 
-    public Vector3D scale(final double scalar) {
-        return multiply(this, scalar);
-    }
-
-    /**
-     * Add 2 vectors.
-     *
-     * @param other The second vector.
-     * @return The result.
-     */
-    public Vector3D add(final Vector3D other) {
-        return add(this, other);
-    }
-
     /**
      * Add 2 vectors.
      *
@@ -79,16 +57,6 @@ public class Vector3D extends Vector {
      */
     public static Vector3D add(final Vector3D vect1, final Vector3D vect2) {
         return new Vector3D(vect1.x + vect2.x, vect1.y + vect2.y, vect1.z + vect2.z);
-    }
-
-    /**
-     * Subtract 2 vectors.
-     *
-     * @param other The second vector.
-     * @return The result.
-     */
-    public Vector3D subtract(final Vector3D other) {
-        return subtract(this, other);
     }
 
     /**
@@ -120,16 +88,6 @@ public class Vector3D extends Vector {
     /**
      * Calculate the cross product of 2 vectors (vect1 x vect2).
      *
-     * @param other The second vector.
-     * @return The product.
-     */
-    public Vector3D crossProduct(final Vector3D other) {
-        return crossProduct(this, other);
-    }
-
-    /**
-     * Calculate the cross product of 2 vectors (vect1 x vect2).
-     *
      * @param vect1 The first vector.
      * @param vect2 The second vector.
      * @return The product.
@@ -144,68 +102,12 @@ public class Vector3D extends Vector {
     /**
      * Calculate the dot product of 2 vectors (vect1*vect2).
      *
-     * @param other The second vector.
-     * @return The product.
-     */
-    public double dotProduct(final Vector3D other) {
-        return dotProduct(this, other);
-    }
-
-    /**
-     * Calculate the dot product of 2 vectors (vect1*vect2).
-     *
      * @param vect1 The first vector.
      * @param vect2 The second vector.
      * @return The product.
      */
     public static double dotProduct(final Vector3D vect1, final Vector3D vect2) {
         return vect1.x * vect2.x + vect1.y * vect2.y + vect1.z * vect2.z;
-    }
-
-    public final double[] toArray() {
-        double[] res = new double[3];
-        res[0] = x;
-        res[1] = y;
-        res[2] = z;
-        return res;
-    }
-
-    public final float[] toFloatArray() {
-        float[] res = new float[3];
-        res[0] = (float) x;
-        res[1] = (float) y;
-        res[2] = (float) z;
-        return res;
-    }
-
-    /**
-     * Transform a vector by a matrix.
-     *
-     * @param m The transformation matrix.
-     * @return The transformed vector.
-     */
-    public Vector3D transformCoords(final Matrix m) {
-        return transformCoords(this, m);
-    }
-
-    /**
-     * Transform normals.
-     *
-     * @param m The transformation matrix.
-     * @return The transformed normal.
-     */
-    public Vector3D transformNormal(final Matrix m) {
-        return transformNormal(this, m);
-    }
-
-    /**
-     * Check equality of 2 vectors.
-     *
-     * @param other The second vector.
-     * @return The result.
-     */
-    public boolean equals(final Vector3D other, final double precision) {
-        return equals(this, other, precision);
     }
 
     /**
@@ -263,6 +165,104 @@ public class Vector3D extends Vector {
         return Math.abs(a.getX() - b.getX()) < precision
                 && Math.abs(a.getY() - b.getY()) < precision
                 && Math.abs(a.getZ() - b.getZ()) < precision;
+    }
+
+    public double length() {
+        return length(this);
+    }
+
+    public Vector3D normalize() {
+        return normalize(this);
+    }
+
+    public Vector3D scale(final double scalar) {
+        return multiply(this, scalar);
+    }
+
+    /**
+     * Add 2 vectors.
+     *
+     * @param other The second vector.
+     * @return The result.
+     */
+    public Vector3D add(final Vector3D other) {
+        return add(this, other);
+    }
+
+    /**
+     * Subtract 2 vectors.
+     *
+     * @param other The second vector.
+     * @return The result.
+     */
+    public Vector3D subtract(final Vector3D other) {
+        return subtract(this, other);
+    }
+
+    /**
+     * Calculate the cross product of 2 vectors (vect1 x vect2).
+     *
+     * @param other The second vector.
+     * @return The product.
+     */
+    public Vector3D crossProduct(final Vector3D other) {
+        return crossProduct(this, other);
+    }
+
+    /**
+     * Calculate the dot product of 2 vectors (vect1*vect2).
+     *
+     * @param other The second vector.
+     * @return The product.
+     */
+    public double dotProduct(final Vector3D other) {
+        return dotProduct(this, other);
+    }
+
+    public final double[] toArray() {
+        double[] res = new double[3];
+        res[0] = x;
+        res[1] = y;
+        res[2] = z;
+        return res;
+    }
+
+    public final float[] toFloatArray() {
+        float[] res = new float[3];
+        res[0] = (float) x;
+        res[1] = (float) y;
+        res[2] = (float) z;
+        return res;
+    }
+
+    /**
+     * Transform a vector by a matrix.
+     *
+     * @param m The transformation matrix.
+     * @return The transformed vector.
+     */
+    public Vector3D transformCoords(final Matrix m) {
+        return transformCoords(this, m);
+    }
+
+    /**
+     * Transform normals.
+     *
+     * @param m The transformation matrix.
+     * @return The transformed normal.
+     */
+    public Vector3D transformNormal(final Matrix m) {
+        return transformNormal(this, m);
+    }
+
+    /**
+     * Check equality of 2 vectors.
+     *
+     * @param other The second vector.
+     * @return The result.
+     */
+    public boolean equals(final Vector3D other, final double precision) {
+        return equals(this, other, precision);
     }
 
     /**

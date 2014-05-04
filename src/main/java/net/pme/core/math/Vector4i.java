@@ -1,6 +1,7 @@
 package net.pme.core.math;
 
 import java.util.Iterator;
+
 /**
  * @author Johannes Schuck <jojoschuck@googlemail.com>
  * @version 0.1
@@ -11,9 +12,8 @@ public class Vector4i extends VectorI implements Iterable<Integer> {
 
     /**
      * Creates a new three dimensional integer type vector.
-     *
      */
-    public Vector4i(){
+    public Vector4i() {
         this(0, 0, 0, 0);
     }
 

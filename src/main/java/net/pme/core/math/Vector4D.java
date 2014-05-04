@@ -16,6 +16,7 @@ public class Vector4D extends Vector {
 
     /**
      * Create a vector with the given parameters.
+     *
      * @param x x-component
      * @param y y-component
      * @param z z-component
@@ -28,10 +29,6 @@ public class Vector4D extends Vector {
         this.w = w;
     }
 
-    public double length() {
-        return length(this);
-    }
-
     /**
      * Calculate the length of a vector.
      *
@@ -40,10 +37,6 @@ public class Vector4D extends Vector {
      */
     public static double length(final Vector4D v) {
         return Math.sqrt((v.x * v.x) + (v.y * v.y) + (v.z * v.z) + (v.w * v.w));
-    }
-
-    public Vector4D normalize() {
-        return normalize(this);
     }
 
     /**
@@ -56,20 +49,6 @@ public class Vector4D extends Vector {
         return multiply(v, 1.0 / length(v));
     }
 
-    public Vector4D scale(final double scalar) {
-        return multiply(this, scalar);
-    }
-
-    /**
-     * Add 2 vectors.
-     *
-     * @param other The second vector.
-     * @return The result.
-     */
-    public Vector4D add(final Vector4D other) {
-        return add(this, other);
-    }
-
     /**
      * Add 2 vectors.
      *
@@ -79,16 +58,6 @@ public class Vector4D extends Vector {
      */
     public static Vector4D add(final Vector4D vect1, final Vector4D vect2) {
         return new Vector4D(vect1.x + vect2.x, vect1.y + vect2.y, vect1.z + vect2.z, vect1.w + vect2.w);
-    }
-
-    /**
-     * Subtract 2 vectors.
-     *
-     * @param other The second vector.
-     * @return The result.
-     */
-    public Vector4D subtract(final Vector4D other) {
-        return subtract(this, other);
     }
 
     /**
@@ -118,6 +87,38 @@ public class Vector4D extends Vector {
         return out;
     }
 
+    public double length() {
+        return length(this);
+    }
+
+    public Vector4D normalize() {
+        return normalize(this);
+    }
+
+    public Vector4D scale(final double scalar) {
+        return multiply(this, scalar);
+    }
+
+    /**
+     * Add 2 vectors.
+     *
+     * @param other The second vector.
+     * @return The result.
+     */
+    public Vector4D add(final Vector4D other) {
+        return add(this, other);
+    }
+
+    /**
+     * Subtract 2 vectors.
+     *
+     * @param other The second vector.
+     * @return The result.
+     */
+    public Vector4D subtract(final Vector4D other) {
+        return subtract(this, other);
+    }
+
     @Override
     public final double[] toArray() {
         double[] res = new double[4];
@@ -137,6 +138,7 @@ public class Vector4D extends Vector {
         res[3] = (float) w;
         return res;
     }
+
     /**
      * @return the x
      */
@@ -178,6 +180,7 @@ public class Vector4D extends Vector {
     public final void setZ(final double z) {
         this.z = z;
     }
+
     /**
      * @return the w
      */

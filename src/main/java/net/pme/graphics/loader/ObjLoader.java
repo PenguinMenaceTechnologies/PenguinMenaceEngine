@@ -1,16 +1,11 @@
 package net.pme.graphics.loader;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.FileInputStream;
-
-import java.util.ArrayList;
-import java.util.InvalidPropertiesFormatException;
-
 import net.pme.graphics.Model;
 import net.pme.graphics.data.VertexData;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.InvalidPropertiesFormatException;
 
 /**
  * @author Johannes Schuck <jojoschuck@googlemail.com>
@@ -27,7 +22,7 @@ public class ObjLoader {
     public static Model loadObj(final String path, boolean flipZ) {
         FileInputStream fis;
         try {
-            fis = new FileInputStream (path);
+            fis = new FileInputStream(path);
         } catch (FileNotFoundException e) {
             System.out.println("File not found:" + path);
             return null;
@@ -36,7 +31,8 @@ public class ObjLoader {
         System.out.println("Warning: No full support for obj files yet!");
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(fis), 4096);
-        String line; String tokens[];
+        String line;
+        String tokens[];
 
         models = new ArrayList<VertexData>();
         int currentObject = 0;
@@ -108,7 +104,7 @@ public class ObjLoader {
                         currentObject++;
                     }
                 } else if (tokens[0].equals("mtllib")) {
-                     loadMtl(tokens[1]);
+                    loadMtl(tokens[1]);
                 } /*else if (tokens[0].equals("usemtl")) {
                     if (tokens.length == 1)
                         activeGroup.materialName = "default";

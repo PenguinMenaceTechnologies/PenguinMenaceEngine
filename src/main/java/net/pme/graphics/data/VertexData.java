@@ -1,10 +1,10 @@
 package net.pme.graphics.data;
 
-import java.util.List;
-import java.util.ArrayList;
-
-import net.pme.core.math.Vector3D;
 import net.pme.core.math.Vector2D;
+import net.pme.core.math.Vector3D;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Johannes Schuck <jojoschuck@googlemail.com>
@@ -12,22 +12,19 @@ import net.pme.core.math.Vector2D;
  * @since 2014-03-12
  */
 public class VertexData {
-    private List<Vector3D> vertices;
-    private List<Vector3D> normals;
-    private List<Vector2D> uvs;
-    private List<Vector3D> colors;
-
-    private List<int[]> faces;
-
     private final boolean hasNormal;
     private final boolean hasColor;
     private final boolean hasUV;
-    private int numComponents = 1;
-
     private final int VERTEX_COMPONENTS = 3;
     private final int NORMAL_COMPONENTS = 3;
     private final int COLOR_COMPONENTS = 3;
     private final int UV_COMPONENTS = 2;
+    private List<Vector3D> vertices;
+    private List<Vector3D> normals;
+    private List<Vector2D> uvs;
+    private List<Vector3D> colors;
+    private List<int[]> faces;
+    private int numComponents = 1;
 
     public VertexData() {
         this(false, false, false);
@@ -60,6 +57,7 @@ public class VertexData {
 
     /**
      * Checks if the VertexData is valid and could be sent to the GPU.
+     *
      * @return true if valid, false otherwise.
      */
     // TODO: implement
@@ -77,10 +75,11 @@ public class VertexData {
         int i = 0;
         for (int[] currFace : faces) {
             for (int j = 0; j < currFace.length / 4 - 2; j++) {
-                indexData[i * 3]     = i + j;
+                indexData[i * 3] = i + j;
                 indexData[i * 3 + 1] = i + j + 1;
                 indexData[i * 3 + 2] = i + j + 2;
-                i++; j++;
+                i++;
+                j++;
             }
         }
 
@@ -107,7 +106,8 @@ public class VertexData {
         int i = 0;
         for (int[] face : faces) {
             for (int j = 0; j < face.length / numComponents; j++) {
-                int currOffset = 0; int p = 0;
+                int currOffset = 0;
+                int p = 0;
                 vertexData[i * numFloats + p++] = (float) vertices.get(face[currOffset]).getX();
                 vertexData[i * numFloats + p++] = (float) vertices.get(face[currOffset]).getY();
                 vertexData[i * numFloats + p++] = (float) vertices.get(face[currOffset]).getZ();
@@ -176,6 +176,7 @@ public class VertexData {
 
     /**
      * Adds a face to the vertex data.
+     *
      * @param face The vector of the current face.
      */
     public void addFace(int[] face) {

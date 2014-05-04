@@ -1,38 +1,33 @@
 package net.pme;
 
-import org.lwjgl.opengl.GL11;
-
 import net.pme.core.GameObject;
 import net.pme.core.math.Vector3D;
 import net.pme.gameloop.LoopableAttachment;
 import net.pme.graphics.RenderAttachment;
 import net.pme.graphics.Shader;
+import org.lwjgl.opengl.GL11;
 
 /**
  * A simple cube.
- * 
+ *
  * @author Michael FÃ¼rst
  * @version 1.0
  */
 public class TestCube3 extends GameObject {
-	private float[] uniform = null;
-	private Shader sh = null;
-	private double t;
+    private float[] uniform = null;
+    private Shader sh = null;
+    private double t;
 
-	/**
-	 * A Test cube.
-	 * 
-	 * @param id
-	 *            The id.
-	 * @param position
-	 *            The position.
-	 * @param front
-	 *            The front axis.
-	 * @param up
-	 *            The up axis.
-	 **/
-	public TestCube3(long id, Vector3D position, Vector3D front, Vector3D up) {
-		super(id, position);
+    /**
+     * A Test cube.
+     *
+     * @param id       The id.
+     * @param position The position.
+     * @param front    The front axis.
+     * @param up       The up axis.
+     */
+    public TestCube3(long id, Vector3D position, Vector3D front, Vector3D up) {
+        super(id, position);
 
         setRenderAttachment(new RenderAttachment(this, front, up, -1) {
             @Override
@@ -92,9 +87,9 @@ public class TestCube3 extends GameObject {
             }
         });
 
-		sh = new Shader(null, Shaders.fsh);
-		getRenderAttachment().attachShader(sh);
-		uniform = new float[4];
-		sh.setUniform4f("color", uniform);
-	}
+        sh = new Shader(null, Shaders.fsh);
+        getRenderAttachment().attachShader(sh);
+        uniform = new float[4];
+        sh.setUniform4f("color", uniform);
+    }
 }

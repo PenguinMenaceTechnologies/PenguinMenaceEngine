@@ -1,9 +1,5 @@
 package net.pme.core.math;
 
-import net.pme.core.math.Vector2D;
-import net.pme.core.math.Vector3D;
-import net.pme.core.math.Vector4D;
-
 /**
  * @author Johannes Schuck <jojoschuck@googlemail.com>
  * @version 0.1
@@ -67,12 +63,14 @@ public abstract class Vector {
 
     /**
      * Returns an array of the vector.
+     *
      * @return The array of the vector.
      */
     public abstract double[] toArray();
 
     /**
      * Returns a float array of the vector.
+     *
      * @return The float array of the vector.
      */
     public abstract float[] toFloatArray();

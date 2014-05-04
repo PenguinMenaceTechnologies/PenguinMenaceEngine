@@ -1,37 +1,30 @@
 package net.pme;
 
-import net.pme.graphics.Shader;
-import org.lwjgl.opengl.GL11;
-
 import net.pme.core.GameObject;
 import net.pme.core.math.Vector3D;
 import net.pme.gameloop.LoopableAttachment;
 import net.pme.graphics.RenderAttachment;
-import net.pme.model.ModelManager;
+import net.pme.graphics.Shader;
+import org.lwjgl.opengl.GL11;
 
 /**
  * A simple cube.
- * 
+ *
  * @author Michael Fürst
  * @version 1.0
  */
 public class Ship extends GameObject {
-	/**
-	 * A Test cube.
-	 * 
-	 * @param id
-	 *            The id.
-	 * @param position
-	 *            The position.
-	 * @param front
-	 *            The front axis.
-     * @param up
-     *            The up axis.
-     * @param graphics
-     *            The up axis.
-	 **/
-	public Ship(long id, Vector3D position, Vector3D front, Vector3D up, int graphics) {
-		super(id, position);
+    /**
+     * A Test cube.
+     *
+     * @param id       The id.
+     * @param position The position.
+     * @param front    The front axis.
+     * @param up       The up axis.
+     * @param graphics The up axis.
+     */
+    public Ship(long id, Vector3D position, Vector3D front, Vector3D up, int graphics) {
+        super(id, position);
         final GameObject parent = this;
         setRenderAttachment(new RenderAttachment(this, front, up, graphics) {
             @Override
@@ -90,5 +83,5 @@ public class Ship extends GameObject {
                 parent.getRenderAttachment().move(new Vector3D(0, 0, elapsedTime));
             }
         });
-	}
+    }
 }
