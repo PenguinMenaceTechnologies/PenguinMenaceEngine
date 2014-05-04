@@ -29,8 +29,8 @@ public abstract class Player extends GameObject {
      * @param graphics The graphics identifier.
      */
     public Player(final Vector3D position, final Vector3D front, final Vector3D up, final int graphics) {
-        super(1, position);
-        setRenderAttachment(new RenderAttachment(this, front, up, graphics));
+        super(1, position, front, up);
+        setRenderAttachment(new RenderAttachment(this, graphics));
     }
 
     /**
@@ -40,7 +40,7 @@ public abstract class Player extends GameObject {
     public final void applyCamera() {
         if (getRenderAttachment() != null) {
             Matrix m = Matrix.camera(getPosition(),
-                    Vector3D.crossProduct(getRenderAttachment().getFront(), getRenderAttachment().getUp()), getRenderAttachment().getUp(), getRenderAttachment().getFront());
+                    Vector3D.crossProduct(getFront(), getUp()), getUp(), getFront());
 
             matrixBuffer = m.getValues(matrixBuffer);
             matrixBuffer.position(0);

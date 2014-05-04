@@ -34,9 +34,9 @@ public class TestPlayer extends Player {
         setLoopableAttachment(new LoopableAttachment() {
             @Override
             public void update(double elapsedTime) {
-                getRenderAttachment().move(new Vector3D(xAxis * elapsedTime * 3.0, yAxis * elapsedTime * 3.0,
+                move(new Vector3D(xAxis * elapsedTime * 3.0, yAxis * elapsedTime * 3.0,
                         zAxis * elapsedTime * 6.0));
-                getRenderAttachment().rotateAroundFrontAxis(elapsedTime * rotate * 50.0);
+                rotateAroundFrontAxis(elapsedTime * rotate * 50.0);
                 Display.setTitle(String.format("PenguinMenaceEngine Test [%.0f@%.2f]",
                         1.0 / elapsedTime, ((double) ManagementFactory.getThreadMXBean().getCurrentThreadCpuTime()) * 1E-9));
             }
@@ -143,8 +143,8 @@ public class TestPlayer extends Player {
      */
     @Override
     public void mouseMoveHandler(int dx, int dy) {
-        getRenderAttachment().rotateAroundPitchAxis(-dy * 0.2);
-        getRenderAttachment().rotateAroundUpAxis(dx * 0.2);
+        rotateAroundPitchAxis(-dy * 0.2);
+        rotateAroundUpAxis(dx * 0.2);
     }
 
 }

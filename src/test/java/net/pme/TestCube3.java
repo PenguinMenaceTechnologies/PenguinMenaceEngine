@@ -27,9 +27,9 @@ public class TestCube3 extends GameObject {
      * @param up       The up axis.
      */
     public TestCube3(long id, Vector3D position, Vector3D front, Vector3D up) {
-        super(id, position);
+        super(id, position, front, up);
 
-        setRenderAttachment(new RenderAttachment(this, front, up, -1) {
+        setRenderAttachment(new RenderAttachment(this, -1) {
             @Override
             protected void specialFX() {
                 GL11.glBegin(GL11.GL_QUADS);
@@ -78,7 +78,7 @@ public class TestCube3 extends GameObject {
         setLoopableAttachment(new LoopableAttachment() {
             @Override
             public void update(double elapsedTime) {
-                getRenderAttachment().rotateAroundPitchAxis(elapsedTime * 10.0);
+                rotateAroundPitchAxis(elapsedTime * 10.0);
                 uniform[0] = (float) Math.abs(Math.sin(t));
                 uniform[1] = (float) Math.abs(Math.cos(t));
                 uniform[2] = 0.0f;
@@ -88,7 +88,7 @@ public class TestCube3 extends GameObject {
         });
 
         sh = new Shader(null, Shaders.fsh);
-        getRenderAttachment().attachShader(sh);
+        getRenderAttachment().setShader(sh);
         uniform = new float[4];
         sh.setUniform4f("color", uniform);
     }

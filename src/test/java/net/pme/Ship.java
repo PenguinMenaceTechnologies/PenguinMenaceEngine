@@ -24,12 +24,12 @@ public class Ship extends GameObject {
      * @param graphics The up axis.
      */
     public Ship(long id, Vector3D position, Vector3D front, Vector3D up, int graphics) {
-        super(id, position);
+        super(id, position, front, up);
         final GameObject parent = this;
-        setRenderAttachment(new RenderAttachment(this, front, up, graphics) {
+        setRenderAttachment(new RenderAttachment(this, graphics) {
             @Override
             protected void specialFX() {
-                if (this.getGraphics() >= 0) {
+                if (this.getModel() >= 0) {
                     return;
                 }
                 GL11.glBegin(GL11.GL_QUADS);
@@ -75,12 +75,12 @@ public class Ship extends GameObject {
 
             }
         });
-        this.getRenderAttachment().attachShader(new Shader(null, Shaders.fsh));
+        this.getRenderAttachment().setShader(new Shader(null, Shaders.fsh));
         setLoopableAttachment(new LoopableAttachment() {
             @Override
             public void update(double elapsedTime) {
-                parent.getRenderAttachment().rotateAroundUpAxis(elapsedTime * 10);
-                parent.getRenderAttachment().move(new Vector3D(0, 0, elapsedTime));
+                parent.rotateAroundUpAxis(elapsedTime * 10);
+                parent.move(new Vector3D(0, 0, elapsedTime));
             }
         });
     }
