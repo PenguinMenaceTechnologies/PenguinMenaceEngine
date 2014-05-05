@@ -3,7 +3,7 @@ package net.pme;
 import net.pme.core.GameObject;
 import net.pme.core.Player;
 import net.pme.core.config.GameSettings;
-import net.pme.gameloop.GameLoop;
+import net.pme.jobcenter.GameLoop;
 import net.pme.graphics.Graphics;
 import net.pme.graphics.HudObject;
 import net.pme.model.ModelManager;
@@ -122,7 +122,7 @@ public final class Game {
     }
 
     /**
-     * Stop the currently running gameloop.
+     * Stop the currently running jobcenter.
      */
     public void stopGame() {
         if (gameLoop == null) {

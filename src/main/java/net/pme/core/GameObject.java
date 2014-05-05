@@ -3,8 +3,9 @@ package net.pme.core;
 import net.pme.core.math.MathUtils;
 import net.pme.core.math.Matrix;
 import net.pme.core.math.Vector3D;
-import net.pme.gameloop.LoopableAttachment;
+import net.pme.jobcenter.LoopableAttachment;
 import net.pme.graphics.RenderAttachment;
+import net.pme.jobcenter.MoveJob;
 import net.pme.physics.PhysicsAttachment;
 
 /**
@@ -33,6 +34,7 @@ public abstract class GameObject {
      * The direction where the top of the object is.
      */
     private Vector3D up;
+    private MoveJob moveJob = new MoveJob(null, this);
 
     /**
      * Create a new gameobject.
@@ -192,5 +194,9 @@ public abstract class GameObject {
         if (getRenderAttachment() != null) {
             getRenderAttachment().setNeedsUpdate(true);
         }
+    }
+
+    public MoveJob getMoveJob() {
+        return moveJob;
     }
 }

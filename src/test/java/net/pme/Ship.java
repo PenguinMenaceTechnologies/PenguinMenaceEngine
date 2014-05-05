@@ -2,7 +2,7 @@ package net.pme;
 
 import net.pme.core.GameObject;
 import net.pme.core.math.Vector3D;
-import net.pme.gameloop.LoopableAttachment;
+import net.pme.jobcenter.LoopableAttachment;
 import net.pme.graphics.RenderAttachment;
 import net.pme.graphics.Shader;
 import net.pme.model.Model;

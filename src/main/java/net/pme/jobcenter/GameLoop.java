@@ -1,4 +1,4 @@
-package net.pme.gameloop;
+package net.pme.jobcenter;
 
 import net.pme.Game;
 import net.pme.core.GameObject;
@@ -42,6 +42,8 @@ public final class GameLoop {
 
         double elapsedTime = 0;
 
+        final Scheduler scheduler = new Scheduler();
+
         Graphics display = game.getDisplay();
 
         while (running && (display == null || !display.isCloseRequested())) {
@@ -50,15 +52,29 @@ public final class GameLoop {
             // Flush particle buffer to local buffer.
             //addAll(localParticleObjects, particleObjects);
 
-            // Move all objects
-            for (GameObject o : objects) {
-                if (o.getLoopableAttachment() != null) {
-                    o.getLoopableAttachment().update(elapsedTime);
+            // Wait for all jobs to wait in this frame.
+            scheduler.await();
+
+            final double elapsedTimeFixed = elapsedTime;
+            scheduler.addJob(new Job(scheduler) {
+                @Override
+                public void execute() {
+                    // Move all objects
+                    for (GameObject o : objects) {
+                        o.getMoveJob().setup(elapsedTimeFixed, scheduler);
+                        scheduler.addJobForNextTick(o.getMoveJob());
+                    }
+                    scheduler.addJobForNextTick(new Job(scheduler) {
+                        @Override
+                        public void execute() {
+                            for (HudObject h: hudObjects) {
+                                h.move(elapsedTimeFixed);
+                            }
+                        }
+                    });
+
                 }
-            }
-            for (HudObject o : hudObjects) {
-                o.move(elapsedTime);
-            }
+            });
 
             display = game.getDisplay();
 
@@ -78,6 +94,9 @@ public final class GameLoop {
                     e.printStackTrace();
                 }
             }
+
+            scheduler.await();
+            scheduler.tick();
 
             timer = System.nanoTime() - timer;
             elapsedTime = timer * NANO_TO_SEC;

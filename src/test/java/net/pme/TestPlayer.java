@@ -2,7 +2,7 @@ package net.pme;
 
 import net.pme.core.Player;
 import net.pme.core.math.Vector3D;
-import net.pme.gameloop.LoopableAttachment;
+import net.pme.jobcenter.LoopableAttachment;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 

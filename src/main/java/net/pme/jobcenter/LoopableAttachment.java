@@ -1,4 +1,4 @@
-package net.pme.gameloop;
+package net.pme.jobcenter;
 
 /**
  * Models a movable object.
@@ -13,5 +13,5 @@ public interface LoopableAttachment {
      *
      * @param elapsedTime The time that the last frame took to calculate. (in seconds)
      */
-    void update(double elapsedTime);
+    void update(final double elapsedTime);
 }
