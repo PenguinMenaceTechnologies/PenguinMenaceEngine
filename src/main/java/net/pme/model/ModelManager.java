@@ -26,9 +26,9 @@ public final class ModelManager {
      * @param key The model name.
      * @return The id to the model.
      */
-    public Model get(final String key) throws IOException {
+    public Model get(final String key, final Class callee) throws IOException {
         if (!MAP.containsKey(key)) {
-            MAP.put(key, new Model(key));
+            MAP.put(key, new Model(key, callee));
         }
 
         return MAP.get(key);

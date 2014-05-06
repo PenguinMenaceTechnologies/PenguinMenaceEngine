@@ -33,8 +33,8 @@ public class Texture {
      * @throws IOException When the searched file does not exist or not contain an
      *                     image.
      */
-    public Texture(final String filename) throws IOException {
-        textureId = TextureLoader.loadFromFile(filename);
+    public Texture(final String filename, final Class callee) throws IOException {
+        textureId = TextureLoader.loadFromFile(filename, callee);
     }
 
     /**

@@ -2,6 +2,7 @@ package net.pme;
 
 import net.pme.core.Player;
 import net.pme.core.math.Vector3d;
+import net.pme.core.utils.IOUtils;
 import net.pme.graphics.OffscreenRenderer;
 import net.pme.model.Model;
 import net.pme.model.ModelManager;
@@ -46,10 +47,8 @@ public class Test {
 
         ModelManager modelManager = game.getModelManager();
 
-        Model model = modelManager.get(Test.class.getResource(
-                "/assets/cube_small.obj").getPath());
-        Model model2 = modelManager.get(Test.class.getResource(
-                "/assets/cube_small.obj").getPath());
+        Model model = modelManager.get("resource://assets/cube_small.obj", Test.class);
+        Model model2 = modelManager.get("resource://assets/cube_small.obj", Test.class);
         if (model == model2) {
             System.out.println("Model loading is efficient!");
         }
@@ -70,9 +69,9 @@ public class Test {
         Vector3d up3 = new Vector3d(1, 1, 0);
 
         game.addGameObject(new Ship(2, new Vector3d(1, 2, -10), front1, up1,
-                game.getModelManager().get(Test.class.getResource("/assets/cube_small.obj").getPath())));
+                game.getModelManager().get("resource://assets/cube_small.obj", Test.class)));
         game.addGameObject(new Ship(3, new Vector3d(1, -2, -10), front2, up2,
-                game.getModelManager().get(Test.class.getResource("/assets/ship.obj").getPath())));
+                game.getModelManager().get("resource://assets/ship.obj", Test.class)));
         game.addGameObject(new TestCube3(4, new Vector3d(-2, 0, -10), front3,
                 up3));
 
@@ -91,8 +90,7 @@ public class Test {
 		}*/
 
         try {
-            BufferedImage bi = ImageIO.read(new File(Test.class.getResource(
-                    "/assets/overlay.jpg").getFile()));
+            BufferedImage bi = ImageIO.read(IOUtils.getFile("resource://assets/overlay.jpg", Test.class));
             game.addHud(new TestHudObject(64, 64, bi));
         } catch (IOException e) {
             e.printStackTrace();

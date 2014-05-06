@@ -1,7 +1,9 @@
 package net.pme.model;
 
+import net.pme.core.GameObject;
 import net.pme.core.math.Vector3d;
 import net.pme.core.utils.FileFormatException;
+import net.pme.core.utils.IOUtils;
 import org.lwjgl.opengl.GL11;
 
 import java.io.*;
@@ -28,14 +30,25 @@ public class Model {
     private HashMap<Integer, String> mtls = new HashMap<>();
     private HashMap<Integer, String> smoothing = new HashMap<>();
 
+    private double size;
+    private BoundingBox boundingBox;
+    private String path;
+    private Class callee;
+
     /**
      * Package visibility for model only.
      *
      * @param path The path from which to load the model.
      * @throws IOException When the given file cannot be loaded.
      */
-    public Model(final String path) throws IOException {
-        this(new File(path));
+    public Model(final String path, final Class callee) throws IOException {
+        this.path = path;
+        this.callee = callee;
+        setupDisplayList(); // TODO on removal mve the loadModelFromFile to here!
+        for (Vector3d v: vertices) {
+            size = size < v.length() ? v.length() : size;
+        }
+        boundingBox = new BoundingBox(this);
     }
     /**
      * Package visibility for model only.
@@ -44,14 +57,34 @@ public class Model {
      * @throws IOException When the given file cannot be loaded.
      */
     public Model(final File file) throws IOException {
-        setupDisplayList(file); // TODO on removal mve the loadModelFromFile to here!
+        this(file.getAbsolutePath(), Model.class); // This cannot be a resource.
+    }
+
+    /**
+     * Get the size of the model.
+     *
+     * Models a sphere into which the model fits.
+     *
+     * @return The size of the model.
+     */
+    public double getSize() {
+        return size;
+    }
+
+    /**
+     * The bounding box calculated for this model.
+     *
+     * @return The bounding box for this model.
+     */
+    public BoundingBox getBoundingBox() {
+        return boundingBox;
     }
 
     @Deprecated
-    private void setupDisplayList(File file) throws IOException {
+    private void setupDisplayList() throws IOException {
         displayList = GL11.glGenLists(1);
         GL11.glNewList(displayList, GL11.GL_COMPILE);
-        loadModelFromFile(file);
+        loadModelFromFile();
         GL11.glBegin(GL11.GL_TRIANGLES);
         int i = 0;
         boolean smoothing = true;
@@ -236,10 +269,13 @@ public class Model {
     /**
      * Load a model from a file.
      *
-     * @param f The file where the model is stored in.
      * @throws IOException When the file cannot be loaded.
      */
-    private void loadModelFromFile(final File f) throws IOException {
+    private void loadModelFromFile() throws IOException {
+        final File f = IOUtils.getFile(path, callee);
+
+        final String basePath = path.substring(0, path.lastIndexOf("/"));
+
         BufferedReader reader = new BufferedReader(new FileReader(f));
         String line;
         int lineNumber = 0;
@@ -257,8 +293,8 @@ public class Model {
                     if (!splitline[1].startsWith("/")) {
                         s = "/";
                     }
-                    Material.loadMaterials(new File(f.getParent() + s + mtl),
-                            mtllibs);
+                    Material.loadMaterials(basePath, s + mtl,
+                            mtllibs, callee);
                 } else if (line.startsWith("usemtl ")) {
                     String[] splitline = line.split(" ");
                     String mtl = splitline[1];

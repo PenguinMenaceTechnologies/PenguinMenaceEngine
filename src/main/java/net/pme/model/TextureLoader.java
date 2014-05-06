@@ -3,6 +3,7 @@
  */
 package net.pme.model;
 
+import net.pme.core.utils.IOUtils;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
@@ -40,10 +41,10 @@ public final class TextureLoader {
      * @return The texture identifier.
      * @throws IOException When there is an error opening the file.
      */
-    public static int loadFromFile(final String pathname) throws IOException {
+    public static int loadFromFile(final String pathname, final Class callee) throws IOException {
         if (!textures.containsKey(pathname)) {
             textures.put(pathname,
-                    loadTextureForceReload(ImageIO.read(new File(pathname))));
+                    loadTextureForceReload(ImageIO.read(IOUtils.getFile(pathname, callee))));
             openedTimes.put(textures.get(pathname), 0);
         }
         openedTimes.put(textures.get(pathname),

@@ -4,6 +4,7 @@
 package net.pme.model;
 
 import net.pme.core.utils.FileFormatException;
+import net.pme.core.utils.IOUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -56,12 +57,14 @@ class Material {
     /**
      * Create a material from a file.
      *
-     * @param f   The file.
+     * @param basePath   The basepath.
+     * @param file   The file.
      * @param map the material map where to add materials to.
      * @throws IOException When
      */
-    static void loadMaterials(final File f, final HashMap<String, Material> map)
+    static void loadMaterials(final String basePath, final String file, final HashMap<String, Material> map, final Class callee)
             throws IOException {
+        File f = IOUtils.getFile(basePath+file, callee);
         BufferedReader reader = new BufferedReader(new FileReader(f));
         String line;
         Material mtl = null;
@@ -111,32 +114,32 @@ class Material {
                     if (!splitline[1].startsWith("/")) {
                         s = "/";
                     }
-                    mtl.ambientMap = new Texture(f.getParent() + s
-                            + splitline[1]);
+                    mtl.ambientMap = new Texture(basePath + s
+                            + splitline[1], callee);
                 } else if (line.startsWith("map_Kd ")) {
                     String[] splitline = line.split(" ");
                     String s = "";
                     if (!splitline[1].startsWith("/")) {
                         s = "/";
                     }
-                    mtl.diffuseMap = new Texture(f.getParent() + s
-                            + splitline[1]);
+                    mtl.diffuseMap = new Texture(basePath + s
+                            + splitline[1], callee);
                 } else if (line.startsWith("map_Ks ")) {
                     String[] splitline = line.split(" ");
                     String s = "";
                     if (!splitline[1].startsWith("/")) {
                         s = "/";
                     }
-                    mtl.specularMap = new Texture(f.getParent() + s
-                            + splitline[1]);
+                    mtl.specularMap = new Texture(basePath + s
+                            + splitline[1], callee);
                 } else if (line.startsWith("map_Ns ")) {
                     String[] splitline = line.split(" ");
                     String s = "";
                     if (!splitline[1].startsWith("/")) {
                         s = "/";
                     }
-                    mtl.specularHighlightMap = new Texture(f.getParent() + s
-                            + splitline[1]);
+                    mtl.specularHighlightMap = new Texture(basePath + s
+                            + splitline[1], callee);
                 } else if (line.startsWith("map_bump ")
                         || line.startsWith("bump ")) {
                     String[] splitline = line.split(" ");
@@ -144,24 +147,24 @@ class Material {
                     if (!splitline[1].startsWith("/")) {
                         s = "/";
                     }
-                    mtl.bumpMap = new Texture(f.getParent() + s
-                            + splitline[1]);
+                    mtl.bumpMap = new Texture(basePath + s
+                            + splitline[1], callee);
                 } else if (line.startsWith("disp ")) {
                     String[] splitline = line.split(" ");
                     String s = "";
                     if (!splitline[1].startsWith("/")) {
                         s = "/";
                     }
-                    mtl.displacementMap = new Texture(f.getParent() + s
-                            + splitline[1]);
+                    mtl.displacementMap = new Texture(basePath + s
+                            + splitline[1], callee);
                 } else if (line.startsWith("decal ")) {
                     String[] splitline = line.split(" ");
                     String s = "";
                     if (!splitline[1].startsWith("/")) {
                         s = "/";
                     }
-                    mtl.decalMap = new Texture(f.getParent() + s
-                            + splitline[1]);
+                    mtl.decalMap = new Texture(basePath + s
+                            + splitline[1], callee);
                 }
             } catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
                 reader.close();

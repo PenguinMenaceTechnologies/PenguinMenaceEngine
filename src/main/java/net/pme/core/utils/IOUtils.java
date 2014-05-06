@@ -1,8 +1,6 @@
 package net.pme.core.utils;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.Charset;
 
 /**
@@ -12,6 +10,10 @@ import java.nio.charset.Charset;
  * @version 1.0
  */
 public final class IOUtils {
+    /**
+     * The buffer size for file unzipping.
+     */
+    private static final int BUFFER_SIZE = 16 * 1024;
 
     /**
      * The UTF-8 character set.
@@ -24,6 +26,71 @@ public final class IOUtils {
      */
     private IOUtils() {
 
+    }
+
+    public static File getFile(String path, Class callee) throws IOException{
+        if (path.startsWith("resource://")) {
+            path = path.substring(11);
+            path = extractFile(path, callee);
+        }
+        return new File(path);
+    }
+
+    /**
+     * Save a library to a temp file.
+     *
+     * @param library The library to save.
+     * @return The path where the temp file was created.
+     * @throws IOException When something went wrong.
+     */
+    private static String extractFile(final String library, Class callee) throws IOException {
+        InputStream in = null;
+        OutputStream out = null;
+
+        try {
+            String libraryName = "/" + library;
+            in = callee.getResourceAsStream(libraryName);
+            if (in == null) {
+                throw new IllegalArgumentException("File not found! "
+                        + libraryName);
+            }
+            String tmpDirName = System.getProperty("java.io.tmpdir");
+            File tmpDir = new File(tmpDirName);
+            if (!tmpDir.exists()) {
+                tmpDir.mkdir();
+            }
+            File file = new File(tmpDir + "/pme/" + library);
+            file.mkdirs();
+            if (file.exists()) {
+                file.delete();
+            }
+            file.createNewFile();
+            // Clean up the file when exiting
+            out = new FileOutputStream(file);
+
+            int cnt;
+            byte[] buf = new byte[BUFFER_SIZE];
+            // copy until done.
+            while ((cnt = in.read(buf)) >= 1) {
+                out.write(buf, 0, cnt);
+            }
+            return file.getAbsolutePath();
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     /**
