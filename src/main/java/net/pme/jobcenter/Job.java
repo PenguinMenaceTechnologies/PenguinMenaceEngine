@@ -71,12 +71,14 @@ public abstract class Job implements Runnable {
         // Kill threads that have bugged dependencies.
         if (cancelTimeout-- < 0) {
             scheduler.deleteJob(this);
+            System.err.println("Job killed because of dependency error. ("+this.getClass().toString()+")");
             return;
         }
 
         // Check the dependencies.
         for (Job d: getDependencies()) {
             if (scheduler.isPending(d)) {
+                scheduler.deleteJob(this);
                 scheduler.addJob(this);
                 return;
             }
