@@ -15,7 +15,7 @@ public final class BoundingBox {
      * Starting in the front left lower corner.
      * Starting at the ground side anti-clockwise and then the upper also anti-clockwise.
      */
-    private Vector3d[] edges;
+    private Vector3d[] edges = new Vector3d[8];
 
     /**
      * Create a bounding box for the given model.
