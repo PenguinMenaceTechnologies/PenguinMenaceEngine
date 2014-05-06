@@ -15,6 +15,33 @@ It is basically a simulator that is focused on realtime performance.
 That makes it great for 3d gaming.
 However, the PenguinMenaceEngine tries to reach for a larger target group than just gamedevelopers.
 
+Setting up a project
+====================
+
+It is highly recommended to use maven.
+However if you cannot use maven for any reasons, download the build from the release page and add it as a library to the buildpath.
+
+Add the repository to your pom in the repositories section.
+
+        <repository>
+            <id>com.github.penguinmenaceengine</id>
+            <url>https://github.com/PenguinMenaceTechnologies/PenguinMenaceEngine/raw/master/mvn-repo</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
+
+Now add the dependency on the Engine to your pom in the dependencies section.
+
+        <dependency>
+            <groupId>com.github.penguinmenaceengine</groupId>
+            <artifactId>PenguinMenaceEngine</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+That's all now you can use the engine in your own maven project.
+
 Usage
 =====
 
