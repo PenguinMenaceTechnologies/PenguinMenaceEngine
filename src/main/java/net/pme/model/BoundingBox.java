@@ -5,6 +5,8 @@ import net.pme.core.math.Vector3d;
 import java.util.List;
 
 /**
+ * A bounding box that can be used for fast collision detection.
+ *
  * @author <a href="mailto:mail@michaelfuerst.de>Michael Fürst</a>
  * @version 1.0
  * @since 2014-05-06
