@@ -1,7 +1,7 @@
 package net.pme.core;
 
 import net.pme.core.math.Matrix;
-import net.pme.core.math.Vector3D;
+import net.pme.core.math.Vector3d;
 import net.pme.graphics.RenderAttachment;
 import net.pme.model.Model;
 import org.lwjgl.opengl.GL11;
@@ -29,7 +29,7 @@ public abstract class Player extends GameObject {
      * @param up       The direction where the players top is.
      * @param model    The graphics identifier.
      */
-    public Player(final Vector3D position, final Vector3D front, final Vector3D up, final Model model) {
+    public Player(final Vector3d position, final Vector3d front, final Vector3d up, final Model model) {
         super(1, position, front, up);
         setRenderAttachment(new RenderAttachment(this, model));
     }
@@ -41,7 +41,7 @@ public abstract class Player extends GameObject {
     public final void applyCamera() {
         if (getRenderAttachment() != null) {
             Matrix m = Matrix.camera(getPosition(),
-                    Vector3D.crossProduct(getFront(), getUp()), getUp(), getFront());
+                    Vector3d.crossProduct(getFront(), getUp()), getUp(), getFront());
 
             matrixBuffer = m.getValues(matrixBuffer);
             matrixBuffer.position(0);

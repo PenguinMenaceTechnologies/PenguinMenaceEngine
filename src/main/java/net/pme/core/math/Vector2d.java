@@ -5,13 +5,12 @@ package net.pme.core.math;
  * @version 0.1
  * @since 2014-03-12
  */
-public class Vector4D extends Vector {
-
+public class Vector2d extends Vector {
     /**
      * Create a null vector.
      */
-    public Vector4D() {
-        this(0.0, 0.0, 0.0, 0.0);
+    public Vector2d() {
+        this(0.0, 0.0);
     }
 
     /**
@@ -19,14 +18,10 @@ public class Vector4D extends Vector {
      *
      * @param x x-component
      * @param y y-component
-     * @param z z-component
-     * @param w w-component
      */
-    public Vector4D(final double x, final double y, final double z, final double w) {
+    public Vector2d(final double x, final double y) {
         this.x = x;
         this.y = y;
-        this.z = z;
-        this.w = w;
     }
 
     /**
@@ -35,8 +30,8 @@ public class Vector4D extends Vector {
      * @param v The vector.
      * @return The length of the vector.
      */
-    public static double length(final Vector4D v) {
-        return Math.sqrt((v.x * v.x) + (v.y * v.y) + (v.z * v.z) + (v.w * v.w));
+    public static double length(final Vector2d v) {
+        return Math.sqrt((v.x * v.x) + (v.y * v.y));
     }
 
     /**
@@ -45,7 +40,7 @@ public class Vector4D extends Vector {
      * @param v The vector to normalize.
      * @return The normalized vector.
      */
-    public static Vector4D normalize(final Vector4D v) {
+    public static Vector2d normalize(final Vector2d v) {
         return multiply(v, 1.0 / length(v));
     }
 
@@ -56,8 +51,8 @@ public class Vector4D extends Vector {
      * @param vect2 The second vector.
      * @return The result.
      */
-    public static Vector4D add(final Vector4D vect1, final Vector4D vect2) {
-        return new Vector4D(vect1.x + vect2.x, vect1.y + vect2.y, vect1.z + vect2.z, vect1.w + vect2.w);
+    public static Vector2d add(final Vector2d vect1, final Vector2d vect2) {
+        return new Vector2d(vect1.x + vect2.x, vect1.y + vect2.y);
     }
 
     /**
@@ -67,8 +62,8 @@ public class Vector4D extends Vector {
      * @param vect2 The second vector.
      * @return The result.
      */
-    public static Vector4D subtract(final Vector4D vect1, final Vector4D vect2) {
-        return new Vector4D(vect1.x - vect2.x, vect1.y - vect2.y, vect1.z - vect2.z, vect1.w - vect2.w);
+    public static Vector2d subtract(final Vector2d vect1, final Vector2d vect2) {
+        return new Vector2d(vect1.x - vect2.x, vect1.y - vect2.y);
     }
 
     /**
@@ -78,24 +73,44 @@ public class Vector4D extends Vector {
      * @param scalar The scalar.
      * @return The scaled vector.
      */
-    public static Vector4D multiply(final Vector4D vector, final double scalar) {
-        Vector4D out = new Vector4D();
+    public static Vector2d multiply(final Vector2d vector, final double scalar) {
+        Vector2d out = new Vector2d();
         out.setX(vector.getX() * scalar);
         out.setY(vector.getY() * scalar);
-        out.setZ(vector.getZ() * scalar);
-        out.setW(vector.getW() * scalar);
         return out;
+    }
+
+    /**
+     * Calculate the dot product of 2 vectors (vect1*vect2).
+     *
+     * @param vect1 The first vector.
+     * @param vect2 The second vector.
+     * @return The product.
+     */
+    public static double dotProduct(final Vector2d vect1, final Vector2d vect2) {
+        return vect1.x * vect2.x + vect1.y * vect2.y;
+    }
+
+    /**
+     * Check equality of 2 vectors.
+     *
+     * @param a The first vector.
+     * @param b The second vector.
+     * @return The result.
+     */
+    public static boolean equals(final Vector2d a, final Vector2d b, final double precision) {
+        return Math.abs(a.getX() - b.getX()) < precision && Math.abs(a.getY() - b.getY()) < precision;
     }
 
     public double length() {
         return length(this);
     }
 
-    public Vector4D normalize() {
+    public Vector2d normalize() {
         return normalize(this);
     }
 
-    public Vector4D scale(final double scalar) {
+    public Vector2d scale(final double scalar) {
         return multiply(this, scalar);
     }
 
@@ -105,7 +120,7 @@ public class Vector4D extends Vector {
      * @param other The second vector.
      * @return The result.
      */
-    public Vector4D add(final Vector4D other) {
+    public Vector2d add(final Vector2d other) {
         return add(this, other);
     }
 
@@ -115,28 +130,42 @@ public class Vector4D extends Vector {
      * @param other The second vector.
      * @return The result.
      */
-    public Vector4D subtract(final Vector4D other) {
+    public Vector2d subtract(final Vector2d other) {
         return subtract(this, other);
     }
 
-    @Override
+    /**
+     * Calculate the dot product of 2 vectors (vect1*vect2).
+     *
+     * @param other The second vector.
+     * @return The product.
+     */
+    public double dotProduct(final Vector2d other) {
+        return dotProduct(this, other);
+    }
+
     public final double[] toArray() {
-        double[] res = new double[4];
+        double[] res = new double[2];
         res[0] = x;
         res[1] = y;
-        res[2] = z;
-        res[3] = w;
         return res;
     }
 
-    @Override
     public final float[] toFloatArray() {
-        float[] res = new float[4];
+        float[] res = new float[2];
         res[0] = (float) x;
         res[1] = (float) y;
-        res[2] = (float) z;
-        res[3] = (float) w;
         return res;
+    }
+
+    /**
+     * Check equality of 2 vectors.
+     *
+     * @param other The second vector.
+     * @return The result.
+     */
+    public boolean equals(final Vector2d other, final double precision) {
+        return equals(this, other, precision);
     }
 
     /**
@@ -167,43 +196,12 @@ public class Vector4D extends Vector {
         this.y = y;
     }
 
-    /**
-     * @return the z
-     */
-    public final double getZ() {
-        return z;
-    }
-
-    /**
-     * @param z the z to set
-     */
-    public final void setZ(final double z) {
-        this.z = z;
-    }
-
-    /**
-     * @return the w
-     */
-    public final double getW() {
-        return w;
-    }
-
-    /**
-     * @param w the w to set
-     */
-    public final void setW(final double w) {
-        this.w = w;
-    }
-
     @Override
     public final boolean equals(final Object object) {
-        if (object instanceof Vector4D) {
-            Vector4D other = (Vector4D) object;
+        if (object instanceof Vector2d) {
+            Vector2d other = (Vector2d) object;
 
-            if (Math.abs(other.x - this.x) < PRECISION
-                    && Math.abs(other.y - this.y) < PRECISION
-                    && Math.abs(other.z - this.z) < PRECISION
-                    && Math.abs(other.w - this.w) < PRECISION) {
+            if (Math.abs(other.x - this.x) < PRECISION && Math.abs(other.y - this.y) < PRECISION) {
                 return true;
             }
         }
@@ -219,15 +217,11 @@ public class Vector4D extends Vector {
         result = prime * result + (int) (temp ^ (temp >>> SHIFT));
         temp = Double.doubleToLongBits(y);
         result = prime * result + (int) (temp ^ (temp >>> SHIFT));
-        temp = Double.doubleToLongBits(z);
-        result = prime * result + (int) (temp ^ (temp >>> SHIFT));
-        temp = Double.doubleToLongBits(w);
-        result = prime * result + (int) (temp ^ (temp >>> SHIFT));
         return result;
     }
 
     @Override
     public final String toString() {
-        return "(" + x + ", " + y + ", " + z + ", " + w + ")";
+        return "(" + x + ", " + y + ")";
     }
 }

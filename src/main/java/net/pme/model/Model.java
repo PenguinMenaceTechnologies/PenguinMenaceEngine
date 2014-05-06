@@ -1,9 +1,8 @@
 package net.pme.model;
 
-import net.pme.core.math.Vector3D;
+import net.pme.core.math.Vector3d;
 import net.pme.core.utils.FileFormatException;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.vector.Vector3f;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -20,10 +19,10 @@ public class Model {
     private static final float COLOR = 0.5f;
     private static final int VECTOR_LENGTH = 4;
     private int displayList;
-    private List<Vector3D> vertices = new ArrayList<>();
-    private List<Vector3D> normals = new ArrayList<>();
-    private List<Vector3D> textureCoords = new ArrayList<>();
-    private List<Vector3D> spaceVertices = new ArrayList<>();
+    private List<Vector3d> vertices = new ArrayList<>();
+    private List<Vector3d> normals = new ArrayList<>();
+    private List<Vector3d> textureCoords = new ArrayList<>();
+    private List<Vector3d> spaceVertices = new ArrayList<>();
     private List<Face> faces = new ArrayList<>();
     private HashMap<String, Material> mtllibs = new HashMap<>();
     private HashMap<Integer, String> mtls = new HashMap<>();
@@ -68,35 +67,35 @@ public class Model {
                 mtllibs.get(mtls.get(i)).use();
             }
             GL11.glColor3f(COLOR, COLOR, COLOR);
-            Vector3D n1 = normals.get((int) face.getNormal().getX() - 1);
+            Vector3d n1 = normals.get((int) face.getNormal().getX() - 1);
             if (!smoothing) {
                 GL11.glNormal3d(n1.getX(), n1.getY(), n1.getZ());
             }
             if (face.getTexture() != null) {
-                Vector3D t1 = textureCoords.get((int) face.getTexture().getX() - 1);
+                Vector3d t1 = textureCoords.get((int) face.getTexture().getX() - 1);
                 GL11.glTexCoord3d(t1.getX(), -t1.getY(), t1.getZ());
             }
-            Vector3D v1 = vertices.get((int) face.getVertex().getX() - 1);
+            Vector3d v1 = vertices.get((int) face.getVertex().getX() - 1);
             GL11.glVertex3d(v1.getY(), v1.getX(), -v1.getZ());
-            Vector3D n2 = normals.get((int) face.getNormal().getY() - 1);
+            Vector3d n2 = normals.get((int) face.getNormal().getY() - 1);
             if (!smoothing) {
                 GL11.glNormal3d(n2.getX(), n2.getY(), n2.getZ());
             }
             if (face.getTexture() != null) {
-                Vector3D t2 = textureCoords.get((int) face.getTexture().getY() - 1);
+                Vector3d t2 = textureCoords.get((int) face.getTexture().getY() - 1);
                 GL11.glTexCoord3d(t2.getX(), -t2.getY(), t2.getZ());
             }
-            Vector3D v2 = vertices.get((int) face.getVertex().getY() - 1);
+            Vector3d v2 = vertices.get((int) face.getVertex().getY() - 1);
             GL11.glVertex3d(v2.getY(), v2.getX(), -v2.getZ());
-            Vector3D n3 = normals.get((int) face.getNormal().getZ() - 1);
+            Vector3d n3 = normals.get((int) face.getNormal().getZ() - 1);
             if (!smoothing) {
                 GL11.glNormal3d(n3.getX(), n3.getY(), n3.getZ());
             }
             if (face.getTexture() != null) {
-                Vector3D t3 = textureCoords.get((int) face.getTexture().getZ() - 1);
+                Vector3d t3 = textureCoords.get((int) face.getTexture().getZ() - 1);
                 GL11.glTexCoord3d(t3.getX(), -t3.getY(), t3.getZ());
             }
-            Vector3D v3 = vertices.get((int) face.getVertex().getZ() - 1);
+            Vector3d v3 = vertices.get((int) face.getVertex().getZ() - 1);
             GL11.glVertex3d(v3.getY(), v3.getX(), -v3.getZ());
             i++;
         }
@@ -116,56 +115,56 @@ public class Model {
     /**
      * @return the vertices
      */
-    public final List<Vector3D> getVertices() {
+    public final List<Vector3d> getVertices() {
         return vertices;
     }
 
     /**
      * @param vertices the vertices to set
      */
-    public final void setVertices(final List<Vector3D> vertices) {
+    public final void setVertices(final List<Vector3d> vertices) {
         this.vertices = vertices;
     }
 
     /**
      * @return the normals
      */
-    public final List<Vector3D> getNormals() {
+    public final List<Vector3d> getNormals() {
         return normals;
     }
 
     /**
      * @param normals the normals to set
      */
-    public final void setNormals(final List<Vector3D> normals) {
+    public final void setNormals(final List<Vector3d> normals) {
         this.normals = normals;
     }
 
     /**
      * @return the textureCoords
      */
-    public final List<Vector3D> getTextureCoords() {
+    public final List<Vector3d> getTextureCoords() {
         return textureCoords;
     }
 
     /**
      * @param textureCoords the textureCoords to set
      */
-    public final void setTextureCoords(final List<Vector3D> textureCoords) {
+    public final void setTextureCoords(final List<Vector3d> textureCoords) {
         this.textureCoords = textureCoords;
     }
 
     /**
      * @return the spaceVertices
      */
-    public final List<Vector3D> getSpaceVertices() {
+    public final List<Vector3d> getSpaceVertices() {
         return spaceVertices;
     }
 
     /**
      * @param spaceVertices the spaceVertices to set
      */
-    public final void setSpaceVertices(final List<Vector3D> spaceVertices) {
+    public final void setSpaceVertices(final List<Vector3d> spaceVertices) {
         this.spaceVertices = spaceVertices;
     }
 
@@ -273,13 +272,13 @@ public class Model {
                     float x = Float.parseFloat(splitline[1]);
                     float y = Float.parseFloat(splitline[2]);
                     float z = Float.parseFloat(splitline[3]);
-                    vertices.add(new Vector3D(x, y, z));
+                    vertices.add(new Vector3d(x, y, z));
                 } else if (line.startsWith("vn ")) {
                     String[] splitline = line.split(" ");
                     float x = Float.parseFloat(splitline[1]);
                     float y = Float.parseFloat(splitline[2]);
                     float z = Float.parseFloat(splitline[3]);
-                    normals.add(new Vector3D(x, y, z));
+                    normals.add(new Vector3d(x, y, z));
                 } else if (line.startsWith("vt ")) {
                     String[] splitline = line.split(" ");
                     float x = Float.parseFloat(splitline[1]);
@@ -288,7 +287,7 @@ public class Model {
                     if (splitline.length >= VECTOR_LENGTH) {
                         z = Float.parseFloat(splitline[3]);
                     }
-                    textureCoords.add(new Vector3D(x, y, z));
+                    textureCoords.add(new Vector3d(x, y, z));
                 } else if (line.startsWith("vp ")) {
                     String[] splitline = line.split(" ");
                     float x = Float.parseFloat(splitline[1]);
@@ -300,41 +299,41 @@ public class Model {
                     if (splitline.length >= VECTOR_LENGTH) {
                         z = Float.parseFloat(splitline[3]);
                     }
-                    spaceVertices.add(new Vector3D(x, y, z));
+                    spaceVertices.add(new Vector3d(x, y, z));
                 } else if (line.startsWith("f ")) {
-                    Vector3D vertexIndicies = new Vector3D(
+                    Vector3d vertexIndicies = new Vector3d(
                             Float.parseFloat(line.split(" ")[1].split("/")[0]),
                             Float.parseFloat(line.split(" ")[2].split("/")[0]),
                             Float.parseFloat(line.split(" ")[3].split("/")[0]));
-                    Vector3D textureIndicies;
+                    Vector3d textureIndicies;
                     if (line.split(" ")[1].split("/")[1].equals("")) {
                         textureIndicies = null;
                     } else {
-                        textureIndicies = new Vector3D(
+                        textureIndicies = new Vector3d(
                                 Float.parseFloat(line.split(" ")[1].split("/")[1]),
                                 Float.parseFloat(line.split(" ")[2].split("/")[1]),
                                 Float.parseFloat(line.split(" ")[3].split("/")[1]));
                     }
-                    Vector3D normalIndicies = new Vector3D(
+                    Vector3d normalIndicies = new Vector3d(
                             Float.parseFloat(line.split(" ")[1].split("/")[2]),
                             Float.parseFloat(line.split(" ")[2].split("/")[2]),
                             Float.parseFloat(line.split(" ")[3].split("/")[2]));
                     faces.add(new Face(vertexIndicies, textureIndicies,
                             normalIndicies));
                     if (line.split(" ").length == 5) {
-                        vertexIndicies = new Vector3D(
+                        vertexIndicies = new Vector3d(
                                 Float.parseFloat(line.split(" ")[4].split("/")[0]),
                                 Float.parseFloat(line.split(" ")[1].split("/")[0]),
                                 Float.parseFloat(line.split(" ")[3].split("/")[0]));
                         if (line.split(" ")[1].split("/")[1].equals("")) {
                             textureIndicies = null;
                         } else {
-                            textureIndicies = new Vector3D(
+                            textureIndicies = new Vector3d(
                                     Float.parseFloat(line.split(" ")[4].split("/")[1]),
                                     Float.parseFloat(line.split(" ")[1].split("/")[1]),
                                     Float.parseFloat(line.split(" ")[3].split("/")[1]));
                         }
-                        normalIndicies = new Vector3D(
+                        normalIndicies = new Vector3d(
                                 Float.parseFloat(line.split(" ")[4].split("/")[2]),
                                 Float.parseFloat(line.split(" ")[1].split("/")[2]),
                                 Float.parseFloat(line.split(" ")[3].split("/")[2]));

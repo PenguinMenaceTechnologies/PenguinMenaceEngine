@@ -1,7 +1,7 @@
 package net.pme.graphics.data;
 
-import net.pme.core.math.Vector2D;
-import net.pme.core.math.Vector3D;
+import net.pme.core.math.Vector2d;
+import net.pme.core.math.Vector3d;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,10 +19,10 @@ public class VertexData {
     private final int NORMAL_COMPONENTS = 3;
     private final int COLOR_COMPONENTS = 3;
     private final int UV_COMPONENTS = 2;
-    private List<Vector3D> vertices;
-    private List<Vector3D> normals;
-    private List<Vector2D> uvs;
-    private List<Vector3D> colors;
+    private List<Vector3d> vertices;
+    private List<Vector3d> normals;
+    private List<Vector2d> uvs;
+    private List<Vector3d> colors;
     private List<int[]> faces;
     private int numComponents = 1;
 
@@ -31,7 +31,7 @@ public class VertexData {
     }
 
     public VertexData(boolean normal, boolean color, boolean uv) {
-        vertices = new ArrayList<Vector3D>();
+        vertices = new ArrayList<Vector3d>();
         faces = new ArrayList<int[]>();
 
 
@@ -40,17 +40,17 @@ public class VertexData {
         this.hasUV = uv;
 
         if (hasNormal) {
-            normals = new ArrayList<Vector3D>();
+            normals = new ArrayList<Vector3d>();
             numComponents++;
         }
 
         if (hasUV) {
-            uvs = new ArrayList<Vector2D>();
+            uvs = new ArrayList<Vector2d>();
             numComponents++;
         }
 
         if (hasColor) {
-            colors = new ArrayList<Vector3D>();
+            colors = new ArrayList<Vector3d>();
             numComponents++;
         }
     }
@@ -139,38 +139,38 @@ public class VertexData {
     }
 
     public void addVertex(float x, float y, float z) {
-        vertices.add(new Vector3D(x, y, z));
+        vertices.add(new Vector3d(x, y, z));
     }
 
     public void addVertex(float x, float y, float z, float w) {
-        vertices.add(new Vector3D(x / w, y / w, z / w));
+        vertices.add(new Vector3d(x / w, y / w, z / w));
     }
 
-    public void addVertex(Vector3D vertex) {
+    public void addVertex(Vector3d vertex) {
         vertices.add(vertex);
     }
 
     public void addNormal(float x, float y, float z) {
-        normals.add(new Vector3D(x, y, z));
+        normals.add(new Vector3d(x, y, z));
     }
 
-    public void addNormal(Vector3D normal) {
+    public void addNormal(Vector3d normal) {
         normals.add(normal);
     }
 
     public void addColor(int r, int g, int b) {
-        colors.add(new Vector3D((double) r / 255.0, (double) g / 255.0, (double) b / 255.0));
+        colors.add(new Vector3d((double) r / 255.0, (double) g / 255.0, (double) b / 255.0));
     }
 
-    public void addColor(Vector3D color) {
+    public void addColor(Vector3d color) {
         colors.add(color);
     }
 
     public void addTexCoord(float u, float v) {
-        uvs.add(new Vector2D(u, v));
+        uvs.add(new Vector2d(u, v));
     }
 
-    public void addTexCoord(Vector2D texCoord) {
+    public void addTexCoord(Vector2d texCoord) {
         uvs.add(texCoord);
     }
 

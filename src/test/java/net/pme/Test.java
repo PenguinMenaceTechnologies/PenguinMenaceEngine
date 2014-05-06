@@ -1,7 +1,7 @@
 package net.pme;
 
 import net.pme.core.Player;
-import net.pme.core.math.Vector3D;
+import net.pme.core.math.Vector3d;
 import net.pme.graphics.OffscreenRenderer;
 import net.pme.model.Model;
 import net.pme.model.ModelManager;
@@ -54,37 +54,37 @@ public class Test {
             System.out.println("Model loading is efficient!");
         }
 
-        Vector3D frontA = new Vector3D(0, 0, -1);
-        Vector3D upA = new Vector3D(0, 1, 0);
+        Vector3d frontA = new Vector3d(0, 0, -1);
+        Vector3d upA = new Vector3d(0, 1, 0);
 
-        Vector3D frontB = new Vector3D(0, 0, -1);
-        Vector3D upB = new Vector3D(0, 1, 0);
+        Vector3d frontB = new Vector3d(0, 0, -1);
+        Vector3d upB = new Vector3d(0, 1, 0);
 
-        Vector3D front1 = new Vector3D(0, 0, -1);
-        Vector3D up1 = new Vector3D(1, -1, 0);
+        Vector3d front1 = new Vector3d(0, 0, -1);
+        Vector3d up1 = new Vector3d(1, -1, 0);
 
-        Vector3D front2 = new Vector3D(0, 0, -1);
-        Vector3D up2 = new Vector3D(1, 1, 0);
+        Vector3d front2 = new Vector3d(0, 0, -1);
+        Vector3d up2 = new Vector3d(1, 1, 0);
 
-        Vector3D front3 = new Vector3D(0, 0, -1);
-        Vector3D up3 = new Vector3D(1, 1, 0);
+        Vector3d front3 = new Vector3d(0, 0, -1);
+        Vector3d up3 = new Vector3d(1, 1, 0);
 
-        game.addGameObject(new Ship(2, new Vector3D(1, 2, -10), front1, up1,
+        game.addGameObject(new Ship(2, new Vector3d(1, 2, -10), front1, up1,
                 game.getModelManager().get(Test.class.getResource("/assets/cube_small.obj").getPath())));
-        game.addGameObject(new Ship(3, new Vector3D(1, -2, -10), front2, up2,
+        game.addGameObject(new Ship(3, new Vector3d(1, -2, -10), front2, up2,
                 game.getModelManager().get(Test.class.getResource("/assets/ship.obj").getPath())));
-        game.addGameObject(new TestCube3(4, new Vector3D(-2, 0, -10), front3,
+        game.addGameObject(new TestCube3(4, new Vector3d(-2, 0, -10), front3,
                 up3));
 
-		/*game.addGameObject(new RenderAttachment(5, new Vector3D(-4, 2.5, -10),
+		/*game.addGameObject(new RenderAttachment(5, new Vector3d(-4, 2.5, -10),
                 frontA, upA, model));
-		game.addGameObject(new RenderAttachment(6, new Vector3D(4, 2.5, -10),
+		game.addGameObject(new RenderAttachment(6, new Vector3d(4, 2.5, -10),
 				frontB, upB, modelManager.get(Test.class.getResource(
 						"/assets/cube_small.obj").getPath())));
 
 		for (int j = 0; j < 10; j++) {
 			for (int i = 1; i < 10; i++) {
-				game.addGameObject(new RenderAttachment(6, new Vector3D(
+				game.addGameObject(new RenderAttachment(6, new Vector3d(
 						4 + 4 * i, 2.5 + 4 * j, -10), frontB, upB, model));
 
 			}
@@ -100,9 +100,9 @@ public class Test {
 
         Mouse.setGrabbed(true);
 
-        Vector3D playerFront = new Vector3D(0, 0, 1);
-        Vector3D playerUp = new Vector3D(0, 1, 0);
-        Player player = new TestPlayer(new Vector3D(0, 0, 0), playerFront,
+        Vector3d playerFront = new Vector3d(0, 0, 1);
+        Vector3d playerUp = new Vector3d(0, 1, 0);
+        Player player = new TestPlayer(new Vector3d(0, 0, 0), playerFront,
                 playerUp);
         game.getDisplay().setPostprocessingShader(new PostprocessingShader());
         game.getDisplay().setFinalShader(new PostprocessingShader2());

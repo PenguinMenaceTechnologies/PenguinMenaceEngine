@@ -6,12 +6,12 @@ package net.pme.core.math;
  * @author Michael Fürst, Johannes Schuck
  * @version 1.0
  */
-public class Vector3D extends Vector {
+public class Vector3d extends Vector {
 
     /**
      * Create a null vector.
      */
-    public Vector3D() {
+    public Vector3d() {
         this(0.0, 0.0, 0.0);
     }
 
@@ -22,7 +22,7 @@ public class Vector3D extends Vector {
      * @param y y-component
      * @param z z-component
      */
-    public Vector3D(final double x, final double y, final double z) {
+    public Vector3d(final double x, final double y, final double z) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -34,7 +34,7 @@ public class Vector3D extends Vector {
      * @param v The vector.
      * @return The length of the vector.
      */
-    public static double length(final Vector3D v) {
+    public static double length(final Vector3d v) {
         return Math.sqrt((v.x * v.x) + (v.y * v.y) + (v.z * v.z));
     }
 
@@ -44,7 +44,7 @@ public class Vector3D extends Vector {
      * @param v The vector to normalize.
      * @return The normalized vector.
      */
-    public static Vector3D normalize(final Vector3D v) {
+    public static Vector3d normalize(final Vector3d v) {
         return multiply(v, 1.0 / length(v));
     }
 
@@ -55,8 +55,8 @@ public class Vector3D extends Vector {
      * @param vect2 The second vector.
      * @return The result.
      */
-    public static Vector3D add(final Vector3D vect1, final Vector3D vect2) {
-        return new Vector3D(vect1.x + vect2.x, vect1.y + vect2.y, vect1.z + vect2.z);
+    public static Vector3d add(final Vector3d vect1, final Vector3d vect2) {
+        return new Vector3d(vect1.x + vect2.x, vect1.y + vect2.y, vect1.z + vect2.z);
     }
 
     /**
@@ -66,8 +66,8 @@ public class Vector3D extends Vector {
      * @param vect2 The second vector.
      * @return The result.
      */
-    public static Vector3D subtract(final Vector3D vect1, final Vector3D vect2) {
-        return new Vector3D(vect1.x - vect2.x, vect1.y - vect2.y, vect1.z - vect2.z);
+    public static Vector3d subtract(final Vector3d vect1, final Vector3d vect2) {
+        return new Vector3d(vect1.x - vect2.x, vect1.y - vect2.y, vect1.z - vect2.z);
     }
 
     /**
@@ -77,8 +77,8 @@ public class Vector3D extends Vector {
      * @param scalar The scalar.
      * @return The scaled vector.
      */
-    public static Vector3D multiply(final Vector3D vector, final double scalar) {
-        Vector3D out = new Vector3D();
+    public static Vector3d multiply(final Vector3d vector, final double scalar) {
+        Vector3d out = new Vector3d();
         out.setX(vector.getX() * scalar);
         out.setY(vector.getY() * scalar);
         out.setZ(vector.getZ() * scalar);
@@ -92,11 +92,11 @@ public class Vector3D extends Vector {
      * @param vect2 The second vector.
      * @return The product.
      */
-    public static Vector3D crossProduct(final Vector3D vect1, final Vector3D vect2) {
+    public static Vector3d crossProduct(final Vector3d vect1, final Vector3d vect2) {
         double t1 = vect1.y * vect2.z - vect1.z * vect2.y;
         double t2 = vect1.z * vect2.x - vect1.x * vect2.z;
         double t3 = vect1.x * vect2.y - vect1.y * vect2.x;
-        return new Vector3D(t1, t2, t3);
+        return new Vector3d(t1, t2, t3);
     }
 
     /**
@@ -106,7 +106,7 @@ public class Vector3D extends Vector {
      * @param vect2 The second vector.
      * @return The product.
      */
-    public static double dotProduct(final Vector3D vect1, final Vector3D vect2) {
+    public static double dotProduct(final Vector3d vect1, final Vector3d vect2) {
         return vect1.x * vect2.x + vect1.y * vect2.y + vect1.z * vect2.z;
     }
 
@@ -117,9 +117,9 @@ public class Vector3D extends Vector {
      * @param m The transformation matrix.
      * @return The transformed vector.
      */
-    public static Vector3D transformCoords(final Vector3D v, final Matrix m) {
+    public static Vector3d transformCoords(final Vector3d v, final Matrix m) {
         double[][] tmp = m.getArray();
-        Vector3D vReuslt = new Vector3D(v.x * tmp[0][0] + v.y * tmp[1][0] + v.z * tmp[2][0]
+        Vector3d vReuslt = new Vector3d(v.x * tmp[0][0] + v.y * tmp[1][0] + v.z * tmp[2][0]
                 + tmp[3][0], v.x * tmp[0][1] + v.y * tmp[1][1] + v.z * tmp[2][1] + tmp[3][1], v.x
                 * tmp[0][2] + v.y * tmp[1][2] + v.z * tmp[2][2] + tmp[3][2]);
         double w = v.x * tmp[0][3] + v.y * tmp[1][3] + v.z * tmp[2][3] + tmp[3][3];
@@ -137,13 +137,13 @@ public class Vector3D extends Vector {
      * @param m The transformation matrix.
      * @return The transformed normal.
      */
-    public static Vector3D transformNormal(final Vector3D v, final Matrix m) {
+    public static Vector3d transformNormal(final Vector3d v, final Matrix m) {
         double dLength = length(v);
         if (dLength == 0.0) {
             return v;
         }
         double[][] tmp = m.getArray();
-        Vector3D vReuslt = new Vector3D(v.x * tmp[0][0] + v.y * tmp[1][0] + v.z * tmp[2][0]
+        Vector3d vReuslt = new Vector3d(v.x * tmp[0][0] + v.y * tmp[1][0] + v.z * tmp[2][0]
                 + tmp[3][0], v.x * tmp[0][1] + v.y * tmp[1][1] + v.z * tmp[2][1] + tmp[3][1], v.x
                 * tmp[0][2] + v.y * tmp[1][2] + v.z * tmp[2][2] + tmp[3][2]);
         double w = v.x * tmp[0][3] + v.y * tmp[1][3] + v.z * tmp[2][3] + tmp[3][3];
@@ -161,7 +161,7 @@ public class Vector3D extends Vector {
      * @param b The second vector.
      * @return The result.
      */
-    public static boolean equals(final Vector3D a, final Vector3D b, final double precision) {
+    public static boolean equals(final Vector3d a, final Vector3d b, final double precision) {
         return Math.abs(a.getX() - b.getX()) < precision
                 && Math.abs(a.getY() - b.getY()) < precision
                 && Math.abs(a.getZ() - b.getZ()) < precision;
@@ -171,11 +171,11 @@ public class Vector3D extends Vector {
         return length(this);
     }
 
-    public Vector3D normalize() {
+    public Vector3d normalize() {
         return normalize(this);
     }
 
-    public Vector3D scale(final double scalar) {
+    public Vector3d scale(final double scalar) {
         return multiply(this, scalar);
     }
 
@@ -185,7 +185,7 @@ public class Vector3D extends Vector {
      * @param other The second vector.
      * @return The result.
      */
-    public Vector3D add(final Vector3D other) {
+    public Vector3d add(final Vector3d other) {
         return add(this, other);
     }
 
@@ -195,7 +195,7 @@ public class Vector3D extends Vector {
      * @param other The second vector.
      * @return The result.
      */
-    public Vector3D subtract(final Vector3D other) {
+    public Vector3d subtract(final Vector3d other) {
         return subtract(this, other);
     }
 
@@ -205,7 +205,7 @@ public class Vector3D extends Vector {
      * @param other The second vector.
      * @return The product.
      */
-    public Vector3D crossProduct(final Vector3D other) {
+    public Vector3d crossProduct(final Vector3d other) {
         return crossProduct(this, other);
     }
 
@@ -215,7 +215,7 @@ public class Vector3D extends Vector {
      * @param other The second vector.
      * @return The product.
      */
-    public double dotProduct(final Vector3D other) {
+    public double dotProduct(final Vector3d other) {
         return dotProduct(this, other);
     }
 
@@ -241,7 +241,7 @@ public class Vector3D extends Vector {
      * @param m The transformation matrix.
      * @return The transformed vector.
      */
-    public Vector3D transformCoords(final Matrix m) {
+    public Vector3d transformCoords(final Matrix m) {
         return transformCoords(this, m);
     }
 
@@ -251,7 +251,7 @@ public class Vector3D extends Vector {
      * @param m The transformation matrix.
      * @return The transformed normal.
      */
-    public Vector3D transformNormal(final Matrix m) {
+    public Vector3d transformNormal(final Matrix m) {
         return transformNormal(this, m);
     }
 
@@ -261,7 +261,7 @@ public class Vector3D extends Vector {
      * @param other The second vector.
      * @return The result.
      */
-    public boolean equals(final Vector3D other, final double precision) {
+    public boolean equals(final Vector3d other, final double precision) {
         return equals(this, other, precision);
     }
 
@@ -309,8 +309,8 @@ public class Vector3D extends Vector {
 
     @Override
     public final boolean equals(final Object object) {
-        if (object instanceof Vector3D) {
-            Vector3D other = (Vector3D) object;
+        if (object instanceof Vector3d) {
+            Vector3d other = (Vector3d) object;
 
             if (Math.abs(other.x - this.x) < PRECISION
                     && Math.abs(other.y - this.y) < PRECISION

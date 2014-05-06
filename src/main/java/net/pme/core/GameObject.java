@@ -2,7 +2,7 @@ package net.pme.core;
 
 import net.pme.core.math.MathUtils;
 import net.pme.core.math.Matrix;
-import net.pme.core.math.Vector3D;
+import net.pme.core.math.Vector3d;
 import net.pme.jobcenter.LoopableAttachment;
 import net.pme.graphics.RenderAttachment;
 import net.pme.jobcenter.MoveJob;
@@ -25,15 +25,15 @@ public abstract class GameObject {
     /**
      * The position of the object.
      */
-    private Vector3D position;
+    private Vector3d position;
     /**
      * The direction the object is facing at.
      */
-    private Vector3D front;
+    private Vector3d front;
     /**
      * The direction where the top of the object is.
      */
-    private Vector3D up;
+    private Vector3d up;
     private MoveJob moveJob = new MoveJob(null, this);
 
     /**
@@ -44,7 +44,7 @@ public abstract class GameObject {
      * @param front    The front vector.
      * @param up       The up vector.
      */
-    public GameObject(final long id, final Vector3D position, final Vector3D front, final Vector3D up) {
+    public GameObject(final long id, final Vector3d position, final Vector3d front, final Vector3d up) {
         this.id = id;
         this.setPosition(position);
         this.setFront(front);
@@ -61,14 +61,14 @@ public abstract class GameObject {
     /**
      * @return the position
      */
-    public final Vector3D getPosition() {
+    public final Vector3d getPosition() {
         return position;
     }
 
     /**
      * @param position the position to set
      */
-    public final void setPosition(final Vector3D position) {
+    public final void setPosition(final Vector3d position) {
         this.position = position;
     }
 
@@ -99,14 +99,14 @@ public abstract class GameObject {
     /**
      * @return the front
      */
-    public final Vector3D getFront() {
+    public final Vector3d getFront() {
         return front;
     }
 
     /**
      * @param front the front to set
      */
-    public final void setFront(final Vector3D front) {
+    public final void setFront(final Vector3d front) {
         this.front = front.normalize();
         if (getRenderAttachment() != null) {
             getRenderAttachment().setNeedsUpdate(true);
@@ -116,14 +116,14 @@ public abstract class GameObject {
     /**
      * @return the up
      */
-    public final Vector3D getUp() {
+    public final Vector3d getUp() {
         return up;
     }
 
     /**
      * @param up the up to set
      */
-    public final void setUp(final Vector3D up) {
+    public final void setUp(final Vector3d up) {
         this.up = up.normalize();
         if (getRenderAttachment() != null) {
             getRenderAttachment().setNeedsUpdate(true);
@@ -137,8 +137,8 @@ public abstract class GameObject {
      */
     public final void rotateAroundFrontAxis(final double degree) {
         double angle = MathUtils.DEG2RAD * degree;
-        up = Vector3D.transformCoords(up, Matrix.rotationAxis(front, angle));
-        up = Vector3D.normalize(up);
+        up = Vector3d.transformCoords(up, Matrix.rotationAxis(front, angle));
+        up = Vector3d.normalize(up);
         if (getRenderAttachment() != null) {
             getRenderAttachment().setNeedsUpdate(true);
         }
@@ -151,8 +151,8 @@ public abstract class GameObject {
      */
     public final void rotateAroundUpAxis(final double degree) {
         double angle = MathUtils.DEG2RAD * degree;
-        front = Vector3D.transformCoords(front, Matrix.rotationAxis(up, angle));
-        front = Vector3D.normalize(front);
+        front = Vector3d.transformCoords(front, Matrix.rotationAxis(up, angle));
+        front = Vector3d.normalize(front);
         if (getRenderAttachment() != null) {
             getRenderAttachment().setNeedsUpdate(true);
         }
@@ -166,13 +166,13 @@ public abstract class GameObject {
      * @param degree The amount it should be rotated in degree.
      */
     public final void rotateAroundPitchAxis(final double degree) {
-        Vector3D pitch = Vector3D.crossProduct(front, up);
+        Vector3d pitch = Vector3d.crossProduct(front, up);
         double angle = MathUtils.DEG2RAD * degree;
-        up = Vector3D.transformCoords(up, Matrix.rotationAxis(pitch, angle));
-        up = Vector3D.normalize(up);
-        front = Vector3D.transformCoords(front,
+        up = Vector3d.transformCoords(up, Matrix.rotationAxis(pitch, angle));
+        up = Vector3d.normalize(up);
+        front = Vector3d.transformCoords(front,
                 Matrix.rotationAxis(pitch, angle));
-        front = Vector3D.normalize(front);
+        front = Vector3d.normalize(front);
         if (getRenderAttachment() != null) {
             getRenderAttachment().setNeedsUpdate(true);
         }
@@ -183,14 +183,14 @@ public abstract class GameObject {
      *
      * @param relative The vector defining the motion.
      */
-    public final void move(final Vector3D relative) {
-        Vector3D pitch = Vector3D.crossProduct(front, up);
+    public final void move(final Vector3d relative) {
+        Vector3d pitch = Vector3d.crossProduct(front, up);
 
         Matrix m = Matrix.axes(pitch, up, front);
 
-        Vector3D absolute = Vector3D.transformCoords(relative, m);
+        Vector3d absolute = Vector3d.transformCoords(relative, m);
 
-        setPosition(Vector3D.add(getPosition(), absolute));
+        setPosition(Vector3d.add(getPosition(), absolute));
         if (getRenderAttachment() != null) {
             getRenderAttachment().setNeedsUpdate(true);
         }

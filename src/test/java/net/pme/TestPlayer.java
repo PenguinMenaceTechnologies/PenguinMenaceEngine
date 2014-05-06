@@ -1,7 +1,7 @@
 package net.pme;
 
 import net.pme.core.Player;
-import net.pme.core.math.Vector3D;
+import net.pme.core.math.Vector3d;
 import net.pme.jobcenter.LoopableAttachment;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
@@ -27,14 +27,14 @@ public class TestPlayer extends Player {
      * @param front    Initial front axis.
      * @param up       Initial up axis.
      */
-    public TestPlayer(Vector3D position, Vector3D front, Vector3D up) {
+    public TestPlayer(Vector3d position, Vector3d front, Vector3d up) {
         super(position, front, up, null);
         Player parent = this;
 
         setLoopableAttachment(new LoopableAttachment() {
             @Override
             public void update(double elapsedTime) {
-                move(new Vector3D(xAxis * elapsedTime * 3.0, yAxis * elapsedTime * 3.0,
+                move(new Vector3d(xAxis * elapsedTime * 3.0, yAxis * elapsedTime * 3.0,
                         zAxis * elapsedTime * 6.0));
                 rotateAroundFrontAxis(elapsedTime * rotate * 50.0);
                 Display.setTitle(String.format("PenguinMenaceEngine Test [%.0f@%.2f]",

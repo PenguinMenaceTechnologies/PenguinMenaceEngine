@@ -1,7 +1,7 @@
 package net.pme;
 
 import net.pme.core.GameObject;
-import net.pme.core.math.Vector3D;
+import net.pme.core.math.Vector3d;
 import net.pme.jobcenter.LoopableAttachment;
 import net.pme.graphics.RenderAttachment;
 import net.pme.graphics.Shader;
@@ -26,7 +26,7 @@ public class TestCube3 extends GameObject {
      * @param front    The front axis.
      * @param up       The up axis.
      */
-    public TestCube3(long id, Vector3D position, Vector3D front, Vector3D up) {
+    public TestCube3(long id, Vector3d position, Vector3d front, Vector3d up) {
         super(id, position, front, up);
 
         setRenderAttachment(new RenderAttachment(this, null) {

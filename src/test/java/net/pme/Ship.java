@@ -1,7 +1,7 @@
 package net.pme;
 
 import net.pme.core.GameObject;
-import net.pme.core.math.Vector3D;
+import net.pme.core.math.Vector3d;
 import net.pme.jobcenter.LoopableAttachment;
 import net.pme.graphics.RenderAttachment;
 import net.pme.graphics.Shader;
@@ -24,7 +24,7 @@ public class Ship extends GameObject {
      * @param up       The up axis.
      * @param graphics The up axis.
      */
-    public Ship(long id, Vector3D position, Vector3D front, Vector3D up, Model graphics) {
+    public Ship(long id, Vector3d position, Vector3d front, Vector3d up, Model graphics) {
         super(id, position, front, up);
         final GameObject parent = this;
         setRenderAttachment(new RenderAttachment(this, graphics) {
@@ -81,7 +81,7 @@ public class Ship extends GameObject {
             @Override
             public void update(double elapsedTime) {
                 parent.rotateAroundUpAxis(elapsedTime * 10);
-                parent.move(new Vector3D(0, 0, elapsedTime));
+                parent.move(new Vector3d(0, 0, elapsedTime));
             }
         });
     }

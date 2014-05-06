@@ -61,7 +61,7 @@ public class Matrix {
      * @param v The translation Vector.
      * @return The translation matrix.
      */
-    public static Matrix translation(final Vector3D v) {
+    public static Matrix translation(final Vector3d v) {
         return new Matrix(1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0,
                 1.0, 0.0, v.getX(), v.getY(), v.getZ(), 1.0);
     }
@@ -87,12 +87,12 @@ public class Matrix {
      * @param d The angle (WARNING: not in degree)
      * @return The rotation matrix.
      */
-    public static Matrix rotationAxis(final Vector3D v, final double d) {
+    public static Matrix rotationAxis(final Vector3d v, final double d) {
         double dSin = Math.sin(-d);
         double dCos = Math.cos(-d);
         double dOneMinusCos = 1.0 - dCos;
 
-        Vector3D vAxis = Vector3D.normalize(v);
+        Vector3d vAxis = Vector3d.normalize(v);
 
         return new Matrix((vAxis.getX() * vAxis.getX()) * dOneMinusCos + dCos,
                 (vAxis.getX() * vAxis.getY()) * dOneMinusCos - (vAxis.getZ() * dSin),
@@ -113,7 +113,7 @@ public class Matrix {
      * @param v The vector to scale with.
      * @return The scale matrix.
      */
-    public static Matrix scaling(final Vector3D v) {
+    public static Matrix scaling(final Vector3d v) {
         return new Matrix(v.getX(), 0.0, 0.0, 0.0, 0.0, v.getY(), 0.0, 0.0, 0.0, 0.0,
                 v.getZ(), 0.0, 0.0, 0.0, 0.0, 1.0);
     }
@@ -126,7 +126,7 @@ public class Matrix {
      * @param zAxis The z axis to adjust to.
      * @return The axe matrix.
      */
-    public static Matrix axes(final Vector3D xAxis, final Vector3D yAxis, final Vector3D zAxis) {
+    public static Matrix axes(final Vector3d xAxis, final Vector3d yAxis, final Vector3d zAxis) {
         return new Matrix(xAxis.getX(), xAxis.getY(), xAxis.getZ(), 0.0, yAxis.getX(), yAxis.getY(),
                 yAxis.getZ(), 0.0, zAxis.getX(), zAxis.getY(), zAxis.getZ(), 0.0, 0.0, 0.0, 0.0,
                 1.0);
@@ -213,10 +213,10 @@ public class Matrix {
      * @param zAxis    zAxis of the camera.
      * @return The camera matrix.
      */
-    public static Matrix camera(final Vector3D position, final Vector3D xAxis,
-                                final Vector3D yAxis, final Vector3D zAxis) {
+    public static Matrix camera(final Vector3d position, final Vector3d xAxis,
+                                final Vector3d yAxis, final Vector3d zAxis) {
         return Matrix.multiply(
-                Matrix.translation(Vector3D.multiply(position, -1)),
+                Matrix.translation(Vector3d.multiply(position, -1)),
                 Matrix.transpose(Matrix.axes(xAxis, yAxis, zAxis)));
     }
 

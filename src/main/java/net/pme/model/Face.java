@@ -1,7 +1,6 @@
 package net.pme.model;
 
-import net.pme.core.math.Vector3D;
-import org.lwjgl.util.vector.Vector3f;
+import net.pme.core.math.Vector3d;
 
 /**
  * A face of a Model.
@@ -13,15 +12,15 @@ class Face {
     /**
      * The vertex of a face.
      */
-    private Vector3D vertex = new Vector3D(); // no position just indexes!
+    private Vector3d vertex = new Vector3d(); // no position just indexes!
     /**
      * The normal of the face.
      */
-    private Vector3D normal = new Vector3D();
+    private Vector3d normal = new Vector3d();
     /**
      * The texture of the face.
      */
-    private Vector3D texture = new Vector3D();
+    private Vector3d texture = new Vector3d();
 
     /**
      * Creates a new Face.
@@ -30,7 +29,7 @@ class Face {
      * @param normal  The normal vectors.
      * @param texture The texture vector.
      */
-    Face(final Vector3D vertex, final Vector3D texture, final Vector3D normal) {
+    Face(final Vector3d vertex, final Vector3d texture, final Vector3d normal) {
         this.vertex = vertex;
         this.normal = normal;
         this.texture = texture;
@@ -39,42 +38,42 @@ class Face {
     /**
      * @return the vertex
      */
-    public Vector3D getVertex() {
+    public Vector3d getVertex() {
         return vertex;
     }
 
     /**
      * @param vertex the vertex to set
      */
-    public void setVertex(final Vector3D vertex) {
+    public void setVertex(final Vector3d vertex) {
         this.vertex = vertex;
     }
 
     /**
      * @return the normal
      */
-    public Vector3D getNormal() {
+    public Vector3d getNormal() {
         return normal;
     }
 
     /**
      * @param normal the normal to set
      */
-    public void setNormal(final Vector3D normal) {
+    public void setNormal(final Vector3d normal) {
         this.normal = normal;
     }
 
     /**
      * @return the texture
      */
-    public Vector3D getTexture() {
+    public Vector3d getTexture() {
         return texture;
     }
 
     /**
      * @param texture the texture to set
      */
-    public void setTexture(final Vector3D texture) {
+    public void setTexture(final Vector3d texture) {
         this.texture = texture;
     }
 }

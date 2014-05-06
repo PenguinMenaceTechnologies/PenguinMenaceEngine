@@ -1,7 +1,7 @@
 package net.pme.graphics;
 
 import net.pme.Game;
-import net.pme.core.math.Vector3D;
+import net.pme.core.math.Vector3d;
 
 /**
  * A particle can decay.
@@ -26,7 +26,7 @@ public abstract class Particle {
      * @param graphics The graphics identifier.
      * @param game     The game instance in which the particle should live.
      */
-    public Particle(final long id, final Vector3D position, final Vector3D front, final Vector3D up,
+    public Particle(final long id, final Vector3d position, final Vector3d front, final Vector3d up,
                     final double decay, final int graphics, final Game game) {
         //super(id, position, front, up, graphics);
         this.initialDecay = decay;

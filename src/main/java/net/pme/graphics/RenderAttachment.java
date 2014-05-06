@@ -2,7 +2,7 @@ package net.pme.graphics;
 
 import net.pme.core.GameObject;
 import net.pme.core.math.Matrix;
-import net.pme.core.math.Vector3D;
+import net.pme.core.math.Vector3d;
 import net.pme.model.Model;
 import org.lwjgl.opengl.GL11;
 
@@ -112,7 +112,7 @@ public class RenderAttachment {
         GL11.glTranslated(parent.getPosition().getX(), parent.getPosition().getY(), parent.getPosition().getZ());
 
         if (needsUpdate) {
-            Matrix m = Matrix.axes(parent.getUp(), Vector3D.crossProduct(parent.getFront(), parent.getUp()), parent.getFront());
+            Matrix m = Matrix.axes(parent.getUp(), Vector3d.crossProduct(parent.getFront(), parent.getUp()), parent.getFront());
 
             matrixBuffer = m.getValues(matrixBuffer);
             needsUpdate = false;
