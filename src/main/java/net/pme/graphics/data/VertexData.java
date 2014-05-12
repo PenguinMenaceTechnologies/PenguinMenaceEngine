@@ -19,6 +19,7 @@ import org.lwjgl.opengl.GL15;
  * @since 2014-04-24
  */
 public class VertexData {
+    private static final int MAGIC_FLOAT = 4;
     private List<Vector3D> vertices;
     private List<Vector3D> normals;
     private List<Vector2D> uvs;
@@ -276,7 +277,7 @@ public class VertexData {
             System.out.println("Stride = "+ stride);
             FloatBuffer data = BufferUtils.createFloatBuffer(vertexData.length);
             data.put(vertexData);
-            data.rewind();
+            data.flip();
 
             buffer = GL15.glGenBuffers();
             bind();
@@ -295,21 +296,21 @@ public class VertexData {
         bind();
 
         GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
-        GL11.glVertexPointer(VERTEX_COMPONENTS, GL11.GL_FLOAT, stride, getVertexOffset());
+        GL11.glVertexPointer(VERTEX_COMPONENTS, GL11.GL_FLOAT, stride * MAGIC_FLOAT, getVertexOffset() * MAGIC_FLOAT);
         if (hasNormal) {
             GL11.glEnableClientState(GL11.GL_NORMAL_ARRAY);
-            GL11.glNormalPointer(GL11.GL_FLOAT, stride, getNormalOffset());
+            GL11.glNormalPointer(GL11.GL_FLOAT, stride * MAGIC_FLOAT, getNormalOffset() * MAGIC_FLOAT);
         }
         if (hasColor) {
             GL11.glEnableClientState(GL11.GL_COLOR_ARRAY);
-            GL11.glColorPointer(COLOR_COMPONENTS, GL11.GL_FLOAT, stride, getColorOffset());
+            GL11.glColorPointer(COLOR_COMPONENTS, GL11.GL_FLOAT, stride * MAGIC_FLOAT, getColorOffset() * MAGIC_FLOAT);
         }
         if (hasUV) {
             GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
-            GL11.glTexCoordPointer(UV_COMPONENTS, GL11.GL_FLOAT, stride, getUVOffset());
+            GL11.glTexCoordPointer(UV_COMPONENTS, GL11.GL_FLOAT, stride * MAGIC_FLOAT, getUVOffset() * MAGIC_FLOAT);
         }
 
-        GL11.glDrawArrays(GL11.GL_POINTS, 0, faces.size() * 300);
+        GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, faces.size());
 
         GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
         if (hasNormal) {
