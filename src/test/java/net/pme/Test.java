@@ -124,7 +124,9 @@ public class Test {
                 } catch(Exception e) {
                     return;
                 }
-                game.getDisplay().removeOffscreenRenderer(o);
+                if (game.getDisplay() != null) {
+                    game.getDisplay().removeOffscreenRenderer(o);
+                }
             }
         }.start();
 
