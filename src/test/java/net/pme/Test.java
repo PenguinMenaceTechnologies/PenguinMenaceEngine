@@ -45,6 +45,7 @@ public class Test {
         // Network Manager is independant.
         game.initializeNetwork(new TestNetworkInitializer());
 
+        // Load models.
         ModelManager modelManager = game.getModelManager();
 
         Model model = modelManager.get("resource://assets/cube_small.obj", Test.class);
@@ -53,6 +54,7 @@ public class Test {
             System.out.println("Model loading is efficient!");
         }
 
+        // Setup vectors.
         Vector3d frontA = new Vector3d(0, 0, -1);
         Vector3d upA = new Vector3d(0, 1, 0);
 
@@ -68,6 +70,7 @@ public class Test {
         Vector3d front3 = new Vector3d(0, 0, -1);
         Vector3d up3 = new Vector3d(1, 1, 0);
 
+        // Add the objects to the world.
         game.addGameObject(new Ship(2, new Vector3d(1, 2, -10), front1, up1,
                 game.getModelManager().get("resource://assets/cube_small.obj", Test.class)));
         game.addGameObject(new Ship(3, new Vector3d(1, -2, -10), front2, up2,
@@ -89,6 +92,8 @@ public class Test {
 			}
 		}*/
 
+
+        // Setup overlay.
         try {
             BufferedImage bi = ImageIO.read(IOUtils.getFile("resource://assets/overlay.jpg", Test.class));
             game.addHud(new TestHudObject(64, 64, bi));
@@ -96,15 +101,19 @@ public class Test {
             e.printStackTrace();
         }
 
+        // Grab the mouse and setup the player.
         Mouse.setGrabbed(true);
 
         Vector3d playerFront = new Vector3d(0, 0, 1);
         Vector3d playerUp = new Vector3d(0, 1, 0);
         Player player = new TestPlayer(new Vector3d(0, 0, 0), playerFront,
                 playerUp);
+
+        // Setup the postprocessing shaders.
         game.getDisplay().setPostprocessingShader(new PostprocessingShader());
         game.getDisplay().setFinalShader(new PostprocessingShader2());
 
+        // Add an offscreen renderer.
         new Thread() {
             public void run() {
                 try {
