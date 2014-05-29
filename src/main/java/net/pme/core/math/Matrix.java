@@ -1,6 +1,7 @@
 package net.pme.core.math;
 
 import org.lwjgl.BufferUtils;
+import org.lwjgl.util.vector.Matrix4f;
 
 import java.nio.DoubleBuffer;
 
@@ -24,6 +25,17 @@ public class Matrix {
     public Matrix() {
         this(1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0,
                 0.0, 0.0, 1.0);
+    }
+
+    /**
+     * Create a matrix from a lwjgl Matrix4f.
+     * @param matrix4f The input matrix.
+     */
+    public Matrix(Matrix4f matrix4f) {
+        this(matrix4f.m00, matrix4f.m01, matrix4f.m02, matrix4f.m03,
+                matrix4f.m10, matrix4f.m11, matrix4f.m12, matrix4f.m13,
+                matrix4f.m20, matrix4f.m21, matrix4f.m22, matrix4f.m23,
+                matrix4f.m30, matrix4f.m31, matrix4f.m32, matrix4f.m33);
     }
 
     /**
@@ -92,7 +104,7 @@ public class Matrix {
         double dCos = Math.cos(-d);
         double dOneMinusCos = 1.0 - dCos;
 
-        Vector3d vAxis = Vector3d.normalize(v);
+        Vector3d vAxis = (Vector3d) Vector3d.normalize(v);
 
         return new Matrix((vAxis.getX() * vAxis.getX()) * dOneMinusCos + dCos,
                 (vAxis.getX() * vAxis.getY()) * dOneMinusCos - (vAxis.getZ() * dSin),
@@ -216,7 +228,7 @@ public class Matrix {
     public static Matrix camera(final Vector3d position, final Vector3d xAxis,
                                 final Vector3d yAxis, final Vector3d zAxis) {
         return Matrix.multiply(
-                Matrix.translation(Vector3d.multiply(position, -1)),
+                Matrix.translation((Vector3d) Vector3d.multiply(position, -1)),
                 Matrix.transpose(Matrix.axes(xAxis, yAxis, zAxis)));
     }
 
@@ -327,5 +339,30 @@ public class Matrix {
      */
     public final double[][] getArray() {
         return m;
+    }
+
+    /**
+     * Get a lwjgl Matrix4f.
+     * @return The lwjgl matrix.
+     */
+    public final Matrix4f getMatrix4f() {
+        Matrix4f result = new Matrix4f();
+        result.m00 = (float) m[0][0];
+        result.m01 = (float) m[0][1];
+        result.m02 = (float) m[0][2];
+        result.m03 = (float) m[0][3];
+        result.m10 = (float) m[1][0];
+        result.m11 = (float) m[1][1];
+        result.m12 = (float) m[1][2];
+        result.m13 = (float) m[1][3];
+        result.m20 = (float) m[2][0];
+        result.m21 = (float) m[2][1];
+        result.m22 = (float) m[2][2];
+        result.m23 = (float) m[2][3];
+        result.m30 = (float) m[3][0];
+        result.m31 = (float) m[3][1];
+        result.m32 = (float) m[3][2];
+        result.m33 = (float) m[3][3];
+        return result;
     }
 }

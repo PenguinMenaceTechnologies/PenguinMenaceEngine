@@ -1,11 +1,13 @@
 package net.pme.core.math;
 
+import org.lwjgl.util.vector.Vector4f;
+
 /**
- * @author Johannes Schuck <jojoschuck@googlemail.com>
+ * @author Johannes Schuck <jojoschuck@googlemail.com>, Michael Fürst
  * @version 0.1
  * @since 2014-03-12
  */
-public class Vector4d extends Vector {
+public class Vector4d extends Vector<Vector4f> {
 
     /**
      * Create a null vector.
@@ -29,94 +31,40 @@ public class Vector4d extends Vector {
         this.w = w;
     }
 
-    /**
-     * Calculate the length of a vector.
-     *
-     * @param v The vector.
-     * @return The length of the vector.
-     */
-    public static double length(final Vector4d v) {
-        return Math.sqrt((v.x * v.x) + (v.y * v.y) + (v.z * v.z) + (v.w * v.w));
-    }
-
-    /**
-     * Normalize a given vector (v / length(v)).
-     *
-     * @param v The vector to normalize.
-     * @return The normalized vector.
-     */
-    public static Vector4d normalize(final Vector4d v) {
-        return multiply(v, 1.0 / length(v));
-    }
-
-    /**
-     * Add 2 vectors.
-     *
-     * @param vect1 The first vector.
-     * @param vect2 The second vector.
-     * @return The result.
-     */
-    public static Vector4d add(final Vector4d vect1, final Vector4d vect2) {
-        return new Vector4d(vect1.x + vect2.x, vect1.y + vect2.y, vect1.z + vect2.z, vect1.w + vect2.w);
-    }
-
-    /**
-     * Subtract 2 vectors.
-     *
-     * @param vect1 The first vector.
-     * @param vect2 The second vector.
-     * @return The result.
-     */
-    public static Vector4d subtract(final Vector4d vect1, final Vector4d vect2) {
-        return new Vector4d(vect1.x - vect2.x, vect1.y - vect2.y, vect1.z - vect2.z, vect1.w - vect2.w);
-    }
-
-    /**
-     * Multiply a vector with a scalar.
-     *
-     * @param vector The vector.
-     * @param scalar The scalar.
-     * @return The scaled vector.
-     */
-    public static Vector4d multiply(final Vector4d vector, final double scalar) {
-        Vector4d out = new Vector4d();
-        out.setX(vector.getX() * scalar);
-        out.setY(vector.getY() * scalar);
-        out.setZ(vector.getZ() * scalar);
-        out.setW(vector.getW() * scalar);
-        return out;
-    }
-
+    @Override
     public double length() {
-        return length(this);
+        return Math.sqrt(x*x+y*y+z*z+w*w);
     }
 
-    public Vector4d normalize() {
-        return normalize(this);
+    @Override
+    public Vector4d add(final Vector other) {
+        x += other.x;
+        y += other.y;
+        z += other.z;
+        w += other.w;
+        return this;
     }
 
-    public Vector4d scale(final double scalar) {
-        return multiply(this, scalar);
+    @Override
+    public Vector4d subtract(final Vector other) {
+        x -= other.x;
+        y -= other.y;
+        z -= other.z;
+        w -= other.w;
+        return this;
     }
 
-    /**
-     * Add 2 vectors.
-     *
-     * @param other The second vector.
-     * @return The result.
-     */
-    public Vector4d add(final Vector4d other) {
-        return add(this, other);
+    @Override
+    public double dotProduct(Vector other) {
+        return 0;
     }
 
-    /**
-     * Subtract 2 vectors.
-     *
-     * @param other The second vector.
-     * @return The result.
-     */
-    public Vector4d subtract(final Vector4d other) {
-        return subtract(this, other);
+    @Override
+    public boolean equals(Vector other, double precision) {
+        return Math.abs(other.x - this.x) < precision
+                && Math.abs(other.y - this.y) < precision
+                && Math.abs(other.z - this.z) < precision
+                && Math.abs(other.w - this.w) < precision;
     }
 
     @Override
@@ -196,18 +144,8 @@ public class Vector4d extends Vector {
     }
 
     @Override
-    public final boolean equals(final Object object) {
-        if (object instanceof Vector4d) {
-            Vector4d other = (Vector4d) object;
-
-            if (Math.abs(other.x - this.x) < PRECISION
-                    && Math.abs(other.y - this.y) < PRECISION
-                    && Math.abs(other.z - this.z) < PRECISION
-                    && Math.abs(other.w - this.w) < PRECISION) {
-                return true;
-            }
-        }
-        return false;
+    public final boolean equals(final Vector other) {
+        return equals(other, PRECISION);
     }
 
     @Override
@@ -230,4 +168,10 @@ public class Vector4d extends Vector {
     public final String toString() {
         return "(" + x + ", " + y + ", " + z + ", " + w + ")";
     }
+
+    @Override
+    public Vector4f getLwjglVector() {
+        return new Vector4f((float) x, (float) y, (float) z, (float) w);
+    }
+
 }
