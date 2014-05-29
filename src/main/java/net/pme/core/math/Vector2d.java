@@ -26,6 +26,16 @@ public class Vector2d extends Vector<Vector2f> {
         this.y = y;
     }
 
+    /**
+     * Create a vector from polar coordinate.
+     * @param angle The angle.
+     * @param radius The radius.
+     * @return The vector.
+     */
+    public static Vector2d fromPolar(final double angle, final double radius) {
+        return new Vector2d(radius * Math.cos(angle), radius * Math.sin(angle));
+    }
+
     @Override
     public double length() {
         return Math.sqrt((x*x+y*y));
