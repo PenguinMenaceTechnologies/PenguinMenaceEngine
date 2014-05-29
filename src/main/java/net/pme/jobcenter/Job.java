@@ -85,7 +85,11 @@ public abstract class Job implements Runnable {
         }
 
         // Execute the job.
-        this.execute();
+        try {
+            this.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         cancelTimeout = DEFAULT_CANCEL_TIMEOUT;
 

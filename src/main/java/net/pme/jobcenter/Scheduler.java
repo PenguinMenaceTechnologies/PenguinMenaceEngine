@@ -41,9 +41,10 @@ public class Scheduler {
      * Especially useful for calculations like rendering.
      */
     synchronized public void await() {
-        if (jobQueue.isEmpty()) return;
         try {
-            this.wait();
+            while (!jobQueue.isEmpty()) {
+                this.wait();
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -72,10 +73,7 @@ public class Scheduler {
      */
     synchronized final void deleteJob(final Job job) {
         jobQueue.remove(job);
-
-        if (jobQueue.isEmpty()) {
-            notifyAll();
-        }
+        notifyAll();
     }
 
     /**
@@ -83,7 +81,7 @@ public class Scheduler {
      * @param job The job to test.
      * @return Whether it is pending (or being processed) or not.
      */
-    final boolean isPending(final Job job) {
+    synchronized final boolean isPending(final Job job) {
         return jobQueue.contains(job);
     }
 }

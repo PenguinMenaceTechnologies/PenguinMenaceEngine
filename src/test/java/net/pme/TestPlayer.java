@@ -37,8 +37,8 @@ public class TestPlayer extends Player {
                 move(new Vector3d(xAxis * elapsedTime * 3.0, yAxis * elapsedTime * 3.0,
                         zAxis * elapsedTime * 6.0));
                 rotateAroundFrontAxis(elapsedTime * rotate * 50.0);
-                Display.setTitle(String.format("PenguinMenaceEngine Test [%.0f@%.2f]",
-                        1.0 / elapsedTime, ((double) ManagementFactory.getThreadMXBean().getCurrentThreadCpuTime()) * 1E-9));
+                //Display.setTitle(String.format("PenguinMenaceEngine Test [%.0f@%.2f]",
+                //        1.0 / elapsedTime, ((double) ManagementFactory.getThreadMXBean().getCurrentThreadCpuTime()) * 1E-9));
             }
         });
     }
