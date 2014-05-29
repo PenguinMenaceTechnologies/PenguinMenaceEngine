@@ -8,7 +8,7 @@ import org.lwjgl.util.vector.Vector3f;
  * @author Michael Fürst, Johannes Schuck
  * @version 1.0
  */
-public class Vector3d extends Vector<Vector3f> {
+public class Vector3d extends Vector<Vector3f, Vector3d> {
 
     /**
      * Create a null vector.
@@ -256,5 +256,10 @@ public class Vector3d extends Vector<Vector3f> {
     @Override
     public Vector3f getLwjglVector() {
         return new Vector3f((float) x, (float) y, (float) z);
+    }
+
+    @Override
+    public Vector3d clone() {
+        return (Vector3d) super.clone();
     }
 }

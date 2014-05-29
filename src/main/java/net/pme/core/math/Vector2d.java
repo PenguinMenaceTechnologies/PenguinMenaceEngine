@@ -7,7 +7,7 @@ import org.lwjgl.util.vector.Vector2f;
  * @version 0.1
  * @since 2014-03-12
  */
-public class Vector2d extends Vector<Vector2f> {
+public class Vector2d extends Vector<Vector2f, Vector2d> {
     /**
      * Create a null vector.
      */
@@ -137,5 +137,10 @@ public class Vector2d extends Vector<Vector2f> {
     @Override
     public Vector2f getLwjglVector() {
         return new Vector2f((float) x, (float) y);
+    }
+
+    @Override
+    public Vector2d clone() {
+        return (Vector2d) super.clone();
     }
 }

@@ -7,7 +7,7 @@ import org.lwjgl.util.vector.Vector4f;
  * @version 0.1
  * @since 2014-03-12
  */
-public class Vector4d extends Vector<Vector4f> {
+public class Vector4d extends Vector<Vector4f, Vector4d> {
 
     /**
      * Create a null vector.
@@ -174,4 +174,9 @@ public class Vector4d extends Vector<Vector4f> {
         return new Vector4f((float) x, (float) y, (float) z, (float) w);
     }
 
+
+    @Override
+    public Vector3d clone() {
+        return (Vector3d) super.clone();
+    }
 }

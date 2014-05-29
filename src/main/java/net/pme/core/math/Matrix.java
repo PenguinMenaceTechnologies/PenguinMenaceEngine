@@ -28,6 +28,20 @@ public class Matrix {
     }
 
     /**
+     * Create a new matrix from a quaternion.
+     * @param q0 q0.
+     * @param q1 q1.
+     * @param q2 q2.
+     * @param q3 q3.
+     */
+    public Matrix(double q0, double q1, double q2, double q3) {
+        this(1-2*(q2*q2+q3*q3), -2*q0*q3+2*q1*q2, 2*q0*q2+2*q1*q3, 0.0,
+                2*q0*q3+2*q1*q2, 1-2*(q1*q1+q3*q3), -2*q0*q1+2*q2*q3, 0.0,
+                -2*q0*q2+2*q1*q3, 2*q0*q1+2*q2*q3, 1-2*(q1*q1+q2*q2), 0.0,
+                0.0, 0.0, 0.0, 1.0);
+    }
+
+    /**
      * Create a matrix from a lwjgl Matrix4f.
      * @param matrix4f The input matrix.
      */

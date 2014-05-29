@@ -5,7 +5,7 @@ package net.pme.core.math;
  * @version 0.1
  * @since 2014-03-12
  */
-public abstract class Vector<T> implements Cloneable {
+public abstract class Vector<T, X> implements Cloneable {
     protected static final int SHIFT = 32;
     protected static final double PRECISION = 10E-9;
 
@@ -49,7 +49,7 @@ public abstract class Vector<T> implements Cloneable {
      * @param v The vector to normalize.
      * @return The normalized vector.
      */
-    public static Vector normalize(final Vector v) {
+    public static <T extends Vector> T normalize(final T v) {
         return multiply(v, 1.0 / length(v));
     }
 
@@ -60,8 +60,8 @@ public abstract class Vector<T> implements Cloneable {
      * @param vect2 The second vector.
      * @return The result.
      */
-    public static Vector add(final Vector vect1, final Vector vect2) {
-        return vect1.clone().add(vect2);
+    public static <T extends Vector> T add(final T vect1, final T vect2) {
+        return (T) vect1.clone().add(vect2);
     }
 
     /**
@@ -71,8 +71,8 @@ public abstract class Vector<T> implements Cloneable {
      * @param vect2 The second vector.
      * @return The result.
      */
-    public static Vector subtract(final Vector vect1, final Vector vect2) {
-        return vect1.clone().subtract(vect2);
+    public static <T extends Vector> T subtract(final T vect1, final T vect2) {
+        return (T) vect1.clone().subtract(vect2);
     }
 
     /**
@@ -82,8 +82,8 @@ public abstract class Vector<T> implements Cloneable {
      * @param scalar The scalar.
      * @return The scaled vector.
      */
-    public static Vector multiply(final Vector vector, final double scalar) {
-        return vector.clone().scale(scalar);
+    public static <T extends Vector> T multiply(final T vector, final double scalar) {
+        return (T) vector.clone().scale(scalar);
     }
 
     /**
@@ -120,7 +120,7 @@ public abstract class Vector<T> implements Cloneable {
      *
      * @return The normalized vector.
      */
-    public final Vector normalize() {
+    public final X normalize() {
         return scale(1/length());
     }
 
@@ -130,12 +130,12 @@ public abstract class Vector<T> implements Cloneable {
      * @param scalar The scalar.
      * @return The scaled vector.
      */
-    public final Vector scale(final double scalar) {
+    public final X scale(final double scalar) {
         x = x * scalar;
         y = y * scalar;
         z = z * scalar;
         w = w * scalar;
-        return this;
+        return (X) this;
     }
 
     /**
@@ -144,7 +144,7 @@ public abstract class Vector<T> implements Cloneable {
      * @param other The second vector.
      * @return The result.
      */
-    public abstract Vector add(final Vector other);
+    public abstract X add(final Vector other);
 
     /**
      * Subtract 2 vectors.
@@ -152,7 +152,7 @@ public abstract class Vector<T> implements Cloneable {
      * @param other The second vector.
      * @return The result.
      */
-    public abstract Vector subtract(final Vector other);
+    public abstract X subtract(final Vector other);
 
     /**
      * Calculate the dot product of 2 vectors (vect1*vect2).
