@@ -3,13 +3,13 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.penguinmenaceengine</groupId>
     <artifactId>PenguinMenaceEngine</artifactId>
-    <version>1.2</version>
+    <version>1.2.1</version>
     <name>PenguinMenaceEngine</name>
     <description>A 3d space shooter engine.</description>
 
     <properties>
         <!--maven variable which points to your local repository -->
-        <internal.repo.path>file:///home/michael/git/PenguinMenaceEngine/mvn-repo/</internal.repo.path>
+        <internal.repo.path>file:///Users/michael.fuerst/workspace/penguinmenaceengine/mvn-repo/</internal.repo.path>
     </properties>
 
     <distributionManagement>

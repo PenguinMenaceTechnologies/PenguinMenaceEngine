@@ -107,6 +107,19 @@ public class Matrix {
     }
 
     /**
+     * Rotate a matrix by a quaternion.
+     * @param m The matrix to rotate.
+     * @param q0 First quaternion param.
+     * @param q1 Second quaternion param.
+     * @param q2 Third quaternion param.
+     * @param q3 Last quaternion param.
+     * @return The rotated matrix.
+     */
+    public static Matrix multiply(Matrix m, double q0, double q1, double q2, double q3) {
+        return Matrix.multiply(m, new Matrix(q0, q1, q2, q3));
+    }
+
+    /**
      * Rotate around the given vector.
      *
      * @param v The vector to rotate around.
@@ -344,6 +357,15 @@ public class Matrix {
      */
     public final double zRotation() {
         return Math.PI / 2 - Math.atan2(m[1][0], m[0][0]);
+    }
+
+    /**
+     * Get the euler angles in a complete vector.
+     *
+     * @return The euler rotations around all axis in a vector.
+     */
+    public final Vector3d getEulerRotation() {
+        return new Vector3d(xRotation(), yRotation(), zRotation());
     }
 
     /**
