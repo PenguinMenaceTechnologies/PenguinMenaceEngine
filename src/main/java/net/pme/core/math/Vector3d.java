@@ -45,7 +45,7 @@ public class Vector3d extends Vector<Vector3f, Vector3d> {
      *
      * @param v The vector to transform.
      * @param m The transformation matrix.
-     * @return The transformed vector.
+     * @return The transformed vector (v).
      */
     public static Vector3d transformCoords(final Vector3d v, final Matrix m) {
         double[][] tmp = m.getArray();
@@ -61,11 +61,43 @@ public class Vector3d extends Vector<Vector3f, Vector3d> {
     }
 
     /**
+     * Transform a vector by a quaternion.
+     *
+     * @param v The vector to transform.
+     * @param q The transformation quaternion.
+     * @return The transformed vector (v).
+     */
+    public static Vector3d transformCoords(final Vector3d v, final Quaternion q) {
+        Quaternion tmp = new Quaternion(q);
+        Quaternion res = new Quaternion(q);
+
+        // q * v * q.conjugate
+        res = res.multiply(0, v.getX(), v.getY(), v.getZ()).multiply(tmp.conjugate());
+
+        v.x = res.getX();
+        v.y = res.getY();
+        v.z = res.getZ();
+
+        return v;
+    }
+
+    /**
+     * Transform a normal by a quaternion.
+     *
+     * @param v The normal to transform.
+     * @param q The transformation quaternion.
+     * @return The transformed vector (v).
+     */
+    public static Vector3d transformNormal(final Vector3d v, final Quaternion q) {
+        return transformCoords(v,q);
+    }
+
+    /**
      * Transform normals.
      *
      * @param v The normal to transform.
      * @param m The transformation matrix.
-     * @return The transformed normal.
+     * @return The transformed normal (v).
      */
     public static Vector3d transformNormal(final Vector3d v, final Matrix m) {
         double dLength = length(v);
@@ -171,6 +203,26 @@ public class Vector3d extends Vector<Vector3f, Vector3d> {
      */
     public Vector3d transformNormal(final Matrix m) {
         return transformNormal(this, m);
+    }
+
+    /**
+     * Transform a vector by a quaternion.
+     *
+     * @param q The transformation quaternion..
+     * @return The transformed vector.
+     */
+    public Vector3d transformCoords(final Quaternion q) {
+        return transformCoords(this, q);
+    }
+
+    /**
+     * Transform normals.
+     *
+     * @param q The transformation quaternion.
+     * @return The transformed normal.
+     */
+    public Vector3d transformNormal(final Quaternion q) {
+        return transformNormal(this, q);
     }
 
     /**

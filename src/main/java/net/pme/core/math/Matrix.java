@@ -28,20 +28,6 @@ public class Matrix {
     }
 
     /**
-     * Create a new matrix from a quaternion.
-     * @param q0 q0.
-     * @param q1 q1.
-     * @param q2 q2.
-     * @param q3 q3.
-     */
-    public Matrix(double q0, double q1, double q2, double q3) {
-        this(1-2*(q2*q2+q3*q3), -2*q0*q3+2*q1*q2, 2*q0*q2+2*q1*q3, 0.0,
-                2*q0*q3+2*q1*q2, 1-2*(q1*q1+q3*q3), -2*q0*q1+2*q2*q3, 0.0,
-                -2*q0*q2+2*q1*q3, 2*q0*q1+2*q2*q3, 1-2*(q1*q1+q2*q2), 0.0,
-                0.0, 0.0, 0.0, 1.0);
-    }
-
-    /**
      * Create a matrix from a lwjgl Matrix4f.
      * @param matrix4f The input matrix.
      */
@@ -107,19 +93,6 @@ public class Matrix {
     }
 
     /**
-     * Rotate a matrix by a quaternion.
-     * @param m The matrix to rotate.
-     * @param q0 First quaternion param.
-     * @param q1 Second quaternion param.
-     * @param q2 Third quaternion param.
-     * @param q3 Last quaternion param.
-     * @return The rotated matrix.
-     */
-    public static Matrix multiply(Matrix m, double q0, double q1, double q2, double q3) {
-        return Matrix.multiply(m, new Matrix(q0, q1, q2, q3));
-    }
-
-    /**
      * Rotate around the given vector.
      *
      * @param v The vector to rotate around.
@@ -169,6 +142,22 @@ public class Matrix {
         return new Matrix(xAxis.getX(), xAxis.getY(), xAxis.getZ(), 0.0, yAxis.getX(), yAxis.getY(),
                 yAxis.getZ(), 0.0, zAxis.getX(), zAxis.getY(), zAxis.getZ(), 0.0, 0.0, 0.0, 0.0,
                 1.0);
+    }
+
+    /**
+     * Get a camera matrix from the given vetors.
+     *
+     * @param position Position of the camera.
+     * @param xAxis    xAxis of the camera.
+     * @param yAxis    yAxis of the camera.
+     * @param zAxis    zAxis of the camera.
+     * @return The camera matrix.
+     */
+    public static Matrix camera(final Vector3d position, final Vector3d xAxis,
+                                final Vector3d yAxis, final Vector3d zAxis) {
+        return Matrix.multiply(
+                Matrix.translation((Vector3d) Vector3d.multiply(position, -1)),
+                Matrix.transpose(Matrix.axes(xAxis, yAxis, zAxis)));
     }
 
     /**
@@ -244,22 +233,6 @@ public class Matrix {
     }
 
     /**
-     * Get a camera matrix from the given vetors.
-     *
-     * @param position Position of the camera.
-     * @param xAxis    xAxis of the camera.
-     * @param yAxis    yAxis of the camera.
-     * @param zAxis    zAxis of the camera.
-     * @return The camera matrix.
-     */
-    public static Matrix camera(final Vector3d position, final Vector3d xAxis,
-                                final Vector3d yAxis, final Vector3d zAxis) {
-        return Matrix.multiply(
-                Matrix.translation((Vector3d) Vector3d.multiply(position, -1)),
-                Matrix.transpose(Matrix.axes(xAxis, yAxis, zAxis)));
-    }
-
-    /**
      * Multiply 2 matrices. (a*b)
      *
      * @param a Matrix a.
@@ -302,28 +275,25 @@ public class Matrix {
     }
 
     /**
-     * Convert the Matrix into a DoubleBuffer.
+     * Multiply a matrix with a rotation quaternion.
      *
-     * @param db The double buffer in which to write the values.
-     * @return A DoubleBuffer containing the matrix.
+     * @param m The matrix.
+     * @param q The quaterion.
+     * @return
      */
-    public final DoubleBuffer getValues(final DoubleBuffer db) {
-        double[] tmp = new double[N * N];
-        int i = 0;
-        for (int x = 0; x < m.length; x++) {
-            for (int y = 0; y < m[x].length; y++) {
-                tmp[i++] = m[x][y];
-            }
-        }
+    public static Matrix multiply(Matrix m, Quaternion q) {
+        return Matrix.multiply(m, q.toMatrix());
+    }
 
-        DoubleBuffer localDB = db;
-        if (localDB == null) {
-            localDB = BufferUtils.createDoubleBuffer(N * N);
-        } else {
-            localDB.clear();
-        }
-        localDB.put(tmp);
-        return localDB;
+    /**
+     * Multiply a matrix with a rotation quaternion.
+     *
+     * @param q The quaterion.
+     * @param m The matrix.
+     * @return
+     */
+    public static Matrix multiply(Quaternion q, Matrix m) {
+        return Matrix.multiply(q.toMatrix(), m);
     }
 
     /**
@@ -378,6 +348,31 @@ public class Matrix {
     }
 
     /**
+     * Convert the Matrix into a DoubleBuffer.
+     *
+     * @param db The double buffer in which to write the values.
+     * @return A DoubleBuffer containing the matrix.
+     */
+    public final DoubleBuffer getValues(final DoubleBuffer db) {
+        double[] tmp = new double[N * N];
+        int i = 0;
+        for (int x = 0; x < m.length; x++) {
+            for (int y = 0; y < m[x].length; y++) {
+                tmp[i++] = m[x][y];
+            }
+        }
+
+        DoubleBuffer localDB = db;
+        if (localDB == null) {
+            localDB = BufferUtils.createDoubleBuffer(N * N);
+        } else {
+            localDB.clear();
+        }
+        localDB.put(tmp);
+        return localDB;
+    }
+
+    /**
      * Get a lwjgl Matrix4f.
      * @return The lwjgl matrix.
      */
@@ -400,5 +395,20 @@ public class Matrix {
         result.m32 = (float) m[3][2];
         result.m33 = (float) m[3][3];
         return result;
+    }
+
+    /**
+     * Transform rotationmatrix to quaterion.
+     *
+     * This ignores the translation component of the matrix.
+     *
+     * @return The quaterion.
+     */
+    public Quaternion toQuaternion() {
+        double s = (1.0/2.0) * Math.sqrt(1.0 + m[0][0] + m[1][1] + m[2][2]);
+        double x = (m[3][2] - m[2][3]) / (4.0 * s);
+        double y = (m[1][3] - m[3][1]) / (4.0 * s);
+        double z = (m[2][1] - m[1][2]) / (4.0 * s);
+        return new Quaternion(s,x,y,z);
     }
 }
