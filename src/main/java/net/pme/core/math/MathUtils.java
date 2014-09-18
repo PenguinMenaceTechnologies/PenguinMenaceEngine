@@ -44,4 +44,15 @@ public final class MathUtils {
     private MathUtils() {
 
     }
+
+    /**
+     * Clamp the value v to lower and upper.
+     * @param v the value to clamp.
+     * @param lower The lower bound.
+     * @param upper The upper bound.
+     * @return The clamped value.
+     */
+    public static double clamp(double v, double lower, double upper) {
+        return v < lower ? lower : v > upper ? upper : v;
+    }
 }

@@ -96,7 +96,7 @@ public class Matrix {
      * Rotate around the given vector.
      *
      * @param v The vector to rotate around.
-     * @param d The angle (WARNING: not in degree)
+     * @param d The angle (in radian)
      * @return The rotation matrix.
      */
     public static Matrix rotationAxis(final Vector3d v, final double d) {
@@ -301,8 +301,8 @@ public class Matrix {
      *
      * @return The euler rotation around the x-Axis.
      */
-    public final double xRotation() {
-        return Math.atan2(m[2][1], m[2][2]);
+    public final double getXEuler() {
+        return toQuaternion().getXEuler();
     }
 
     /**
@@ -310,14 +310,8 @@ public class Matrix {
      *
      * @return The euler rotation around the y-Axis.
      */
-    public final double yRotation() {
-        double asin = Math.PI - Math.asin(m[2][0]);
-
-        if (m[2][2] >= 0) {
-            return -asin;
-        }
-
-        return asin;
+    public final double getYEuler() {
+        return toQuaternion().getYEuler();
     }
 
     /**
@@ -325,8 +319,8 @@ public class Matrix {
      *
      * @return The euler rotation around the z-Axis.
      */
-    public final double zRotation() {
-        return Math.PI / 2 - Math.atan2(m[1][0], m[0][0]);
+    public final double getZEuler() {
+        return toQuaternion().getZEuler();
     }
 
     /**
@@ -334,8 +328,8 @@ public class Matrix {
      *
      * @return The euler rotations around all axis in a vector.
      */
-    public final Vector3d getEulerRotation() {
-        return new Vector3d(xRotation(), yRotation(), zRotation());
+    public final Vector3d getEuler() {
+        return new Vector3d(getXEuler(), getYEuler(), getZEuler());
     }
 
     /**

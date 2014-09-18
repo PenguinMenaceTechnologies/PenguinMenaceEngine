@@ -71,7 +71,7 @@ public class Quaternion {
 
     /**
      * Normalizes this quaternion to unit length.
-     * @return the quaternion for chaining.
+     * @return The quaternion for chaining.
      */
     public Quaternion normalize() {
         double len = length2();
@@ -98,19 +98,53 @@ public class Quaternion {
     }
 
     /**
-     * @return the length of this quaternion.
+     * @return The length of this quaternion.
      */
     public double length() {
         return Math.sqrt(length2());
     }
 
     /**
-     * @return the length of this quaternion without square root.
+     * @return The length of this quaternion without square root.
      */
     public double length2() {
         return x * x + y * y + z * z + s * s;
     }
 
+    /**
+     * Get the pole of the gimbal lock, if any.
+     * @return Positive (+1) for north pole, negative (-1) for south pole, zero (0) when no gimbal lock.
+     */
+    public int getGimbalPole() {
+        final double t = y*x+z*s;
+        return t > 0.499 ? 1 : (t < -0.499 ? -1 : 0);
+    }
+
+    /**
+     * Get the roll euler angle in radians, which is the rotation around the z axis. Requires that this quaternion is normalized.
+     * @return The rotation around the z axis in radians (between -PI and +PI).
+     */
+    public double getZEuler() {
+        final int pole = getGimbalPole();
+        return pole == 0 ? Math.atan2(2.0*(s*z + y*x), 1.0 - 2.0 * (x*x + z*z)) : pole * 2.0 * Math.atan2(y, s);
+    }
+
+    /**
+     * Get the pitch euler angle in radians, which is the rotation around the x axis. Requires that this quaternion is normalized.
+     * @return The rotation around the x axis in radians (between -(PI/2) and +(PI/2)).
+     */
+    public double getXEuler() {
+        final int pole = getGimbalPole();
+        return pole == 0 ? Math.asin(MathUtils.clamp(2.0*(s*x-z*y), -1.0, 1.0)) : pole * Math.PI * 0.5;
+    }
+
+    /**
+     * Get the yaw euler angle in radians, which is the rotation around the y axis. Requires that this quaternion is normalized.
+     * @return The rotation around the y axis in radians (between -PI and +PI).
+     */
+    public double getYEuler() {
+        return getGimbalPole() == 0 ? Math.atan2(2.0*(y*s + x*z), 1.0 - 2.0*(y*y+x*x)) : 0.0;
+    }
 
     /**
      * Convert a Quaternion into a matrix.
