@@ -27,7 +27,7 @@ public class Shader {
     /**
      * Create a new shader from files in the given path.
      * <p/>
-     * There will be automatically laoded path.fsh and path.vsh.
+     * There will be automatically loaded path.fsh and path.vsh.
      *
      * @param path The path to the files, without the file ending. There must be a path.vsh and a path.fsh.
      */

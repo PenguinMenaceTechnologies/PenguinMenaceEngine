@@ -3,13 +3,14 @@
   <groupId>com.github.penguinmenaceengine</groupId>
   <artifactId>PenguinMenaceEngine</artifactId>
   <versioning>
-    <release>1.2.1</release>
+    <release>1.3</release>
     <versions>
       <version>1.0</version>
       <version>1.1</version>
       <version>1.2</version>
       <version>1.2.1</version>
+      <version>1.3</version>
     </versions>
-    <lastUpdated>20140703220157</lastUpdated>
+    <lastUpdated>20140918205229</lastUpdated>
   </versioning>
 </metadata>
