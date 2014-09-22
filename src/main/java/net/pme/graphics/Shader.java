@@ -303,4 +303,13 @@ public class Shader {
     public void finalize() {
         delete();
     }
+
+    /**
+     * Get an instance of the default shader.
+     * @return The default shader.
+     */
+    public static Shader getDefaultShader() {
+        // TODO implement.
+        return null;
+    }
 }

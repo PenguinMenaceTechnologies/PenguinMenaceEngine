@@ -3,6 +3,7 @@ package net.pme.graphics;
 import net.pme.core.GameObject;
 import net.pme.core.math.Matrix;
 import net.pme.core.math.Vector3d;
+import net.pme.graphics.data.VertexData;
 import net.pme.model.Model;
 import org.lwjgl.opengl.GL11;
 
@@ -32,6 +33,11 @@ public class RenderAttachment {
     private Shader shader;
 
     /**
+     * Vertex data to render.
+     */
+    private VertexData vertexData;
+
+    /**
      * Create a new RenderAttachment.
      *
      * @param parent   The parent of this attachment.
@@ -56,6 +62,8 @@ public class RenderAttachment {
      */
     protected final void setModel(final Model model) {
         this.model = model;
+        // TODO load model into vertex data correctly here.
+        this.vertexData = new VertexData();
         needsUpdate = true;
     }
 
@@ -98,7 +106,11 @@ public class RenderAttachment {
      * @param shader the shader to set
      */
     public final void setShader(final Shader shader) {
-        this.shader = shader;
+        if (shader == null) {
+            this.shader = Shader.getDefaultShader();
+        } else {
+            this.shader = shader;
+        }
     }
 
     /**
@@ -125,8 +137,11 @@ public class RenderAttachment {
             shader.bind();
         }
 
-        if (model != null && model.getDisplayList() > 0) {
-            GL11.glCallList(model.getDisplayList());
+        if (model != null) {
+            // TODO render vertexdata not the display list.
+            if (model.getDisplayList() > 0) {
+                GL11.glCallList(model.getDisplayList());
+            }
         }
 
         specialFX();
