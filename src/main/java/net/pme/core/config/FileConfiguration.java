@@ -1,6 +1,8 @@
 package net.pme.core.config;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -93,7 +95,9 @@ public final class FileConfiguration extends MemoryConfiguration {
                     false));
 
             Set<String> keySet = getValues().keySet();
-            for (String key : keySet) {
+            ArrayList<String> keysSorted = new ArrayList<>(keySet);
+            Collections.sort(keysSorted);
+            for (String key : keysSorted) {
                 String value = getValues().get(key);
 
                 writer.write(key);
