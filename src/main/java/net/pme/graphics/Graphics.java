@@ -213,7 +213,10 @@ public final class Graphics {
         Display.setVSyncEnabled(false);
         Display.setResizable(true);
         try {
-            Display.create();
+            PixelFormat pixelFormat = new PixelFormat();
+            ContextAttribs contextAtrributes = new ContextAttribs(3, 2)
+            .withProfileCompatibility(true);
+            Display.create(pixelFormat, contextAtrributes);
         } catch (LWJGLException ex) {
             ex.printStackTrace();
         }
