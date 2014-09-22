@@ -112,7 +112,7 @@ public class RenderAttachment {
         GL11.glTranslated(parent.getPosition().getX(), parent.getPosition().getY(), parent.getPosition().getZ());
 
         if (needsUpdate) {
-            Matrix m = Matrix.axes(parent.getUp(), Vector3d.crossProduct(parent.getFront(), parent.getUp()), parent.getFront());
+            Matrix m = Matrix.axes(parent.getUp(), parent.getFront().clone().crossProduct(parent.getUp()), parent.getFront());
 
             matrixBuffer = m.getValues(matrixBuffer);
             needsUpdate = false;

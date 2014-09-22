@@ -41,7 +41,7 @@ public abstract class Player extends GameObject {
     public final void applyCamera() {
         if (getRenderAttachment() != null) {
             Matrix m = Matrix.camera(getPosition(),
-                    (Vector3d) Vector3d.crossProduct(getFront(), getUp()), getUp(), getFront());
+                    getFront().clone().crossProduct(getUp()), getUp(), getFront());
 
             matrixBuffer = m.getValues(matrixBuffer);
             matrixBuffer.position(0);

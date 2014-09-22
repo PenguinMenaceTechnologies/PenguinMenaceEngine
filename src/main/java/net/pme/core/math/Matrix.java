@@ -4,6 +4,7 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.util.vector.Matrix4f;
 
 import java.nio.DoubleBuffer;
+import java.nio.FloatBuffer;
 
 /**
  * Matrix operations.
@@ -104,7 +105,7 @@ public class Matrix {
         double dCos = Math.cos(-d);
         double dOneMinusCos = 1.0 - dCos;
 
-        Vector3d vAxis = (Vector3d) Vector3d.normalize(v);
+        Vector3d vAxis = v.normalize();
 
         return new Matrix((vAxis.getX() * vAxis.getX()) * dOneMinusCos + dCos,
                 (vAxis.getX() * vAxis.getY()) * dOneMinusCos - (vAxis.getZ() * dSin),
@@ -155,18 +156,37 @@ public class Matrix {
      */
     public static Matrix camera(final Vector3d position, final Vector3d xAxis,
                                 final Vector3d yAxis, final Vector3d zAxis) {
-        return Matrix.multiply(
-                Matrix.translation((Vector3d) Vector3d.multiply(position, -1)),
-                Matrix.transpose(Matrix.axes(xAxis, yAxis, zAxis)));
+        return Matrix.translation(position.clone().scale(-1)).multiply(
+                Matrix.axes(xAxis, yAxis, zAxis).transpose());
+    }
+
+    /**
+     * Creates a matrix with the specified parameters mab (a is the row, b the
+     * column).
+     *
+     * @param initialValues The initial values of the matrix, ordered by i and then j with
+     *                      m[i][j]. The amount of parameters must be 16.
+     */
+    public Matrix set(final double... initialValues) {
+        if (initialValues.length != N * N) {
+            throw new IllegalArgumentException("Argument count must be 16");
+        }
+        int i = 0;
+        for (int x = 0; x < m.length; x++) {
+            for (int y = 0; y < m[x].length; y++) {
+                m[x][y] = initialValues[i++];
+            }
+        }
+        return this;
     }
 
     /**
      * Calculate the determinant of the matrix.
      *
-     * @param m Matrix to calculate the determinant from.
      * @return The determinant.
      */
-    public static double det(final Matrix m) {
+    public double det() {
+        Matrix m = this;
         return m.m[0][0] * (m.m[1][1] * m.m[2][2] - m.m[1][2] * m.m[2][1])
                 - m.m[0][1] * (m.m[1][0] * m.m[2][2] - m.m[1][2] * m.m[2][0])
                 + m.m[0][2] * (m.m[1][0] * m.m[2][1] - m.m[1][1] * m.m[2][0]);
@@ -175,11 +195,11 @@ public class Matrix {
     /**
      * Calculate the inverse of a Matrix. (Asume the inverse exists)
      *
-     * @param m The matrix to invert.
      * @return The inverse of m.
      */
-    public static Matrix invert(final Matrix m) {
-        double dInvDet = det(m);
+    public Matrix invert() {
+        Matrix m = this;
+        double dInvDet = det();
         if (dInvDet == 0.0) {
             return identity();
         }
@@ -216,31 +236,43 @@ public class Matrix {
                 * mResult.m[1][2] + m.m[3][2] * mResult.m[2][2]);
         mResult.m[3][3] = 1.0;
 
-        return mResult;
+        return set(mResult);
+    }
+
+    /**
+     * Set the values of this matrix to the other matrix.
+     * @param other The matrix to which the values of this one should be set.
+     * @return The matrix to continue calculations.
+     */
+    private Matrix set(final Matrix other) {
+        for (int i = 0; i < m.length; i++) {
+            System.arraycopy(other.m[i], 0, m[i], 0, m[i].length);
+        }
+        return this;
     }
 
     /**
      * Transpose a matrix.
      *
-     * @param m The matrix to transpose.
      * @return The transposed matrix.
      */
-    public static Matrix transpose(final Matrix m) {
-        return new Matrix(m.m[0][0], m.m[1][0], m.m[2][0], m.m[3][0],
+    public Matrix transpose() {
+        Matrix m = this;
+        return set(m.m[0][0], m.m[1][0], m.m[2][0], m.m[3][0],
                 m.m[0][1], m.m[1][1], m.m[2][1], m.m[3][1], m.m[0][2],
                 m.m[1][2], m.m[2][2], m.m[3][2], m.m[0][3], m.m[1][3],
                 m.m[2][3], m.m[3][3]);
     }
 
     /**
-     * Multiply 2 matrices. (a*b)
+     * Multiply 2 matrices. (this * b)
      *
-     * @param a Matrix a.
      * @param b Matrix b.
      * @return The product.
      */
-    public static Matrix multiply(final Matrix a, final Matrix b) {
-        return new Matrix(b.m[0][0] * a.m[0][0] + b.m[1][0] * a.m[0][1]
+    public Matrix multiply(final Matrix b) {
+        Matrix a = this;
+        return set(b.m[0][0] * a.m[0][0] + b.m[1][0] * a.m[0][1]
                 + b.m[2][0] * a.m[0][2] + b.m[3][0] * a.m[0][3], b.m[0][1]
                 * a.m[0][0] + b.m[1][1] * a.m[0][1] + b.m[2][1] * a.m[0][2]
                 + b.m[3][1] * a.m[0][3], b.m[0][2] * a.m[0][0] + b.m[1][2]
@@ -275,25 +307,65 @@ public class Matrix {
     }
 
     /**
-     * Multiply a matrix with a rotation quaternion.
+     * Multiply 2 matrices. (a * this)
      *
-     * @param m The matrix.
-     * @param q The quaterion.
-     * @return
+     * @param a Matrix a.
+     * @return The product.
      */
-    public static Matrix multiply(Matrix m, Quaternion q) {
-        return Matrix.multiply(m, q.toMatrix());
+    public Matrix multiplyLeft(final Matrix a) {
+        Matrix b = this;
+        return set(b.m[0][0] * a.m[0][0] + b.m[1][0] * a.m[0][1]
+                + b.m[2][0] * a.m[0][2] + b.m[3][0] * a.m[0][3], b.m[0][1]
+                * a.m[0][0] + b.m[1][1] * a.m[0][1] + b.m[2][1] * a.m[0][2]
+                + b.m[3][1] * a.m[0][3], b.m[0][2] * a.m[0][0] + b.m[1][2]
+                * a.m[0][1] + b.m[2][2] * a.m[0][2] + b.m[3][2] * a.m[0][3],
+                b.m[0][3] * a.m[0][0] + b.m[1][3] * a.m[0][1] + b.m[2][3]
+                        * a.m[0][2] + b.m[3][3] * a.m[0][3], b.m[0][0]
+                * a.m[1][0] + b.m[1][0] * a.m[1][1] + b.m[2][0]
+                * a.m[1][2] + b.m[3][0] * a.m[1][3], b.m[0][1]
+                * a.m[1][0] + b.m[1][1] * a.m[1][1] + b.m[2][1]
+                * a.m[1][2] + b.m[3][1] * a.m[1][3], b.m[0][2]
+                * a.m[1][0] + b.m[1][2] * a.m[1][1] + b.m[2][2]
+                * a.m[1][2] + b.m[3][2] * a.m[1][3], b.m[0][3]
+                * a.m[1][0] + b.m[1][3] * a.m[1][1] + b.m[2][3]
+                * a.m[1][2] + b.m[3][3] * a.m[1][3], b.m[0][0]
+                * a.m[2][0] + b.m[1][0] * a.m[2][1] + b.m[2][0]
+                * a.m[2][2] + b.m[3][0] * a.m[2][3], b.m[0][1]
+                * a.m[2][0] + b.m[1][1] * a.m[2][1] + b.m[2][1]
+                * a.m[2][2] + b.m[3][1] * a.m[2][3], b.m[0][2]
+                * a.m[2][0] + b.m[1][2] * a.m[2][1] + b.m[2][2]
+                * a.m[2][2] + b.m[3][2] * a.m[2][3], b.m[0][3]
+                * a.m[2][0] + b.m[1][3] * a.m[2][1] + b.m[2][3]
+                * a.m[2][2] + b.m[3][3] * a.m[2][3], b.m[0][0]
+                * a.m[3][0] + b.m[1][0] * a.m[3][1] + b.m[2][0]
+                * a.m[3][2] + b.m[3][0] * a.m[3][3], b.m[0][1]
+                * a.m[3][0] + b.m[1][1] * a.m[3][1] + b.m[2][1]
+                * a.m[3][2] + b.m[3][1] * a.m[3][3], b.m[0][2]
+                * a.m[3][0] + b.m[1][2] * a.m[3][1] + b.m[2][2]
+                * a.m[3][2] + b.m[3][2] * a.m[3][3], b.m[0][3]
+                * a.m[3][0] + b.m[1][3] * a.m[3][1] + b.m[2][3]
+                * a.m[3][2] + b.m[3][3] * a.m[3][3]
+        );
     }
 
     /**
-     * Multiply a matrix with a rotation quaternion.
+     * Multiply a matrix with a rotation quaternion. (this * q)
      *
      * @param q The quaterion.
-     * @param m The matrix.
-     * @return
+     * @return This matrix.
      */
-    public static Matrix multiply(Quaternion q, Matrix m) {
-        return Matrix.multiply(q.toMatrix(), m);
+    public Matrix multiply(Quaternion q) {
+        return multiply(q.toMatrix());
+    }
+
+    /**
+     * Multiply a matrix with a rotation quaternion. (q * this)
+     *
+     * @param q The quaterion.
+     * @return This matrix.
+     */
+    public Matrix multiplyLeft(Quaternion q) {
+        return multiplyLeft(q.toMatrix());
     }
 
     /**
@@ -367,6 +439,31 @@ public class Matrix {
     }
 
     /**
+     * Convert the Matrix into a DoubleBuffer.
+     *
+     * @param fb The double buffer in which to write the values.
+     * @return A DoubleBuffer containing the matrix.
+     */
+    public final FloatBuffer getValuesF(final FloatBuffer fb) {
+        float[] tmp = new float[N * N];
+        int i = 0;
+        for (int x = 0; x < m.length; x++) {
+            for (int y = 0; y < m[x].length; y++) {
+                tmp[i++] = (float)m[x][y];
+            }
+        }
+
+        FloatBuffer localFB = fb;
+        if (localFB == null) {
+            localFB = BufferUtils.createFloatBuffer(N * N);
+        } else {
+            localFB.clear();
+        }
+        localFB.put(tmp);
+        return localFB;
+    }
+
+    /**
      * Get a lwjgl Matrix4f.
      * @return The lwjgl matrix.
      */
@@ -404,5 +501,11 @@ public class Matrix {
         double y = (m[1][3] - m[3][1]) / (4.0 * s);
         double z = (m[2][1] - m[1][2]) / (4.0 * s);
         return new Quaternion(s,x,y,z);
+    }
+
+    @Override
+    public Matrix clone() {
+        Matrix result = new Matrix();
+        return result.set(this);
     }
 }

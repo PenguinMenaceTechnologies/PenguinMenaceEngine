@@ -107,7 +107,7 @@ public abstract class GameObject {
      * @param front the front to set
      */
     public final void setFront(final Vector3d front) {
-        this.front = (Vector3d) front.normalize();
+        this.front = front.normalize().clone();
         if (getRenderAttachment() != null) {
             getRenderAttachment().setNeedsUpdate(true);
         }
@@ -124,7 +124,7 @@ public abstract class GameObject {
      * @param up the up to set
      */
     public final void setUp(final Vector3d up) {
-        this.up = (Vector3d) up.normalize();
+        this.up = up.normalize().clone();
         if (getRenderAttachment() != null) {
             getRenderAttachment().setNeedsUpdate(true);
         }
@@ -137,8 +137,8 @@ public abstract class GameObject {
      */
     public final void rotateAroundFrontAxis(final double degree) {
         double angle = MathUtils.DEG2RAD * degree;
-        up = Vector3d.transformCoords(up, Matrix.rotationAxis(front, angle));
-        up = (Vector3d) Vector3d.normalize(up);
+        up.transformCoords(Matrix.rotationAxis(front, angle));
+        up.normalize();
         if (getRenderAttachment() != null) {
             getRenderAttachment().setNeedsUpdate(true);
         }
@@ -151,8 +151,8 @@ public abstract class GameObject {
      */
     public final void rotateAroundUpAxis(final double degree) {
         double angle = MathUtils.DEG2RAD * degree;
-        front = Vector3d.transformCoords(front, Matrix.rotationAxis(up, angle));
-        front = (Vector3d) Vector3d.normalize(front);
+        front.transformCoords(Matrix.rotationAxis(up, angle));
+        front.normalize();
         if (getRenderAttachment() != null) {
             getRenderAttachment().setNeedsUpdate(true);
         }
@@ -166,13 +166,12 @@ public abstract class GameObject {
      * @param degree The amount it should be rotated in degree.
      */
     public final void rotateAroundPitchAxis(final double degree) {
-        Vector3d pitch = (Vector3d) Vector3d.crossProduct(front, up);
+        Vector3d pitch = front.clone().crossProduct(up);
         double angle = MathUtils.DEG2RAD * degree;
-        up = Vector3d.transformCoords(up, Matrix.rotationAxis(pitch, angle));
-        up = (Vector3d) Vector3d.normalize(up);
-        front = Vector3d.transformCoords(front,
-                Matrix.rotationAxis(pitch, angle));
-        front = (Vector3d) Vector3d.normalize(front);
+        up.transformCoords( Matrix.rotationAxis(pitch, angle));
+        up.normalize();
+        front.transformCoords(Matrix.rotationAxis(pitch, angle));
+        front.normalize();
         if (getRenderAttachment() != null) {
             getRenderAttachment().setNeedsUpdate(true);
         }
@@ -184,13 +183,13 @@ public abstract class GameObject {
      * @param relative The vector defining the motion.
      */
     public final void move(final Vector3d relative) {
-        Vector3d pitch = (Vector3d) Vector3d.crossProduct(front, up);
+        Vector3d pitch = front.clone().crossProduct(up);
 
         Matrix m = Matrix.axes(pitch, up, front);
 
-        Vector3d absolute = Vector3d.transformCoords(relative, m);
+        Vector3d absolute = relative.clone().transformCoords(m);
 
-        setPosition((Vector3d) Vector3d.add(getPosition(), absolute));
+        getPosition().add(absolute);
         if (getRenderAttachment() != null) {
             getRenderAttachment().setNeedsUpdate(true);
         }

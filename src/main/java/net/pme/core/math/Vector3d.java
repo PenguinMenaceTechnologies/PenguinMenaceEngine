@@ -43,77 +43,98 @@ public class Vector3d extends Vector<Vector3f, Vector3d> {
     /**
      * Transform a vector by a matrix.
      *
-     * @param v The vector to transform.
      * @param m The transformation matrix.
-     * @return The transformed vector (v).
+     * @return This vector.
      */
-    public static Vector3d transformCoords(final Vector3d v, final Matrix m) {
+    public Vector3d transformCoords(final Matrix m) {
+        Vector3d v = this;
         double[][] tmp = m.getArray();
-        Vector3d vReuslt = new Vector3d(v.x * tmp[0][0] + v.y * tmp[1][0] + v.z * tmp[2][0]
+        set(v.x * tmp[0][0] + v.y * tmp[1][0] + v.z * tmp[2][0]
                 + tmp[3][0], v.x * tmp[0][1] + v.y * tmp[1][1] + v.z * tmp[2][1] + tmp[3][1], v.x
                 * tmp[0][2] + v.y * tmp[1][2] + v.z * tmp[2][2] + tmp[3][2]);
         double w = v.x * tmp[0][3] + v.y * tmp[1][3] + v.z * tmp[2][3] + tmp[3][3];
         if (w != 1.0f) {
-            vReuslt.scale(1 / w);
+            scale(1 / w);
         }
 
-        return vReuslt;
+        return this;
+    }
+
+    /**
+     * Set this vector to the values of another.
+     * @param other The other vector.
+     * @return This vector.
+     */
+    public Vector3d set(final Vector3d other) {
+        return set(other.x, other.y, other.z);
+    }
+
+    /**
+     * Set the values of this vector.
+     * @param x The x-coordinate.
+     * @param y The y-coordinate.
+     * @param z The z-coordinate.
+     * @return This vector.
+     */
+    public Vector3d set(final double x, final double y, final double z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        return this;
     }
 
     /**
      * Transform a vector by a quaternion.
      *
-     * @param v The vector to transform.
      * @param q The transformation quaternion.
      * @return The transformed vector (v).
      */
-    public static Vector3d transformCoords(final Vector3d v, final Quaternion q) {
+    public Vector3d transformCoords(final Quaternion q) {
         Quaternion tmp = new Quaternion(q);
         Quaternion res = new Quaternion(q);
 
         // q * v * q.conjugate
-        res = res.multiply(0, v.getX(), v.getY(), v.getZ()).multiply(tmp.conjugate());
+        res = res.multiply(0, getX(), getY(), getZ()).multiply(tmp.conjugate());
 
-        v.x = res.getX();
-        v.y = res.getY();
-        v.z = res.getZ();
+        x = res.getX();
+        y = res.getY();
+        z = res.getZ();
 
-        return v;
+        return this;
     }
 
     /**
      * Transform a normal by a quaternion.
      *
-     * @param v The normal to transform.
      * @param q The transformation quaternion.
      * @return The transformed vector (v).
      */
-    public static Vector3d transformNormal(final Vector3d v, final Quaternion q) {
-        return transformCoords(v,q);
+    public Vector3d transformNormal(final Quaternion q) {
+        return transformCoords(q);
     }
 
     /**
      * Transform normals.
      *
-     * @param v The normal to transform.
      * @param m The transformation matrix.
      * @return The transformed normal (v).
      */
-    public static Vector3d transformNormal(final Vector3d v, final Matrix m) {
-        double dLength = length(v);
+    public Vector3d transformNormal(final Matrix m) {
+        Vector3d v = this;
+        double dLength = length();
         if (dLength == 0.0) {
             return v;
         }
         double[][] tmp = m.getArray();
-        Vector3d vReuslt = new Vector3d(v.x * tmp[0][0] + v.y * tmp[1][0] + v.z * tmp[2][0]
+        set(v.x * tmp[0][0] + v.y * tmp[1][0] + v.z * tmp[2][0]
                 + tmp[3][0], v.x * tmp[0][1] + v.y * tmp[1][1] + v.z * tmp[2][1] + tmp[3][1], v.x
                 * tmp[0][2] + v.y * tmp[1][2] + v.z * tmp[2][2] + tmp[3][2]);
         double w = v.x * tmp[0][3] + v.y * tmp[1][3] + v.z * tmp[2][3] + tmp[3][3];
         if (w != 1.0f) {
-            vReuslt.scale(1 / w);
+            scale(1 / w);
         }
 
-        return vReuslt;
+        return this;
     }
 
     @Override
@@ -135,17 +156,6 @@ public class Vector3d extends Vector<Vector3f, Vector3d> {
         y -= other.y;
         z -= other.z;
         return this;
-    }
-
-    /**
-     * Calculate the cross product of 2 vectors (vect1 x vect2).
-     *
-     * @param vect1 The first vector.
-     * @param vect2 The second vector.
-     * @return The product.
-     */
-    public static Vector3d crossProduct(final Vector3d vect1, final Vector3d vect2) {
-        return ((Vector3d)vect1.clone()).crossProduct(vect2);
     }
 
     /**
@@ -183,46 +193,6 @@ public class Vector3d extends Vector<Vector3f, Vector3d> {
         res[1] = (float) y;
         res[2] = (float) z;
         return res;
-    }
-
-    /**
-     * Transform a vector by a matrix.
-     *
-     * @param m The transformation matrix.
-     * @return The transformed vector.
-     */
-    public Vector3d transformCoords(final Matrix m) {
-        return transformCoords(this, m);
-    }
-
-    /**
-     * Transform normals.
-     *
-     * @param m The transformation matrix.
-     * @return The transformed normal.
-     */
-    public Vector3d transformNormal(final Matrix m) {
-        return transformNormal(this, m);
-    }
-
-    /**
-     * Transform a vector by a quaternion.
-     *
-     * @param q The transformation quaternion..
-     * @return The transformed vector.
-     */
-    public Vector3d transformCoords(final Quaternion q) {
-        return transformCoords(this, q);
-    }
-
-    /**
-     * Transform normals.
-     *
-     * @param q The transformation quaternion.
-     * @return The transformed normal.
-     */
-    public Vector3d transformNormal(final Quaternion q) {
-        return transformNormal(this, q);
     }
 
     /**
@@ -312,6 +282,7 @@ public class Vector3d extends Vector<Vector3f, Vector3d> {
 
     @Override
     public Vector3d clone() {
-        return (Vector3d) super.clone();
+        Vector3d v = new Vector3d();
+        return v.set(this);
     }
 }
