@@ -214,8 +214,7 @@ public final class Graphics {
         Display.setResizable(true);
         try {
             PixelFormat pixelFormat = new PixelFormat();
-            ContextAttribs contextAtrributes = new ContextAttribs(3, 2)
-            .withProfileCompatibility(true);
+            ContextAttribs contextAtrributes = new ContextAttribs(2, 1);
             Display.create(pixelFormat, contextAtrributes);
         } catch (LWJGLException ex) {
             ex.printStackTrace();
