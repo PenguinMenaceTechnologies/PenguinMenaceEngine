@@ -403,6 +403,10 @@ public final class Graphics {
                 }
             }
 
+            // You cannot be sure that the renderers are implemented not changing this.
+            initGL();
+            resizeGL();
+
             GL11.glViewport(0, 0, getWidth(), getHeight());
 
             // unlink textures to avoid errors
