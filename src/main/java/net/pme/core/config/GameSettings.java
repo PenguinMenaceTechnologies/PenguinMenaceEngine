@@ -14,6 +14,8 @@ import java.io.IOException;
 public abstract class GameSettings {
     private FileConfiguration keyMapping = null;
     private FileConfiguration settings = null;
+    private String configPath = "config/settings.config";
+    private String keyPath = "config/keymapping.config";
 
     static {
         File f = new File("config");
@@ -33,6 +35,22 @@ public abstract class GameSettings {
     }
 
     /**
+     * Allow to change the path for keymapping.
+     * @param path The path.
+     */
+    public final void setKeyMappingPath(final String path) {
+        keyPath = path;
+    }
+
+    /**
+     * Allow to change the path for settings.
+     * @param path The path.
+     */
+    public final void setSettingsPath(final String path) {
+        configPath = path;
+    }
+
+    /**
      * Give back the key mapping.
      *
      * @return A hash map containing the key mapping.
@@ -41,7 +59,7 @@ public abstract class GameSettings {
         if (keyMapping != null) {
             return keyMapping;
         }
-        File f = new File("config/keymapping.config");
+        File f = new File(keyPath);
         if (f.exists()) {
             keyMapping = FileConfiguration.parseFromFile(f);
         } else {
@@ -67,7 +85,7 @@ public abstract class GameSettings {
         if (settings != null) {
             return settings;
         }
-        File f = new File("config/settings.config");
+        File f = new File(configPath);
         if (f.exists()) {
             settings = FileConfiguration.parseFromFile(f);
         } else {

@@ -385,6 +385,11 @@ public final class Graphics {
         if (postprocessing) {
             synchronized (this) {
                 for (OffscreenRendererWrapper tmp : offscreenRenderers) {
+                    GL11.glMatrixMode(GL11.GL_PROJECTION);
+                    GL11.glPushMatrix();
+                    GL11.glMatrixMode(GL11.GL_MODELVIEW);
+                    GL11.glPushMatrix();
+
                     if (tmp.preRender(game)) {
                         GL11.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
                         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT
@@ -399,13 +404,19 @@ public final class Graphics {
 
                         //GL11.glFlush();
                         tmp.postRender();
+
                     }
+
+                    GL11.glMatrixMode(GL11.GL_PROJECTION);
+                    GL11.glPopMatrix();
+                    GL11.glMatrixMode(GL11.GL_MODELVIEW);
+                    GL11.glPopMatrix();
                 }
             }
 
             // You cannot be sure that the renderers are implemented not changing this.
-            initGL();
-            resizeGL();
+            //initGL();
+            //resizeGL();
 
             GL11.glViewport(0, 0, getWidth(), getHeight());
 
