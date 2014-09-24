@@ -1,7 +1,4 @@
-package net.pme;
-
-import net.pme.core.math.Matrix;
-import net.pme.core.math.Vector3d;
+package net.pme.core.math;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -141,4 +138,70 @@ public class MatrixTest {
             Assert.assertTrue("Matrix not identical:\n"+r.toString(), r.equals(Matrix.identity()));
         }
     }
+
+    @Test
+    public void testDet() {
+        Assert.assertEquals("Identity determinant not 1", 1.0, Matrix.identity().det(), 10E-8);
+
+        for (int count = 0; count < 100; count++) {
+            double x = Math.random();
+            double y = Math.random();
+            double z = x != 0.0 || y != 0.0 ? Math.random() : 1;
+
+            Matrix r = Matrix.rotationAxis(new Vector3d(x, y, z).normalize(), Math.PI);
+
+            Assert.assertEquals("Rotation determinant not 1:\n" + r.toString(), 1.0, r.det(), 10E-8);
+        }
+    }
+
+    @Test
+    public void testInvertIdentity() {
+        Matrix id = Matrix.identity();
+        Assert.assertTrue("Wrong inversion.", Matrix.identity().invert().equals(id));
+    }
+
+
+    @Test
+    public void testInvertRotation() {
+        Matrix id = Matrix.identity();
+        for (int count = 0; count < 100; count++) {
+            double x = Math.random();
+            double y = Math.random();
+            double z = x != 0.0 || y != 0.0 ? Math.random() : 1;
+
+            Matrix r = Matrix.rotationAxis(new Vector3d(x, y, z).normalize(), Math.PI);
+
+            Assert.assertTrue("Wrong inversion for rotation.", r.clone().invert().multiply(r).equals(id));
+        }
+    }
+
+    /*@Test
+    public void testGetEulerX() {
+        for (int i = 0; i < 100; i++) {
+            double x = Math.random()*2*Math.PI;
+
+            Matrix r = Matrix.rotationAxis(new Vector3d(1, 0, 0), x);
+            Assert.assertEquals("Invalid angle: ", x, r.getXEuler(), 10E-8);
+        }
+    }
+
+    @Test
+    public void testGetEulerY() {
+        for (int i = 0; i < 100; i++) {
+            double x = Math.random()*2*Math.PI;
+
+            Matrix r = Matrix.rotationAxis(new Vector3d(0, 1, 0), x);
+            Assert.assertEquals("Invalid angle: ", x, r.getYEuler(), 10E-8);
+        }
+    }
+
+    @Test
+    public void testGetEulerZ() {
+        for (int i = 0; i < 100; i++) {
+            double x = Math.random()*2*Math.PI;
+
+            Matrix r = Matrix.rotationAxis(new Vector3d(0, 0, 1), x);
+            Assert.assertEquals("Invalid angle: ", x, r.getZEuler(), 10E-8);
+        }
+    }*/
 }
