@@ -508,4 +508,35 @@ public class Matrix {
         Matrix result = new Matrix();
         return result.set(this);
     }
+
+    @Override
+    public String toString() {
+        String result = "";
+        for (int x = 0; x < N; x++) {
+            for (int y = 0; y < N; y++) {
+                result += m[x][y]+ " ";
+            }
+            result += "\n";
+        }
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (! (other instanceof  Matrix)) {
+            return false;
+        }
+
+        Matrix o = (Matrix) other;
+
+        for (int x = 0; x < N; x++) {
+            for (int y = 0; y < N; y++) {
+                if (!MathUtils.isEqual(m[x][y], o.m[x][y], 10E-13)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
 }
