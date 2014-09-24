@@ -1,5 +1,6 @@
 package net.pme.model;
 
+import net.pme.Game;
 import net.pme.core.math.Vector3d;
 
 import java.util.List;
@@ -119,9 +120,11 @@ public final class BoundingBox {
                 edges[7].setZ(v.getZ());
             }
         }
-        System.out.println("Bounding box");
-        for (int i = 0; i < edges.length; i++) {
-            System.out.println(i + " (" + edges[i].getX() + ", "+edges[i].getY() + ", " + edges[i].getZ() + ")");
+        if (Game.getDebugMode() > 100) {
+            System.out.println("Bounding box");
+            for (int i = 0; i < edges.length; i++) {
+                System.out.println(i + " (" + edges[i].getX() + ", " + edges[i].getY() + ", " + edges[i].getZ() + ")");
+            }
         }
     }
 

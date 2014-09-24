@@ -3,6 +3,8 @@
  */
 package net.pme.network;
 
+import net.pme.Game;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.SocketException;
@@ -50,7 +52,9 @@ public class NetworkConnectionListener extends Thread {
                 network.addSocket(serverSocket.accept());
             } catch (SocketException e) {
                 // We cannot connect to that socket, so wayne.
-                System.out.println("(NetworkConnectionListener) Socket closed.");
+                if (Game.getDebugMode() > 100) {
+                    System.out.println("(NetworkConnectionListener) Socket closed.");
+                }
                 break;
             } catch (IOException e) {
                 e.printStackTrace();

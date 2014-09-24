@@ -3,6 +3,8 @@
  */
 package net.pme.network;
 
+import net.pme.Game;
+
 import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.IOException;
@@ -54,7 +56,9 @@ class SocketListener extends Thread {
                 break;
             } catch (SocketException e) {
                 // We just got closed our socket.
-                System.out.println("(SocketListener) Socket closed.");
+                if (Game.getDebugMode() > 100) {
+                    System.out.println("(SocketListener) Socket closed.");
+                }
                 break;
             } catch (IOException e) {
                 e.printStackTrace();

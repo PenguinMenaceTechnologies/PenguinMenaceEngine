@@ -34,6 +34,24 @@ public final class Game {
     private Graphics graphics = null;
     private ModelManager modelManager;
     private GameSettings settings;
+    private static int debugMode = 0;
+
+    /**
+     * Set the debugmode.
+     * 0 means no debug, larger than 100 is reserved for engine internals.
+     * @param debugMode The debugmode.
+     */
+    public static void setDebugMode(int debugMode) {
+        Game.debugMode = debugMode;
+    }
+
+    /**
+     * Determine the debug level. (0 means no debug)
+     * @return Determine the debug level.
+     */
+    public static int getDebugMode() {
+        return Game.debugMode;
+    }
 
     /**
      * Add a gameObject to the game.

@@ -32,6 +32,8 @@ public class Test {
      * @throws IOException
      */
     public static void main(final String[] args) throws IOException {
+        Game.setDebugMode(1337);
+
         // Yay, our game!
         game = new Game();
 
