@@ -175,20 +175,21 @@ public class MatrixTest {
         }
     }
 
-    /*@Test
+    @Test
     public void testGetEulerX() {
         for (int i = 0; i < 100; i++) {
-            double x = Math.random()*2*Math.PI;
+            double x = Math.random()*2*Math.PI - Math.PI;
 
             Matrix r = Matrix.rotationAxis(new Vector3d(1, 0, 0), x);
-            Assert.assertEquals("Invalid angle: ", x, r.getXEuler(), 10E-8);
+            // Beware of pitch only in range of Math.PI / 2 and -Math.PI / 2
+            Assert.assertEquals("Invalid angle: ", Math.sin(x), Math.sin(r.getXEuler()), 10E-8);
         }
     }
 
     @Test
     public void testGetEulerY() {
         for (int i = 0; i < 100; i++) {
-            double x = Math.random()*2*Math.PI;
+            double x = Math.random()*2*Math.PI - Math.PI;
 
             Matrix r = Matrix.rotationAxis(new Vector3d(0, 1, 0), x);
             Assert.assertEquals("Invalid angle: ", x, r.getYEuler(), 10E-8);
@@ -198,10 +199,10 @@ public class MatrixTest {
     @Test
     public void testGetEulerZ() {
         for (int i = 0; i < 100; i++) {
-            double x = Math.random()*2*Math.PI;
+            double x = Math.random()*2*Math.PI - Math.PI;
 
             Matrix r = Matrix.rotationAxis(new Vector3d(0, 0, 1), x);
             Assert.assertEquals("Invalid angle: ", x, r.getZEuler(), 10E-8);
         }
-    }*/
+    }
 }

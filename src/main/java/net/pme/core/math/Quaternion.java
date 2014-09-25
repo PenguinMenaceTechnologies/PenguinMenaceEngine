@@ -121,21 +121,11 @@ public class Quaternion {
     }
 
     /**
-     * Get the roll euler angle in radians, which is the rotation around the z axis. Requires that this quaternion is normalized.
-     * @return The rotation around the z axis in radians (between -PI and +PI).
-     */
-    public double getZEuler() {
-        final int pole = getGimbalPole();
-        return pole == 0 ? Math.atan2(2.0*(s*z + y*x), 1.0 - 2.0 * (x*x + z*z)) : pole * 2.0 * Math.atan2(y, s);
-    }
-
-    /**
      * Get the pitch euler angle in radians, which is the rotation around the x axis. Requires that this quaternion is normalized.
      * @return The rotation around the x axis in radians (between -(PI/2) and +(PI/2)).
      */
     public double getXEuler() {
-        final int pole = getGimbalPole();
-        return pole == 0 ? Math.asin(MathUtils.clamp(2.0*(s*x-z*y), -1.0, 1.0)) : pole * Math.PI * 0.5;
+        return toMatrix().getXEuler();
     }
 
     /**
@@ -143,7 +133,15 @@ public class Quaternion {
      * @return The rotation around the y axis in radians (between -PI and +PI).
      */
     public double getYEuler() {
-        return getGimbalPole() == 0 ? Math.atan2(2.0*(y*s + x*z), 1.0 - 2.0*(y*y+x*x)) : 0.0;
+        return toMatrix().getYEuler();
+    }
+
+    /**
+     * Get the roll euler angle in radians, which is the rotation around the z axis. Requires that this quaternion is normalized.
+     * @return The rotation around the z axis in radians (between -PI and +PI).
+     */
+    public double getZEuler() {
+        return toMatrix().getZEuler();
     }
 
     /**
@@ -154,7 +152,7 @@ public class Quaternion {
         return new Matrix(1-2*(y*y+z*z), -2*s*z+2*x*y, 2*s*y+2*x*z, 0.0,
                 2*s*z+2*x*y, 1-2*(x*x+z*z), -2*s*x+2*y*z, 0.0,
                 -2*s*y+2*x*z, 2*s*x+2*y*z, 1-2*(x*x+y*y), 0.0,
-                0.0, 0.0, 0.0, 1.0);
+                0.0, 0.0, 0.0, 1.0).transpose();
     }
 
     /**
@@ -187,5 +185,25 @@ public class Quaternion {
      */
     public double getS() {
         return s;
+    }
+
+    @Override
+    public boolean equals(final Object object) {
+        if (object instanceof Quaternion) {
+            Quaternion q = (Quaternion) object;
+            if (MathUtils.isEqual(s, q.s) && MathUtils.isEqual(x, q.x) && MathUtils.isEqual(y, q.y) && MathUtils.isEqual(z, q.z)) {
+                return true;
+            }
+            // q*x*q.conjugate = (-1)q*x*(-1)*q.conjugate = q'*x*q'.conjugate mit q' = (-1)q
+            if (MathUtils.isEqual(s, -q.s) && MathUtils.isEqual(x, -q.x) && MathUtils.isEqual(y, -q.y) && MathUtils.isEqual(z, -q.z)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return s+ " "+x+" "+y+" "+z;
     }
 }

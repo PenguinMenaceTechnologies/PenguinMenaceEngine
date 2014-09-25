@@ -369,30 +369,30 @@ public class Matrix {
     }
 
     /**
-     * The euler rotation around the x-Axis.
+     * The euler rotation around the x-Axis. (Pitch)
      *
      * @return The euler rotation around the x-Axis.
      */
     public final double getXEuler() {
-        return toQuaternion().getXEuler();
+        return Math.asin(-m[2][1]);
     }
 
     /**
-     * The euler rotation around the y-Axis.
+     * The euler rotation around the y-Axis. (Yaw)
      *
      * @return The euler rotation around the y-Axis.
      */
     public final double getYEuler() {
-        return toQuaternion().getYEuler();
+        return Math.atan2(m[2][0], m[2][2]);
     }
 
     /**
-     * The euler rotation around the z-Axis.
+     * The euler rotation around the z-Axis. (Roll)
      *
      * @return The euler rotation around the z-Axis.
      */
     public final double getZEuler() {
-        return toQuaternion().getZEuler();
+        return Math.atan2(m[0][1], m[1][1]);
     }
 
     /**
@@ -496,11 +496,46 @@ public class Matrix {
      * @return The quaterion.
      */
     public Quaternion toQuaternion() {
-        double s = (1.0/2.0) * Math.sqrt(1.0 + m[0][0] + m[1][1] + m[2][2]);
-        double x = (m[3][2] - m[2][3]) / (4.0 * s);
-        double y = (m[1][3] - m[3][1]) / (4.0 * s);
-        double z = (m[2][1] - m[1][2]) / (4.0 * s);
-        return new Quaternion(s,x,y,z);
+        transpose();
+
+        double qw = 0;
+        double qx = 0;
+        double qy = 0;
+        double qz = 0;
+
+        double tr = m[0][0] + m[1][1] + m[2][2];
+
+        if (tr > 0) {
+            double S = Math.sqrt(tr+1.0) * 2; // S=4*qw
+            qw = 0.25 * S;
+            qx = (m[2][1] - m[1][2]) / S;
+            qy = (m[0][2] - m[2][0]) / S;
+            qz = (m[1][0] - m[0][1]) / S;
+        } else if ((m[0][0] > m[1][1])&(m[0][0] > m[2][2])) {
+            double S = Math.sqrt(1.0 + m[0][0] - m[1][1] - m[2][2]) * 2; // S=4*qx
+            qw = (m[2][1] - m[1][2]) / S;
+            qx = 0.25 * S;
+            qy = (m[0][1] + m[1][0]) / S;
+            qz = (m[0][2] + m[2][0]) / S;
+        } else if (m[1][1] > m[2][2]) {
+            double S = Math.sqrt(1.0 + m[1][1] - m[0][0] - m[2][2]) * 2; // S=4*qy
+            qw = (m[0][2] - m[2][0]) / S;
+            qx = (m[0][1] + m[1][0]) / S;
+            qy = 0.25 * S;
+            qz = (m[1][2] + m[2][1]) / S;
+        } else {
+            double S = Math.sqrt(1.0 + m[2][2] - m[0][0] - m[1][1]) * 2; // S=4*qz
+            qw = (m[1][0] - m[0][1]) / S;
+            qx = (m[0][2] + m[2][0]) / S;
+            qy = (m[1][2] + m[2][1]) / S;
+            qz = 0.25 * S;
+        }
+
+        transpose();
+
+        Quaternion q = new Quaternion(qw, qx, qy, qz);
+
+        return q;
     }
 
     @Override
@@ -516,7 +551,9 @@ public class Matrix {
             for (int y = 0; y < N; y++) {
                 result += m[x][y]+ " ";
             }
-            result += "\n";
+            if (x < N - 1 ) {
+                result += "\n";
+            }
         }
         return result;
     }

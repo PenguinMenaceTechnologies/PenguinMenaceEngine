@@ -94,7 +94,9 @@ public class Vector3d extends Vector<Vector3f, Vector3d> {
         Quaternion res = new Quaternion(q);
 
         // q * v * q.conjugate
-        res = res.multiply(0, getX(), getY(), getZ()).multiply(tmp.conjugate());
+        res.multiply(0, getX(), getY(), getZ()).multiply(tmp.conjugate());
+
+        assert MathUtils.isEqual(res.getS(), 0);
 
         x = res.getX();
         y = res.getY();
