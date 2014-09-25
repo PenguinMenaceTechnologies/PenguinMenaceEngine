@@ -81,16 +81,19 @@ public class Matrix {
 
     /**
      * Create a rotation matrix for the euler-angles.
-     * <p/>
-     * Not implemented yet.
      *
-     * @param x The x-eulers-angle.
-     * @param y The y-eulers-angle.
-     * @param z The z-eulers-angle.
+     * R_z(roll)*R_x(pitch)*R_y(yaw)
+     *
+     * @param pitch The x-eulers-angle. (Only makes sense between -Math.PI/2 and Math.PI/2)
+     * @param yaw The y-eulers-angle.
+     * @param roll The z-eulers-angle.
      * @return The rotation matrix.
      */
-    public static Matrix rotation(final double x, final double y, final double z) {
-        throw new UnsupportedOperationException("Not implemented yet!");
+    public static Matrix rotation(final double pitch, final double yaw, final double roll) {
+        Vector3d xAxis = new Vector3d(1,0,0);
+        Vector3d yAxis = new Vector3d(0,1,0);
+        Vector3d zAxis = new Vector3d(0,0,1);
+        return Matrix.rotationAxis(zAxis, roll).multiply(Matrix.rotationAxis(xAxis, pitch)).multiply(Matrix.rotationAxis(yAxis, yaw));
     }
 
     /**

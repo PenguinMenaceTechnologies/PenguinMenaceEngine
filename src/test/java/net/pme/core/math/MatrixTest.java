@@ -205,4 +205,18 @@ public class MatrixTest {
             Assert.assertEquals("Invalid angle: ", x, r.getZEuler(), 10E-8);
         }
     }
+
+    @Test
+    public void testEulerMatrices() {
+        for (int i = 0; i < 100; i++) {
+            double x = Math.random() * Math.PI - Math.PI / 2;
+            double y = Math.random() * 2 * Math.PI - Math.PI;
+            double z = Math.random() * 2 * Math.PI - Math.PI;
+
+            Matrix r = Matrix.rotation(x,y,z);
+            Assert.assertEquals("Invalid x", x, r.getXEuler(), 10E-8);
+            Assert.assertEquals("Invalid y", y, r.getYEuler(), 10E-8);
+            Assert.assertEquals("Invalid z", z, r.getZEuler(), 10E-8);
+        }
+    }
 }
