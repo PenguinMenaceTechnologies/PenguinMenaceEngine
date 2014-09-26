@@ -1,6 +1,8 @@
 package net.pme;
 
+import net.pme.core.GameObject;
 import net.pme.core.Player;
+import net.pme.core.config.EnvironmentConfiguration;
 import net.pme.core.math.Vector3d;
 import net.pme.core.utils.IOUtils;
 import net.pme.graphics.OffscreenRenderer;
@@ -10,7 +12,6 @@ import org.lwjgl.input.Mouse;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 
 /**
@@ -72,27 +73,44 @@ public class Test {
         Vector3d front3 = new Vector3d(0, 0, -1);
         Vector3d up3 = new Vector3d(1, 1, 0);
 
+
+        TestModel ship = new TestModel(3, new Vector3d(1, -2, -10), front2, up2,
+                game.getModelManager().get("resource://assets/ship.obj", Test.class));
+
+        TestModel cube = new TestModel(2, new Vector3d(1, 2, -10), front1, up1,
+                game.getModelManager().get("resource://assets/cube_small.obj", Test.class));
+
+        TestCube3 fxCube = new TestCube3(4, new Vector3d(-2, 0, -10), front3, up3);
+
+        // Enable bounding box for the ship
+        ship.getRenderAttachment().setBoundingFrame(true);
+
         // Add the objects to the world.
-        game.addGameObject(new Ship(2, new Vector3d(1, 2, -10), front1, up1,
-                game.getModelManager().get("resource://assets/cube_small.obj", Test.class)));
-        game.addGameObject(new Ship(3, new Vector3d(1, -2, -10), front2, up2,
-                game.getModelManager().get("resource://assets/ship.obj", Test.class)));
-        game.addGameObject(new TestCube3(4, new Vector3d(-2, 0, -10), front3,
-                up3));
+        game.addGameObject(cube);
+        game.addGameObject(ship);
+        game.addGameObject(fxCube);
 
-		/*game.addGameObject(new RenderAttachment(5, new Vector3d(-4, 2.5, -10),
-                frontA, upA, model));
-		game.addGameObject(new RenderAttachment(6, new Vector3d(4, 2.5, -10),
-				frontB, upB, modelManager.get(Test.class.getResource(
-						"/assets/cube_small.obj").getPath())));
+        EnvironmentConfiguration map = new EnvironmentConfiguration();
 
-		for (int j = 0; j < 10; j++) {
-			for (int i = 1; i < 10; i++) {
-				game.addGameObject(new RenderAttachment(6, new Vector3d(
-						4 + 4 * i, 2.5 + 4 * j, -10), frontB, upB, model));
+        GameObject[] objs = map.createAllObjects(modelManager, Test.class);
 
-			}
-		}*/
+        if (objs.length == 0) {
+            for (int j = 0; j < 3; j++) {
+                for (int i = 1; i < 3; i++) {
+                    TestModel m = new TestModel(6, new Vector3d(
+                            4 + 4 * i, 2.5 + 4 * j, -10), frontB, upB, model);
+                    map.addObjectToMap("cube_" + i + "_" + j, m);
+
+                }
+            }
+            map.save();
+            System.out.println("Created map");
+            objs = map.createAllObjects(modelManager, Test.class);
+        }
+
+        for (GameObject o: objs) {
+            game.addGameObject(o);
+        }
 
 
         // Setup overlay.
@@ -130,7 +148,9 @@ public class Test {
                 } catch (Exception e) {
                     return;
                 }
-                game.getDisplay().removeOffscreenRenderer(o);
+                if (game.getDisplay() != null) {
+                    game.getDisplay().removeOffscreenRenderer(o);
+                }
             }
         }.start();
 

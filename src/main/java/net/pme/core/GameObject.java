@@ -46,9 +46,9 @@ public abstract class GameObject {
      */
     public GameObject(final long id, final Vector3d position, final Vector3d front, final Vector3d up) {
         this.id = id;
-        this.setPosition(position);
-        this.setFront(front);
-        this.setUp(up);
+        this.setPosition(position.clone());
+        this.setFront(front.clone().normalize());
+        this.setUp(up.clone().normalize());
     }
 
     /**

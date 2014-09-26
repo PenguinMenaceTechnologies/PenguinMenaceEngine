@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.penguinmenaceengine</groupId>
     <artifactId>PenguinMenaceEngine</artifactId>
-    <version>2.0</version>
+    <version>2.1</version>
     <name>PenguinMenaceEngine</name>
     <description>A 3d space shooter engine.</description>
 

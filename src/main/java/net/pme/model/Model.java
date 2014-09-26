@@ -72,6 +72,14 @@ public class Model {
     }
 
     /**
+     * Get the path to the model file.
+     * @return The path to the modelfile.
+     */
+    public String getPath() {
+        return path;
+    }
+
+    /**
      * The bounding box calculated for this model.
      *
      * @return The bounding box for this model.
@@ -106,30 +114,30 @@ public class Model {
             }
             if (face.getTexture() != null) {
                 Vector3d t1 = textureCoords.get((int) face.getTexture().getX() - 1);
-                GL11.glTexCoord3d(t1.getX(), -t1.getY(), t1.getZ());
+                GL11.glTexCoord3d(t1.getX(), t1.getY(), t1.getZ());
             }
             Vector3d v1 = vertices.get((int) face.getVertex().getX() - 1);
-            GL11.glVertex3d(v1.getY(), v1.getX(), -v1.getZ());
+            GL11.glVertex3d(v1.getX(), v1.getY(), v1.getZ());
             Vector3d n2 = normals.get((int) face.getNormal().getY() - 1);
             if (!smoothing) {
                 GL11.glNormal3d(n2.getX(), n2.getY(), n2.getZ());
             }
             if (face.getTexture() != null) {
                 Vector3d t2 = textureCoords.get((int) face.getTexture().getY() - 1);
-                GL11.glTexCoord3d(t2.getX(), -t2.getY(), t2.getZ());
+                GL11.glTexCoord3d(t2.getX(), t2.getY(), t2.getZ());
             }
             Vector3d v2 = vertices.get((int) face.getVertex().getY() - 1);
-            GL11.glVertex3d(v2.getY(), v2.getX(), -v2.getZ());
+            GL11.glVertex3d(v2.getX(), v2.getY(), v2.getZ());
             Vector3d n3 = normals.get((int) face.getNormal().getZ() - 1);
             if (!smoothing) {
                 GL11.glNormal3d(n3.getX(), n3.getY(), n3.getZ());
             }
             if (face.getTexture() != null) {
                 Vector3d t3 = textureCoords.get((int) face.getTexture().getZ() - 1);
-                GL11.glTexCoord3d(t3.getX(), -t3.getY(), t3.getZ());
+                GL11.glTexCoord3d(t3.getX(), t3.getY(), t3.getZ());
             }
             Vector3d v3 = vertices.get((int) face.getVertex().getZ() - 1);
-            GL11.glVertex3d(v3.getY(), v3.getX(), -v3.getZ());
+            GL11.glVertex3d(v3.getX(), v3.getY(), v3.getZ());
             i++;
         }
         Material.resetMaterial();
@@ -308,7 +316,7 @@ public class Model {
                     float x = Float.parseFloat(splitline[1]);
                     float y = Float.parseFloat(splitline[2]);
                     float z = Float.parseFloat(splitline[3]);
-                    vertices.add(new Vector3d(x, y, z));
+                    vertices.add(new Vector3d(y, x, -z));
                 } else if (line.startsWith("vn ")) {
                     String[] splitline = line.split(" ");
                     float x = Float.parseFloat(splitline[1]);
@@ -323,7 +331,7 @@ public class Model {
                     if (splitline.length >= VECTOR_LENGTH) {
                         z = Float.parseFloat(splitline[3]);
                     }
-                    textureCoords.add(new Vector3d(x, y, z));
+                    textureCoords.add(new Vector3d(x, -y, z));
                 } else if (line.startsWith("vp ")) {
                     String[] splitline = line.split(" ");
                     float x = Float.parseFloat(splitline[1]);

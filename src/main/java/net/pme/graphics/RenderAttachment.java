@@ -4,6 +4,7 @@ import net.pme.core.GameObject;
 import net.pme.core.math.Matrix;
 import net.pme.core.math.Vector3d;
 import net.pme.graphics.data.VertexData;
+import net.pme.model.BoundingBox;
 import net.pme.model.Model;
 import org.lwjgl.opengl.GL11;
 
@@ -38,6 +39,11 @@ public class RenderAttachment {
     private VertexData vertexData;
 
     /**
+     * Draw the bounding frame or not.
+     */
+    private boolean boundingFrame = false;
+
+    /**
      * Create a new RenderAttachment.
      *
      * @param parent   The parent of this attachment.
@@ -53,7 +59,7 @@ public class RenderAttachment {
     /**
      * @return the graphics
      */
-    protected final Model getModel() {
+    public final Model getModel() {
         return model;
     }
 
@@ -114,6 +120,14 @@ public class RenderAttachment {
     }
 
     /**
+     * Set the state of rendering the bounding frame.
+     * @param enabed The bounding frame.
+     */
+    public final void setBoundingFrame(final boolean enabed) {
+        boundingFrame = enabed;
+    }
+
+    /**
      * Set the coordinate system to the center of the ship and render it.
      * <p/>
      * Calls the specialFX method.
@@ -148,6 +162,62 @@ public class RenderAttachment {
 
         if (shader != null) {
             shader.unbind();
+        }
+
+        if (boundingFrame && model != null) {
+            if (Shader.getDefaultShader() != null) {
+                Shader.getDefaultShader().bind();
+            }
+
+            BoundingBox b = model.getBoundingBox();
+            Vector3d[] edges = b.getEdges();
+
+            GL11.glBegin(GL11.GL_LINES);
+
+            GL11.glVertex3d(edges[0].getX(), edges[0].getY(), edges[0].getZ());
+            GL11.glVertex3d(edges[1].getX(), edges[1].getY(), edges[1].getZ());
+
+            GL11.glVertex3d(edges[1].getX(), edges[1].getY(), edges[1].getZ());
+            GL11.glVertex3d(edges[2].getX(), edges[2].getY(), edges[2].getZ());
+
+            GL11.glVertex3d(edges[2].getX(), edges[2].getY(), edges[2].getZ());
+            GL11.glVertex3d(edges[3].getX(), edges[3].getY(), edges[3].getZ());
+
+            GL11.glVertex3d(edges[3].getX(), edges[3].getY(), edges[3].getZ());
+            GL11.glVertex3d(edges[0].getX(), edges[0].getY(), edges[0].getZ());
+
+
+            GL11.glVertex3d(edges[4].getX(), edges[4].getY(), edges[4].getZ());
+            GL11.glVertex3d(edges[5].getX(), edges[5].getY(), edges[5].getZ());
+
+            GL11.glVertex3d(edges[5].getX(), edges[5].getY(), edges[5].getZ());
+            GL11.glVertex3d(edges[6].getX(), edges[6].getY(), edges[6].getZ());
+
+            GL11.glVertex3d(edges[6].getX(), edges[6].getY(), edges[6].getZ());
+            GL11.glVertex3d(edges[7].getX(), edges[7].getY(), edges[7].getZ());
+
+            GL11.glVertex3d(edges[7].getX(), edges[7].getY(), edges[7].getZ());
+            GL11.glVertex3d(edges[4].getX(), edges[4].getY(), edges[4].getZ());
+
+
+            GL11.glVertex3d(edges[0].getX(), edges[0].getY(), edges[0].getZ());
+            GL11.glVertex3d(edges[4].getX(), edges[4].getY(), edges[4].getZ());
+
+            GL11.glVertex3d(edges[1].getX(), edges[1].getY(), edges[1].getZ());
+            GL11.glVertex3d(edges[5].getX(), edges[5].getY(), edges[5].getZ());
+
+            GL11.glVertex3d(edges[2].getX(), edges[2].getY(), edges[2].getZ());
+            GL11.glVertex3d(edges[6].getX(), edges[6].getY(), edges[6].getZ());
+
+            GL11.glVertex3d(edges[3].getX(), edges[3].getY(), edges[3].getZ());
+            GL11.glVertex3d(edges[7].getX(), edges[7].getY(), edges[7].getZ());
+
+            GL11.glEnd();
+
+
+            if (Shader.getDefaultShader() != null) {
+                Shader.getDefaultShader().unbind();
+            }
         }
 
         GL11.glPopMatrix();

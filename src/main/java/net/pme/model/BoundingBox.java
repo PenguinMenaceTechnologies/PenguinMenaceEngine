@@ -120,12 +120,14 @@ public final class BoundingBox {
                 edges[7].setZ(v.getZ());
             }
         }
-        if (Game.getDebugMode() > 100) {
-            System.out.println("Bounding box");
-            for (int i = 0; i < edges.length; i++) {
-                System.out.println(i + " (" + edges[i].getX() + ", " + edges[i].getY() + ", " + edges[i].getZ() + ")");
-            }
-        }
+    }
+
+    /**
+     * Get a list of the bounding edges.
+     * @return The edges.
+     */
+    public Vector3d[] getEdges() {
+        return edges;
     }
 
     /**
