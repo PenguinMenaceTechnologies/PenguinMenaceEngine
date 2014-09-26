@@ -51,8 +51,8 @@ public class Test {
         // Load models.
         ModelManager modelManager = game.getModelManager();
 
-        Model model = modelManager.get("resource://assets/cube_small.obj", Test.class);
-        Model model2 = modelManager.get("resource://assets/cube_small.obj", Test.class);
+        Model model = modelManager.get("resource://assets/cube_small.obj", Game.class);
+        Model model2 = modelManager.get("resource://assets/cube_small.obj", Game.class);
         if (model == model2) {
             System.out.println("Model loading is efficient!");
         }
@@ -78,7 +78,7 @@ public class Test {
                 game.getModelManager().get("resource://assets/ship.obj", Test.class));
 
         TestModel cube = new TestModel(2, new Vector3d(1, 2, -10), front1, up1,
-                game.getModelManager().get("resource://assets/cube_small.obj", Test.class));
+                game.getModelManager().get("resource://assets/cube_small.obj", Game.class));
 
         TestCube3 fxCube = new TestCube3(4, new Vector3d(-2, 0, -10), front3, up3);
 
@@ -92,7 +92,7 @@ public class Test {
 
         EnvironmentConfiguration map = new EnvironmentConfiguration();
 
-        GameObject[] objs = map.createAllObjects(modelManager, Test.class);
+        GameObject[] objs = map.createAllObjects(modelManager, Game.class);
 
         if (objs.length == 0) {
             for (int j = 0; j < 3; j++) {

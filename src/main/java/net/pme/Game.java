@@ -118,7 +118,7 @@ public final class Game {
      *
      * @param player The player instance. (Null creates a dummy-player placed at 0)
      */
-    public void runGame(final Player player) {
+    public void runGame(Player player) {
         if (!isLoaded) {
             throw new IllegalStateException(
                     "You have to initialize the core module to run a game!");
@@ -126,6 +126,9 @@ public final class Game {
         if (gameLoop != null) {
             throw new IllegalStateException(
                     "There cannot be 2 calls of run game at a time");
+        }
+        if (player == null) {
+            player = new DefaultPlayer(this);
         }
 
         gameLoop = new GameLoop();
