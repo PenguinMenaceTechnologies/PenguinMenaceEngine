@@ -260,6 +260,7 @@ public final class Graphics {
         Display.destroy();
         Keyboard.destroy();
         Mouse.destroy();
+        instance = null;
     }
 
     /**

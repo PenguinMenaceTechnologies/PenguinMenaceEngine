@@ -38,13 +38,19 @@ public final class TextureLoader {
      * return a pointer to the texture.
      *
      * @param pathname The image you want as a texture.
+     * @param resourcePath The resource path.
      * @return The texture identifier.
      * @throws IOException When there is an error opening the file.
      */
-    public static int loadFromFile(final String pathname, final Class callee) throws IOException {
+    public static int loadFromFile(final String pathname, final Class callee, final String resourcePath) throws IOException {
         if (!textures.containsKey(pathname)) {
-            textures.put(pathname,
-                    loadTextureForceReload(ImageIO.read(IOUtils.getFile(pathname, callee))));
+            if (callee != null) {
+                textures.put(pathname,
+                        loadTextureForceReload(ImageIO.read(IOUtils.getFile(pathname, callee))));
+            } else {
+                textures.put(pathname,
+                        loadTextureForceReload(ImageIO.read(IOUtils.getFile(pathname, resourcePath))));
+            }
             openedTimes.put(textures.get(pathname), 0);
         }
         openedTimes.put(textures.get(pathname),

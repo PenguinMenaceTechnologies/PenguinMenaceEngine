@@ -20,6 +20,7 @@ import java.io.IOException;
 public class EnvironmentConfiguration {
     private static int CURRENT_ID = 1000;
     private final FileConfiguration config;
+    private String resourcePath = null;
 
     /**
      * Create an environment configuration using the defaut file.
@@ -38,6 +39,14 @@ public class EnvironmentConfiguration {
     }
 
     /**
+     * Set the path for resources.
+     * @param resourcePath
+     */
+    public void setResourcePath(String resourcePath) {
+        this.resourcePath = resourcePath;
+    }
+
+    /**
      * Create an object from the config by using its name.
      * @param name The name of the model to load.
      * @param modelManager The model manager to use for loading the graphics.
@@ -46,7 +55,12 @@ public class EnvironmentConfiguration {
      * @throws IOException
      */
     public GameObject createObjectByName(final String name, final ModelManager modelManager, final Class callee) throws IOException {
-        Model m = modelManager.get(config.getString(name+"_path"), callee);
+        Model m = null;
+        if (resourcePath == null) {
+            m = modelManager.get(config.getString(name + "_path"), callee);
+        } else {
+            m = modelManager.getWithPath(config.getString(name + "_path"), resourcePath);
+        }
         double x = config.getDouble(name + "_pos_x");
         double y = config.getDouble(name + "_pos_y");
         double z = config.getDouble(name + "_pos_z");

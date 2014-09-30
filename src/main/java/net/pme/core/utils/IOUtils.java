@@ -165,4 +165,21 @@ public final class IOUtils {
         return new String(bytes, CHARSET_UTF8);
     }
 
+    /**
+     * Get a file from a path with a given resource path for resources.
+     * @param path The path where to get the file from.
+     * @param resourcePath The resource path.
+     * @return The file.
+     */
+    public static File getFile(String path, String resourcePath) {
+        if (path.startsWith("resource://")) {
+            path = path.substring(11);
+            if (resourcePath.endsWith("/")) {
+                path = resourcePath + path;
+            } else {
+                path = resourcePath + "/" + path;
+            }
+        }
+        return new File(path);
+    }
 }

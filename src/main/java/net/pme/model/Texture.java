@@ -30,11 +30,12 @@ public class Texture {
      * Create texture from a given filename.
      *
      * @param filename The filename.
+     * @param resourcePath The resource path.
      * @throws IOException When the searched file does not exist or not contain an
      *                     image.
      */
-    public Texture(final String filename, final Class callee) throws IOException {
-        textureId = TextureLoader.loadFromFile(filename, callee);
+    public Texture(final String filename, final Class callee, final String resourcePath) throws IOException {
+        textureId = TextureLoader.loadFromFile(filename, callee, resourcePath);
     }
 
     /**

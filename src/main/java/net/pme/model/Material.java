@@ -60,11 +60,17 @@ class Material {
      * @param basePath   The basepath.
      * @param file   The file.
      * @param map the material map where to add materials to.
+     * @param resourcePath The resource path to use.
      * @throws IOException When
      */
-    static void loadMaterials(final String basePath, final String file, final HashMap<String, Material> map, final Class callee)
+    static void loadMaterials(final String basePath, final String file, final HashMap<String, Material> map, final Class callee, String resourcePath)
             throws IOException {
-        File f = IOUtils.getFile(basePath+file, callee);
+        File f = null;
+        if (callee != null) {
+            f = IOUtils.getFile(basePath + file, callee);
+        } else {
+            f = IOUtils.getFile(basePath + file, resourcePath);
+        }
         BufferedReader reader = new BufferedReader(new FileReader(f));
         String line;
         Material mtl = null;
@@ -115,7 +121,7 @@ class Material {
                         s = "/";
                     }
                     mtl.ambientMap = new Texture(basePath + s
-                            + splitline[1], callee);
+                            + splitline[1], callee, resourcePath);
                 } else if (line.startsWith("map_Kd ")) {
                     String[] splitline = line.split(" ");
                     String s = "";
@@ -123,7 +129,7 @@ class Material {
                         s = "/";
                     }
                     mtl.diffuseMap = new Texture(basePath + s
-                            + splitline[1], callee);
+                            + splitline[1], callee, resourcePath);
                 } else if (line.startsWith("map_Ks ")) {
                     String[] splitline = line.split(" ");
                     String s = "";
@@ -131,7 +137,7 @@ class Material {
                         s = "/";
                     }
                     mtl.specularMap = new Texture(basePath + s
-                            + splitline[1], callee);
+                            + splitline[1], callee, resourcePath);
                 } else if (line.startsWith("map_Ns ")) {
                     String[] splitline = line.split(" ");
                     String s = "";
@@ -139,7 +145,7 @@ class Material {
                         s = "/";
                     }
                     mtl.specularHighlightMap = new Texture(basePath + s
-                            + splitline[1], callee);
+                            + splitline[1], callee, resourcePath);
                 } else if (line.startsWith("map_bump ")
                         || line.startsWith("bump ")) {
                     String[] splitline = line.split(" ");
@@ -148,7 +154,7 @@ class Material {
                         s = "/";
                     }
                     mtl.bumpMap = new Texture(basePath + s
-                            + splitline[1], callee);
+                            + splitline[1], callee, resourcePath);
                 } else if (line.startsWith("disp ")) {
                     String[] splitline = line.split(" ");
                     String s = "";
@@ -156,7 +162,7 @@ class Material {
                         s = "/";
                     }
                     mtl.displacementMap = new Texture(basePath + s
-                            + splitline[1], callee);
+                            + splitline[1], callee, resourcePath);
                 } else if (line.startsWith("decal ")) {
                     String[] splitline = line.split(" ");
                     String s = "";
@@ -164,7 +170,7 @@ class Material {
                         s = "/";
                     }
                     mtl.decalMap = new Texture(basePath + s
-                            + splitline[1], callee);
+                            + splitline[1], callee, resourcePath);
                 }
             } catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
                 reader.close();

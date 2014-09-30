@@ -172,6 +172,7 @@ public class RenderAttachment {
             BoundingBox b = model.getBoundingBox();
             Vector3d[] edges = b.getEdges();
 
+            GL11.glLineWidth(5);
             GL11.glBegin(GL11.GL_LINES);
 
             GL11.glVertex3d(edges[0].getX(), edges[0].getY(), edges[0].getZ());

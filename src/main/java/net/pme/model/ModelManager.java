@@ -51,4 +51,20 @@ public final class ModelManager {
     public void finalize() {
         clear();
     }
+
+    /**
+     * Load a model or just get the link if already loaded.
+     *
+     * Warning: This method can be slow in some cases.
+     *
+     * @param key The model name.
+     * @return The id to the model.
+     */
+    public Model getWithPath(final String key, final String resourcePath) throws IOException {
+        if (!MAP.containsKey(key)) {
+            MAP.put(key, new Model(key, resourcePath));
+        }
+
+        return MAP.get(key);
+    }
 }

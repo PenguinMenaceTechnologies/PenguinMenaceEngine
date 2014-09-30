@@ -33,7 +33,8 @@ public class Model {
     private double size;
     private BoundingBox boundingBox;
     private String path;
-    private Class callee;
+    private Class callee = null;
+    private String resourcePath = null;
 
     /**
      * Package visibility for model only.
@@ -58,6 +59,16 @@ public class Model {
      */
     public Model(final File file) throws IOException {
         this(file.getAbsolutePath(), Model.class); // This cannot be a resource.
+    }
+
+    public Model(final String path, final String resourcePath) throws IOException {
+        this.path = path;
+        this.resourcePath = resourcePath;
+        setupDisplayList(); // TODO on removal mve the loadModelFromFile to here!
+        for (Vector3d v: vertices) {
+            size = size < v.length() ? v.length() : size;
+        }
+        boundingBox = new BoundingBox(this);
     }
 
     /**
@@ -280,7 +291,14 @@ public class Model {
      * @throws IOException When the file cannot be loaded.
      */
     private void loadModelFromFile() throws IOException {
-        final File f = IOUtils.getFile(path, callee);
+        File tmp = null;
+        if (callee != null) {
+            tmp = IOUtils.getFile(path, callee);
+        } else {
+            tmp = IOUtils.getFile(path, resourcePath);
+        }
+
+        final File f = tmp;
 
         final String basePath = path.substring(0, path.lastIndexOf("/"));
 
@@ -302,7 +320,7 @@ public class Model {
                         s = "/";
                     }
                     Material.loadMaterials(basePath, s + mtl,
-                            mtllibs, callee);
+                            mtllibs, callee, resourcePath);
                 } else if (line.startsWith("usemtl ")) {
                     String[] splitline = line.split(" ");
                     String mtl = splitline[1];
