@@ -85,6 +85,9 @@ public class Test {
         // Enable bounding box for the ship
         ship.getRenderAttachment().setBoundingFrame(true);
 
+        // Enable wireframe for cube
+        cube.getRenderAttachment().setWireframe(true);
+
         // Add the objects to the world.
         game.addGameObject(cube);
         game.addGameObject(ship);

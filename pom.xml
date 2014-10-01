@@ -9,7 +9,7 @@
 
     <properties>
         <!--maven variable which points to your local repository -->
-        <internal.repo.path>file:///home/michael/androspace/PenguinMenaceEngine/mvn-repo/</internal.repo.path>
+        <internal.repo.path>file:///home/michael/IdeaProjects/PenguinMenaceEngine/mvn-repo/</internal.repo.path>
     </properties>
 
     <distributionManagement>

@@ -42,6 +42,10 @@ public class RenderAttachment {
      * Draw the bounding frame or not.
      */
     private boolean boundingFrame = false;
+    /**
+     * Draw model as wireframe.
+     */
+    private boolean wireframe = false;
 
     /**
      * Create a new RenderAttachment.
@@ -121,10 +125,18 @@ public class RenderAttachment {
 
     /**
      * Set the state of rendering the bounding frame.
-     * @param enabed The bounding frame.
+     * @param enabled The bounding frame.
      */
-    public final void setBoundingFrame(final boolean enabed) {
-        boundingFrame = enabed;
+    public final void setBoundingFrame(final boolean enabled) {
+        boundingFrame = enabled;
+    }
+
+    /**
+     * Set to render wireframe or not.
+     * @param enabled
+     */
+    public final void setWireframe(final boolean enabled) {
+        this.wireframe = enabled;
     }
 
     /**
@@ -151,6 +163,10 @@ public class RenderAttachment {
             shader.bind();
         }
 
+        if (wireframe) {
+            GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+        }
+
         if (model != null) {
             // TODO render vertexdata not the display list.
             if (model.getDisplayList() > 0) {
@@ -159,6 +175,10 @@ public class RenderAttachment {
         }
 
         specialFX();
+
+        if (wireframe) {
+            GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
+        }
 
         if (shader != null) {
             shader.unbind();
