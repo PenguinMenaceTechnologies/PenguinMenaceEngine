@@ -18,29 +18,23 @@ However, the PenguinMenaceEngine tries to reach for a larger target group than j
 Setting up a project
 ====================
 
-It is highly recommended to use maven.
-However if you cannot use maven for any reasons, download the build from the release page and add it as a library to the buildpath.
+Download and isntall https://github.com/penguinmenac3/PenguinMenaceEngine-SDK.
+Follow the instructions
 
-Add the repository to your pom in the repositories section.
+The SDK will generate a maven project for you.
 
-        <repository>
-            <id>com.github.penguinmenaceengine</id>
-            <url>https://github.com/PenguinMenaceTechnologies/PenguinMenaceEngine/raw/master/mvn-repo</url>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
-        </repository>
+Exporting Blender Models
+========================
 
-Now add the dependency on the Engine to your pom in the dependencies section.
+Open your Model in Blender.
 
-        <dependency>
-            <groupId>com.github.penguinmenaceengine</groupId>
-            <artifactId>PenguinMenaceEngine</artifactId>
-            <version>1.0</version>
-        </dependency>
+Open the export dialog at File->Eport->Wavefront(.obj)
 
-That's all now you can use the engine in your own maven project.
+Select 'Include Normals' on the left. 'Triangulate Faces' is optional when using quads and tris.
+
+The Axis should be Forward: '-Z Forward' and Up:  'Y Up' by default.
+
+Now chose a name for your obj and click 'Export OBJ'.
 
 Usage
 =====
