@@ -73,12 +73,19 @@ public class Test {
         Vector3d front3 = new Vector3d(0, 0, -1);
         Vector3d up3 = new Vector3d(1, 1, 0);
 
+        Vector3d front4 = new Vector3d(0, 0, -1);
+        Vector3d up4 = new Vector3d(0, 1, 0);
+
 
         TestModel ship = new TestModel(3, new Vector3d(1, -2, -10), front2, up2,
                 game.getModelManager().get("resource://assets/ship.obj", Test.class));
 
         TestModel cube = new TestModel(2, new Vector3d(1, 2, -10), front1, up1,
                 game.getModelManager().get("resource://assets/cube_small.obj", Game.class));
+
+
+        TestModelStatic testArena = new TestModelStatic(2, new Vector3d(1, 2, -10), front4, up4,
+                game.getModelManager().get("resource://assets/srd.obj", Game.class));
 
         TestCube3 fxCube = new TestCube3(4, new Vector3d(-2, 0, -10), front3, up3);
 
@@ -88,9 +95,14 @@ public class Test {
         // Enable wireframe for cube
         cube.getRenderAttachment().setWireframe(true);
 
+        // Enable framing
+        testArena.getRenderAttachment().setBoundingFrame(true);
+        testArena.getRenderAttachment().setWireframe(true);
+
         // Add the objects to the world.
         game.addGameObject(cube);
         game.addGameObject(ship);
+        game.addGameObject(testArena);
         game.addGameObject(fxCube);
 
         EnvironmentConfiguration map = new EnvironmentConfiguration();
