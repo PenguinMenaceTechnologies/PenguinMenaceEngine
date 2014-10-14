@@ -1,6 +1,7 @@
 package net.pme.model;
 
 import net.pme.Game;
+import net.pme.core.math.Matrix;
 import net.pme.core.math.Vector3d;
 
 import java.util.List;
@@ -19,6 +20,9 @@ public final class BoundingBox {
      * Starting at the ground side anti-clockwise and then the upper also anti-clockwise.
      */
     private Vector3d[] edges = new Vector3d[8];
+    private final double sphereRadius;
+
+    private final Model model;
 
     /**
      * Create a bounding box for the given model.
@@ -28,6 +32,7 @@ public final class BoundingBox {
      * @param model The model to create the bounding box for.
      */
     BoundingBox(Model model) {
+        this.model = model;
         // Get the vertices of the model. This will also use invisible vertices. (Not used in a face.)
         List<Vector3d> vertices = model.getVertices();
 
@@ -120,6 +125,16 @@ public final class BoundingBox {
                 edges[7].setZ(v.getZ());
             }
         }
+
+        double calcShpere = 0;
+
+        for (Vector3d edge: edges) {
+            if (edge.length() > calcShpere) {
+                calcShpere = edge.length();
+            }
+        }
+
+        sphereRadius = calcShpere;
     }
 
     /**
@@ -135,7 +150,20 @@ public final class BoundingBox {
      * @param other The other bounding box.
      * @return Whether there is an intersection or not.
      */
-    public final boolean intersect(BoundingBox other) {
-        return false;
+    public final boolean intersect(Vector3d position, Vector3d front, Vector3d up, BoundingBox other, Vector3d position2, Vector3d front2, Vector3d up2) {
+        Vector3d pd = position.clone().subtract(position2);
+        if (pd.length() < sphereRadius) {
+            Matrix rot = Matrix.axes(front.clone().crossProduct(up), up, front);
+            Vector3d fd = front2.clone().transformCoords(rot);
+            Vector3d ud = up2.clone().transformCoords(rot);
+            rot = Matrix.axes(fd.clone().crossProduct(ud), ud, fd);
+            for (Vector3d edge: other.edges) {
+                edge = edge.clone().transformCoords(rot).add(pd);
+                // TODO check if edge is inside this bounding box.
+            }
+            return false;
+        } else {
+            return false;
+        }
     }
 }
