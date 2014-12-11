@@ -445,7 +445,7 @@ public class Matrix {
     /**
      * Convert the Matrix into a FloatBuffer.
      *
-     * @param fb The double buffer in which to write the values.
+     * @param fb The float buffer in which to write the values.
      * @return A FloatBuffer containing the matrix.
      */
     public final FloatBuffer getValuesF(final FloatBuffer fb) {

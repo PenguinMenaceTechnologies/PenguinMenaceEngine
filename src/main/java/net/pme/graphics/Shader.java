@@ -250,6 +250,7 @@ public class Shader {
         for (Integer k : keys) {
             Matrix value = uniformsMat.get(k);
             FloatBuffer buffer = uniformsMatBuffers.get(k);
+            buffer.rewind();
             GL20.glUniformMatrix4(k, false, value.getValuesF(buffer));
         }
     }
