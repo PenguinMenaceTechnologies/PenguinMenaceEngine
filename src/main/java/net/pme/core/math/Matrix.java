@@ -149,7 +149,7 @@ public class Matrix {
     }
 
     /**
-     * Get a camera matrix from the given vetors.
+     * Get a camera matrix from the given vectors.
      *
      * @param position Position of the camera.
      * @param xAxis    xAxis of the camera.
@@ -196,7 +196,7 @@ public class Matrix {
     }
 
     /**
-     * Calculate the inverse of a Matrix. (Asume the inverse exists)
+     * Calculate the inverse of a Matrix. (Assume the inverse exists)
      *
      * @return The inverse of m.
      */
@@ -354,7 +354,7 @@ public class Matrix {
     /**
      * Multiply a matrix with a rotation quaternion. (this * q)
      *
-     * @param q The quaterion.
+     * @param q The quaternion.
      * @return This matrix.
      */
     public Matrix multiply(Quaternion q) {
@@ -364,7 +364,7 @@ public class Matrix {
     /**
      * Multiply a matrix with a rotation quaternion. (q * this)
      *
-     * @param q The quaterion.
+     * @param q The quaternion.
      * @return This matrix.
      */
     public Matrix multiplyLeft(Quaternion q) {
@@ -425,9 +425,9 @@ public class Matrix {
     public final DoubleBuffer getValues(final DoubleBuffer db) {
         double[] tmp = new double[N * N];
         int i = 0;
-        for (int x = 0; x < m.length; x++) {
-            for (int y = 0; y < m[x].length; y++) {
-                tmp[i++] = m[x][y];
+        for (double[] aM : m) {
+            for (double anAM : aM) {
+                tmp[i++] = anAM;
             }
         }
 
@@ -438,21 +438,22 @@ public class Matrix {
             localDB.clear();
         }
         localDB.put(tmp);
+        localDB.flip();
         return localDB;
     }
 
     /**
-     * Convert the Matrix into a DoubleBuffer.
+     * Convert the Matrix into a FloatBuffer.
      *
      * @param fb The double buffer in which to write the values.
-     * @return A DoubleBuffer containing the matrix.
+     * @return A FloatBuffer containing the matrix.
      */
     public final FloatBuffer getValuesF(final FloatBuffer fb) {
         float[] tmp = new float[N * N];
         int i = 0;
-        for (int x = 0; x < m.length; x++) {
-            for (int y = 0; y < m[x].length; y++) {
-                tmp[i++] = (float)m[x][y];
+        for (double[] aM : m) {
+            for (double anAM : aM) {
+                tmp[i++] = (float) anAM;
             }
         }
 
@@ -502,10 +503,7 @@ public class Matrix {
     public Quaternion toQuaternion() {
         transpose();
 
-        double qw = 0;
-        double qx = 0;
-        double qy = 0;
-        double qz = 0;
+        double qw, qx, qy, qz;
 
         double tr = m[0][0] + m[1][1] + m[2][2];
 
@@ -537,9 +535,7 @@ public class Matrix {
 
         transpose();
 
-        Quaternion q = new Quaternion(qw, qx, qy, qz);
-
-        return q;
+        return new Quaternion(qw, qx, qy, qz);
     }
 
     @Override
