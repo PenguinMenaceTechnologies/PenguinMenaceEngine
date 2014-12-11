@@ -1,6 +1,7 @@
 package net.pme;
 
 import net.pme.core.GameObject;
+import net.pme.core.math.Matrix;
 import net.pme.core.math.Vector3d;
 import net.pme.jobcenter.LoopableAttachment;
 import net.pme.graphics.RenderAttachment;
@@ -91,5 +92,6 @@ public class TestCube3 extends GameObject {
         getRenderAttachment().setShader(sh);
         uniform = new float[4];
         sh.setUniform4f("color", uniform);
+        sh.setUniformMat("testMat", new Matrix());
     }
 }

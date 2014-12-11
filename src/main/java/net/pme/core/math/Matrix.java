@@ -463,6 +463,7 @@ public class Matrix {
             localFB.clear();
         }
         localFB.put(tmp);
+        localFB.flip();
         return localFB;
     }
 

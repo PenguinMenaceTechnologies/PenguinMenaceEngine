@@ -166,7 +166,7 @@ public class Shader {
 
     /**
      * Bind a java array to be a uniform4f in your shader code. In the shader it
-     * is used by "uniform vec4 uniform_name;"
+     * is used by "uniform mat4 uniform_name;"
      *
      * @param uniform The name of the uniform.
      * @param value   The array of size 4 which to bind to that uniform.

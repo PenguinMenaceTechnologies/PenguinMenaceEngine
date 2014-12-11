@@ -1,6 +1,7 @@
 package net.pme;
 
 import net.pme.core.GameObject;
+import net.pme.core.math.Matrix;
 import net.pme.core.math.Vector3d;
 import net.pme.graphics.RenderAttachment;
 import net.pme.graphics.Shader;
@@ -28,7 +29,12 @@ public class TestModelStatic extends GameObject {
         super(id, position, front, up);
         final GameObject parent = this;
         setRenderAttachment(new RenderAttachment(this, graphics) {});
-        this.getRenderAttachment().setShader(new Shader(null, Shaders.fsh));
+
+        Shader sh = new Shader(null, Shaders.fsh);
+        float[] uniform = new float[]{1f,1f,1f,1f};
+        sh.setUniform4f("color", uniform);
+        sh.setUniformMat("testMat", new Matrix());
+        this.getRenderAttachment().setShader(sh);
         setLoopableAttachment(new LoopableAttachment() {
             @Override
             public void update(double elapsedTime) {
